@@ -1,0 +1,1822 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeuroSound - محوّل الترددات العصبية</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --bg-primary: #0a0e1a;
+      --bg-secondary: #111827;
+      --bg-card: #1a2235;
+      --bg-card-hover: #1f2a42;
+      --accent-cyan: #00e5ff;
+      --accent-purple: #b388ff;
+      --accent-pink: #ff4081;
+      --accent-green: #00e676;
+      --accent-gold: #ffd740;
+      --text-primary: #e8eaf6;
+      --text-secondary: #90a4ae;
+      --text-muted: #546e7a;
+      --border-color: rgba(0, 229, 255, 0.15);
+      --glow-cyan: 0 0 20px rgba(0, 229, 255, 0.3);
+      --glow-purple: 0 0 20px rgba(179, 136, 255, 0.3);
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+
+    html.dark {
+      /* Already dark by default */
+    }
+
+    html:not(.dark) {
+      --bg-primary: #f0f4f8;
+      --bg-secondary: #e2e8f0;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f7fafc;
+      --accent-cyan: #0097a7;
+      --accent-purple: #7c4dff;
+      --accent-pink: #e91e63;
+      --accent-green: #00c853;
+      --accent-gold: #ff8f00;
+      --text-primary: #1a202c;
+      --text-secondary: #4a5568;
+      --text-muted: #718096;
+      --border-color: rgba(0, 151, 167, 0.2);
+      --glow-cyan: 0 0 15px rgba(0, 151, 167, 0.15);
+      --glow-purple: 0 0 15px rgba(124, 77, 255, 0.15);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Animated background */
+    .bg-grid {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.04;
+      background-image:
+        linear-gradient(var(--accent-cyan) 1px, transparent 1px),
+        linear-gradient(90deg, var(--accent-cyan) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-orb-1 {
+      width: 400px; height: 400px;
+      background: rgba(0, 229, 255, 0.08);
+      top: -100px; right: -100px;
+      animation: floatOrb 12s ease-in-out infinite;
+    }
+
+    .bg-orb-2 {
+      width: 350px; height: 350px;
+      background: rgba(179, 136, 255, 0.06);
+      bottom: -80px; left: -80px;
+      animation: floatOrb 15s ease-in-out infinite reverse;
+    }
+
+    @keyframes floatOrb {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(30px, -30px); }
+    }
+
+    .app-container {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 30px 0 20px;
+    }
+
+    .logo-icon {
+      width: 70px; height: 70px;
+      margin: 0 auto 16px;
+      position: relative;
+    }
+
+    .logo-icon svg {
+      width: 100%; height: 100%;
+    }
+
+    .logo-pulse {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 70px; height: 70px;
+      border-radius: 50%;
+      border: 2px solid var(--accent-cyan);
+      animation: logoPulse 2s ease-out infinite;
+    }
+
+    @keyframes logoPulse {
+      0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+      100% { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
+    }
+
+    .header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 28px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      color: var(--text-secondary);
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.6;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      background: var(--bg-card-hover);
+    }
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 18px;
+      color: var(--text-primary);
+    }
+
+    .card-title i {
+      color: var(--accent-cyan);
+      font-size: 18px;
+    }
+
+    /* Upload Area */
+    .upload-zone {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 40px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-zone:hover, .upload-zone.drag-over {
+      border-color: var(--accent-cyan);
+      background: rgba(0, 229, 255, 0.04);
+    }
+
+    .upload-zone.has-file {
+      border-color: var(--accent-green);
+      border-style: solid;
+      padding: 20px;
+    }
+
+    .upload-zone input {
+      display: none;
+    }
+
+    .upload-icon {
+      font-size: 40px;
+      color: var(--accent-cyan);
+      margin-bottom: 12px;
+      opacity: 0.7;
+    }
+
+    .upload-text {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .upload-hint {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .file-icon-wrap {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      background: rgba(0, 230, 118, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .file-icon-wrap i {
+      font-size: 22px;
+      color: var(--accent-green);
+    }
+
+    .file-details {
+      flex: 1;
+      text-align: right;
+    }
+
+    .file-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      word-break: break-all;
+    }
+
+    .file-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .file-remove {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 64, 129, 0.1);
+      color: var(--accent-pink);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .file-remove:hover {
+      background: rgba(255, 64, 129, 0.2);
+      transform: scale(1.1);
+    }
+
+    /* Frequency Bands */
+    .freq-bands {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .freq-band {
+      text-align: center;
+      padding: 14px 6px;
+      border-radius: var(--radius-sm);
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: rgba(255,255,255,0.03);
+    }
+
+    html:not(.dark) .freq-band {
+      background: rgba(0,0,0,0.02);
+    }
+
+    .freq-band:hover {
+      background: rgba(255,255,255,0.06);
+    }
+
+    .freq-band.active {
+      border-color: var(--band-color);
+      background: var(--band-bg);
+      box-shadow: 0 0 20px var(--band-glow);
+    }
+
+    .freq-band[data-band="delta"] { --band-color: #4fc3f7; --band-bg: rgba(79,195,247,0.08); --band-glow: rgba(79,195,247,0.15); }
+    .freq-band[data-band="theta"] { --band-color: #b388ff; --band-bg: rgba(179,136,255,0.08); --band-glow: rgba(179,136,255,0.15); }
+    .freq-band[data-band="alpha"] { --band-color: #00e676; --band-bg: rgba(0,230,118,0.08); --band-glow: rgba(0,230,118,0.15); }
+    .freq-band[data-band="beta"] { --band-color: #ffd740; --band-bg: rgba(255,215,64,0.08); --band-glow: rgba(255,215,64,0.15); }
+    .freq-band[data-band="gamma"] { --band-color: #ff4081; --band-bg: rgba(255,64,129,0.08); --band-glow: rgba(255,64,129,0.15); }
+
+    .band-icon {
+      font-size: 22px;
+      margin-bottom: 6px;
+    }
+
+    .band-name {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .band-freq {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .band-desc {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    /* Sliders */
+    .slider-group {
+      margin-bottom: 18px;
+    }
+
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .slider-label span {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .slider-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 13px;
+      color: var(--accent-cyan);
+      font-weight: 700;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    html:not(.dark) input[type="range"] {
+      background: rgba(0,0,0,0.08);
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      box-shadow: var(--glow-cyan);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      box-shadow: var(--glow-cyan);
+      cursor: pointer;
+      border: none;
+    }
+
+    /* Visualizer */
+    .visualizer-wrap {
+      width: 100%;
+      height: 140px;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      background: rgba(0,0,0,0.3);
+      position: relative;
+      margin-bottom: 16px;
+    }
+
+    html:not(.dark) .visualizer-wrap {
+      background: rgba(0,0,0,0.05);
+    }
+
+    .visualizer-wrap canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .viz-label {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    /* Transport Controls */
+    .transport {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .btn-transport {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      border: 2px solid var(--accent-cyan);
+      background: transparent;
+      color: var(--accent-cyan);
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .btn-transport:hover {
+      background: rgba(0, 229, 255, 0.1);
+      box-shadow: var(--glow-cyan);
+    }
+
+    .btn-transport.playing {
+      background: var(--accent-cyan);
+      color: var(--bg-primary);
+    }
+
+    .btn-transport:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .progress-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 6px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 3px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    html:not(.dark) .progress-bar-bg {
+      background: rgba(0,0,0,0.08);
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+      border-radius: 3px;
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    .progress-time {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Action Buttons */
+    .btn-action {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Tajawal', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-process {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      color: #fff;
+    }
+
+    .btn-process:hover {
+      box-shadow: 0 4px 25px rgba(0, 229, 255, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .btn-process:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-download {
+      background: rgba(0, 230, 118, 0.1);
+      color: var(--accent-green);
+      border: 1px solid rgba(0, 230, 118, 0.3);
+      margin-top: 10px;
+    }
+
+    .btn-download:hover {
+      background: rgba(0, 230, 118, 0.18);
+    }
+
+    .btn-download:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    /* Status */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .status-bar.visible {
+      display: flex;
+    }
+
+    .status-bar.processing {
+      background: rgba(0, 229, 255, 0.08);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(0, 229, 255, 0.15);
+    }
+
+    .status-bar.success {
+      background: rgba(0, 230, 118, 0.08);
+      color: var(--accent-green);
+      border: 1px solid rgba(0, 230, 118, 0.15);
+    }
+
+    .status-bar.error {
+      background: rgba(255, 64, 129, 0.08);
+      color: var(--accent-pink);
+      border: 1px solid rgba(255, 64, 129, 0.15);
+    }
+
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid transparent;
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Info Section */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .info-item {
+      padding: 14px;
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border-color);
+    }
+
+    html:not(.dark) .info-item {
+      background: rgba(0,0,0,0.02);
+    }
+
+    .info-item .info-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-item .info-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--accent-cyan);
+    }
+
+    /* Binaural toggle */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+    }
+
+    .toggle-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .toggle-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .toggle-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 50px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255,255,255,0.1);
+      border-radius: 14px;
+      transition: 0.3s;
+    }
+
+    html:not(.dark) .toggle-slider {
+      background: rgba(0,0,0,0.1);
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      height: 22px; width: 22px;
+      right: 3px;
+      bottom: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: 0.3s;
+    }
+
+    .toggle-switch input:checked + .toggle-slider {
+      background: var(--accent-cyan);
+    }
+
+    .toggle-switch input:checked + .toggle-slider::before {
+      transform: translateX(-22px);
+    }
+
+    /* Volume */
+    .volume-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .volume-row i {
+      color: var(--text-muted);
+      font-size: 16px;
+    }
+
+    .volume-row input[type="range"] {
+      flex: 1;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .freq-bands {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .freq-bands .freq-band:nth-child(4),
+      .freq-bands .freq-band:nth-child(5) {
+        grid-column: span 1;
+      }
+
+      .header h1 {
+        font-size: 22px;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .card {
+        padding: 18px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .freq-bands {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    /* Animations */
+    .fade-in {
+      animation: fadeIn 0.5s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card:nth-child(1) { animation-delay: 0.05s; }
+    .card:nth-child(2) { animation-delay: 0.1s; }
+    .card:nth-child(3) { animation-delay: 0.15s; }
+    .card:nth-child(4) { animation-delay: 0.2s; }
+
+    /* Processing overlay on visualizer */
+    .processing-overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.5);
+      z-index: 2;
+      display: none;
+    }
+
+    .processing-overlay.visible {
+      display: flex;
+    }
+
+    .processing-overlay .spinner {
+      width: 30px; height: 30px;
+      border-width: 3px;
+      color: var(--accent-cyan);
+    }
+
+    /* Waveform marker */
+    .wave-marker {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9px;
+      color: var(--accent-purple);
+      position: absolute;
+      bottom: 8px;
+      right: 10px;
+      letter-spacing: 1px;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .footer a {
+      color: var(--accent-cyan);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+
+  <div class="app-container">
+    <!-- Header -->
+    <div class="header fade-in">
+      <div class="logo-icon">
+        <div class="logo-pulse"></div>
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="35" stroke="url(#grad1)" stroke-width="2.5" fill="none" opacity="0.5"/>
+          <circle cx="50" cy="50" r="25" stroke="url(#grad1)" stroke-width="2" fill="none" opacity="0.3"/>
+          <path d="M30 50 Q 37 30, 44 50 Q 51 70, 58 50 Q 65 30, 72 50" stroke="var(--accent-cyan)" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <circle cx="50" cy="50" r="5" fill="var(--accent-purple)" opacity="0.8"/>
+          <defs>
+            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:var(--accent-cyan)"/>
+              <stop offset="100%" style="stop-color:var(--accent-purple)"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <h1>NEUROSOUND</h1>
+      <p>محوّل الترددات العصبية — حوّل أي صوت إلى ترددات يستقبلها الدماغ مباشرة</p>
+    </div>
+
+    <!-- Upload Card -->
+    <div class="card fade-in">
+      <div class="card-title">
+        <i class="fas fa-file-audio"></i>
+        رفع المقطع الصوتي
+      </div>
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" id="audioInput" accept="audio/*">
+        <div id="uploadPlaceholder">
+          <div class="upload-icon"><i class="fas fa-cloud-arrow-up"></i></div>
+          <div class="upload-text">اضغط أو اسحب ملفاً صوتياً هنا</div>
+          <div class="upload-hint">MP3, WAV, OGG, M4A — حتى 50 ميجابايت</div>
+        </div>
+        <div id="fileInfoDisplay" style="display:none;">
+          <div class="file-info">
+            <div class="file-icon-wrap"><i class="fas fa-music"></i></div>
+            <div class="file-details">
+              <div class="file-name" id="fileName"></div>
+              <div class="file-meta" id="fileMeta"></div>
+            </div>
+            <button class="file-remove" id="removeFile" type="button"><i class="fas fa-xmark"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Frequency Band Selection -->
+    <div class="card fade-in">
+      <div class="card-title">
+        <i class="fas fa-brain"></i>
+        نطاق التردد العصبي
+      </div>
+      <div class="freq-bands" id="freqBands">
+        <div class="freq-band" data-band="delta" data-freq="2">
+          <div class="band-icon">🌊</div>
+          <div class="band-name" style="color:#4fc3f7;">دلتا</div>
+          <div class="band-freq">0.5–4 Hz</div>
+          <div class="band-desc">نوم عميق</div>
+        </div>
+        <div class="freq-band" data-band="theta" data-freq="6">
+          <div class="band-icon">🧘</div>
+          <div class="band-name" style="color:#b388ff;">ثيتا</div>
+          <div class="band-freq">4–8 Hz</div>
+          <div class="band-desc">تأمل وإبداع</div>
+        </div>
+        <div class="freq-band active" data-band="alpha" data-freq="10">
+          <div class="band-icon">✨</div>
+          <div class="band-name" style="color:#00e676;">ألفا</div>
+          <div class="band-freq">8–13 Hz</div>
+          <div class="band-desc">استرخاء وهدوء</div>
+        </div>
+        <div class="freq-band" data-band="beta" data-freq="20">
+          <div class="band-icon">⚡</div>
+          <div class="band-name" style="color:#ffd740;">بيتا</div>
+          <div class="band-freq">13–30 Hz</div>
+          <div class="band-desc">تركيز ويقظة</div>
+        </div>
+        <div class="freq-band" data-band="gamma" data-freq="40">
+          <div class="band-icon">🔮</div>
+          <div class="band-name" style="color:#ff4081;">غاما</div>
+          <div class="band-freq">30–100 Hz</div>
+          <div class="band-desc">إدراك عالي</div>
+        </div>
+      </div>
+
+      <!-- Fine-tune frequency -->
+      <div class="slider-group">
+        <div class="slider-label">
+          <span>التردد الدقيق</span>
+          <span class="slider-value" id="freqValue">10.0 Hz</span>
+        </div>
+        <input type="range" id="freqSlider" min="0.5" max="100" step="0.5" value="10">
+      </div>
+
+      <!-- Modulation depth -->
+      <div class="slider-group">
+        <div class="slider-label">
+          <span>عمق التعديل</span>
+          <span class="slider-value" id="depthValue">70%</span>
+        </div>
+        <input type="range" id="depthSlider" min="0" max="100" step="1" value="70">
+      </div>
+
+      <!-- Binaural toggle -->
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-title">نغمات ثنائية الأذن (Binaural)</div>
+          <div class="toggle-desc">يُرسل تردداً مختلفاً لكل أذن لتحفيز الدماغ — استخدم سماعات</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="binauralToggle" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <!-- Carrier frequency for binaural -->
+      <div class="slider-group" id="carrierGroup">
+        <div class="slider-label">
+          <span>تردد الحامل (Carrier)</span>
+          <span class="slider-value" id="carrierValue">200 Hz</span>
+        </div>
+        <input type="range" id="carrierSlider" min="80" max="500" step="1" value="200">
+      </div>
+    </div>
+
+    <!-- Player & Visualizer -->
+    <div class="card fade-in">
+      <div class="card-title">
+        <i class="fas fa-wave-square"></i>
+        التشغيل والتصور
+      </div>
+
+      <div class="visualizer-wrap">
+        <canvas id="visualizer"></canvas>
+        <div class="viz-label">NEURAL WAVEFORM</div>
+        <div class="wave-marker" id="waveMarker">ALPHA 10 Hz</div>
+        <div class="processing-overlay" id="processingOverlay">
+          <div class="spinner"></div>
+        </div>
+      </div>
+
+      <!-- Transport -->
+      <div class="transport">
+        <button class="btn-transport" id="btnPlay" disabled>
+          <i class="fas fa-play" id="playIcon"></i>
+        </button>
+        <button class="btn-transport" id="btnStop" disabled style="width:40px;height:40px;font-size:16px;">
+          <i class="fas fa-stop"></i>
+        </button>
+        <div class="progress-wrap">
+          <div class="progress-bar-bg" id="progressBar">
+            <div class="progress-bar-fill" id="progressFill"></div>
+          </div>
+          <div class="progress-time">
+            <span id="currentTime">0:00</span>
+            <span id="totalTime">0:00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Volume -->
+      <div class="volume-row">
+        <i class="fas fa-volume-high"></i>
+        <input type="range" id="volumeSlider" min="0" max="100" step="1" value="80">
+        <span class="slider-value" id="volumeValue" style="min-width:40px;text-align:center;">80%</span>
+      </div>
+
+      <!-- Status -->
+      <div class="status-bar" id="statusBar">
+        <div class="spinner" id="statusSpinner" style="display:none;"></div>
+        <i class="fas fa-circle-info" id="statusIcon"></i>
+        <span id="statusText"></span>
+      </div>
+
+      <!-- Process Button -->
+      <button class="btn-action btn-process" id="btnProcess" disabled>
+        <i class="fas fa-bolt"></i>
+        معالجة وتحويل التردد
+      </button>
+
+      <!-- Download Button -->
+      <button class="btn-action btn-download" id="btnDownload" disabled>
+        <i class="fas fa-download"></i>
+        تحميل الملف المعالَج
+      </button>
+    </div>
+
+    <!-- Info Card -->
+    <div class="card fade-in">
+      <div class="card-title">
+        <i class="fas fa-circle-info"></i>
+        معلومات المعالجة
+      </div>
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-label">النطاق المختار</div>
+          <div class="info-value" id="infoband">ألفا</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">التردد</div>
+          <div class="info-value" id="infoFreq">10 Hz</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">عمق التعديل</div>
+          <div class="info-value" id="infoDepth">70%</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">ثنائي الأذن</div>
+          <div class="info-value" id="infoBinaural">نعم</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- How it works -->
+    <div class="card fade-in">
+      <div class="card-title">
+        <i class="fas fa-lightbulb"></i>
+        كيف يعمل البرنامج؟
+      </div>
+      <div style="color:var(--text-secondary); font-size:14px; line-height:1.9;">
+        <p style="margin-bottom:10px;">
+          <strong style="color:var(--accent-cyan);">١. تعديل السعة (AM):</strong>
+          يتم تعديل سعة الصوت الأصلي بتردد الموجة الدماغية المختار، مما يخلق نبضات إيقاعية يستجيب لها الدماغ تلقائياً.
+        </p>
+        <p style="margin-bottom:10px;">
+          <strong style="color:var(--accent-purple);">٢. نغمات ثنائية الأذن:</strong>
+          عند التفعيل، يُرسل تردد مختلف قليلاً لكل أذن. الفرق بين الترددين يُنتج نغمة "وهمية" يسمعها الدماغ مباشرة ويتزامن معها.
+        </p>
+        <p style="margin-bottom:10px;">
+          <strong style="color:var(--accent-green);">٣. تحفيز الموجات الدماغية:</strong>
+          هذه التقنية تُعرف بـ "Brainwave Entrainment" وتُستخدم علمياً لتحسين التركيز والاسترخاء والنوم العميق.
+        </p>
+        <p style="color:var(--accent-gold);">
+          <i class="fas fa-headphones"></i>
+          يُنصح باستخدام سماعات الرأس للحصول على أفضل تجربة، خاصة مع النغمات الثنائية.
+        </p>
+      </div>
+    </div>
+
+    <div class="footer">
+      NeuroSound — تقنية تحفيز الموجات الدماغية
+    </div>
+  </div>
+
+  <script>
+    /* ========= Dark Mode Detection ========= */
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(event) {
+      if (event.matches) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    });
+
+    /* ========= State ========= */
+    var audioFile = null;
+    var audioBuffer = null;
+    var processedBuffer = null;
+    var audioContext = null;
+    var sourceNode = null;
+    var gainNode = null;
+    var analyserNode = null;
+    var binauralOscL = null;
+    var binauralOscR = null;
+    var binauralGainL = null;
+    var binauralGainR = null;
+    var mergerNode = null;
+    var isPlaying = false;
+    var startTime = 0;
+    var pauseOffset = 0;
+    var animationId = null;
+    var downloadBlob = null;
+
+    /* ========= DOM Refs ========= */
+    var uploadZone = document.getElementById('uploadZone');
+    var audioInput = document.getElementById('audioInput');
+    var uploadPlaceholder = document.getElementById('uploadPlaceholder');
+    var fileInfoDisplay = document.getElementById('fileInfoDisplay');
+    var fileNameEl = document.getElementById('fileName');
+    var fileMetaEl = document.getElementById('fileMeta');
+    var removeFileBtn = document.getElementById('removeFile');
+    var freqBandsEl = document.getElementById('freqBands');
+    var freqSlider = document.getElementById('freqSlider');
+    var freqValueEl = document.getElementById('freqValue');
+    var depthSlider = document.getElementById('depthSlider');
+    var depthValueEl = document.getElementById('depthValue');
+    var binauralToggle = document.getElementById('binauralToggle');
+    var carrierSlider = document.getElementById('carrierSlider');
+    var carrierValueEl = document.getElementById('carrierValue');
+    var carrierGroup = document.getElementById('carrierGroup');
+    var btnPlay = document.getElementById('btnPlay');
+    var btnStop = document.getElementById('btnStop');
+    var playIcon = document.getElementById('playIcon');
+    var progressBar = document.getElementById('progressBar');
+    var progressFill = document.getElementById('progressFill');
+    var currentTimeEl = document.getElementById('currentTime');
+    var totalTimeEl = document.getElementById('totalTime');
+    var volumeSlider = document.getElementById('volumeSlider');
+    var volumeValueEl = document.getElementById('volumeValue');
+    var statusBar = document.getElementById('statusBar');
+    var statusSpinner = document.getElementById('statusSpinner');
+    var statusIcon = document.getElementById('statusIcon');
+    var statusText = document.getElementById('statusText');
+    var btnProcess = document.getElementById('btnProcess');
+    var btnDownload = document.getElementById('btnDownload');
+    var visualizerCanvas = document.getElementById('visualizer');
+    var vizCtx = visualizerCanvas.getContext('2d');
+    var waveMarker = document.getElementById('waveMarker');
+    var processingOverlay = document.getElementById('processingOverlay');
+
+    /* Info display */
+    var infoBandEl = document.getElementById('infoband');
+    var infoFreqEl = document.getElementById('infoFreq');
+    var infoDepthEl = document.getElementById('infoDepth');
+    var infoBinauralEl = document.getElementById('infoBinaural');
+
+    var bandNames = {
+      delta: 'دلتا',
+      theta: 'ثيتا',
+      alpha: 'ألفا',
+      beta: 'بيتا',
+      gamma: 'غاما'
+    };
+
+    var markerNames = {
+      delta: 'DELTA',
+      theta: 'THETA',
+      alpha: 'ALPHA',
+      beta: 'BETA',
+      gamma: 'GAMMA'
+    };
+
+    var currentBand = 'alpha';
+
+    /* ========= Utility ========= */
+    function formatTime(seconds) {
+      var m = Math.floor(seconds / 60);
+      var s = Math.floor(seconds % 60);
+      return m + ':' + (s < 10 ? '0' : '') + s;
+    }
+
+    function formatSize(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / 1048576).toFixed(1) + ' MB';
+    }
+
+    function showStatus(type, text) {
+      statusBar.className = 'status-bar visible ' + type;
+      statusText.textContent = text;
+      if (type === 'processing') {
+        statusSpinner.style.display = 'block';
+        statusIcon.style.display = 'none';
+      } else {
+        statusSpinner.style.display = 'none';
+        statusIcon.style.display = 'block';
+        statusIcon.className = type === 'success' ? 'fas fa-circle-check' : 'fas fa-circle-xmark';
+      }
+    }
+
+    function hideStatus() {
+      statusBar.className = 'status-bar';
+    }
+
+    function getAudioContext() {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return audioContext;
+    }
+
+    /* ========= File Upload ========= */
+    uploadZone.addEventListener('click', function(e) {
+      if (e.target === removeFileBtn || removeFileBtn.contains(e.target)) return;
+      audioInput.click();
+    });
+
+    uploadZone.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      uploadZone.classList.add('drag-over');
+    });
+
+    uploadZone.addEventListener('dragleave', function() {
+      uploadZone.classList.remove('drag-over');
+    });
+
+    uploadZone.addEventListener('drop', function(e) {
+      e.preventDefault();
+      uploadZone.classList.remove('drag-over');
+      var files = e.dataTransfer.files;
+      if (files.length > 0 && files[0].type.startsWith('audio/')) {
+        handleFile(files[0]);
+      }
+    });
+
+    audioInput.addEventListener('change', function() {
+      if (audioInput.files.length > 0) {
+        handleFile(audioInput.files[0]);
+      }
+    });
+
+    removeFileBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      resetFile();
+    });
+
+    function handleFile(file) {
+      if (file.size > 50 * 1024 * 1024) {
+        showStatus('error', 'حجم الملف يتجاوز 50 ميجابايت');
+        return;
+      }
+
+      audioFile = file;
+      fileNameEl.textContent = file.name;
+      fileMetaEl.textContent = formatSize(file.size) + ' • ' + file.type.split('/')[1].toUpperCase();
+
+      uploadPlaceholder.style.display = 'none';
+      fileInfoDisplay.style.display = 'block';
+      uploadZone.classList.add('has-file');
+
+      btnProcess.disabled = false;
+      hideStatus();
+
+      /* Decode audio */
+      var ctx = getAudioContext();
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        ctx.decodeAudioData(ev.target.result).then(function(buffer) {
+          audioBuffer = buffer;
+          totalTimeEl.textContent = formatTime(buffer.duration);
+          showStatus('success', 'تم تحميل الملف — جاهز للمعالجة');
+        }).catch(function() {
+          showStatus('error', 'تعذّر قراءة الملف الصوتي');
+          btnProcess.disabled = true;
+        });
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function resetFile() {
+      stopAudio();
+      audioFile = null;
+      audioBuffer = null;
+      processedBuffer = null;
+      downloadBlob = null;
+
+      uploadPlaceholder.style.display = '';
+      fileInfoDisplay.style.display = 'none';
+      uploadZone.classList.remove('has-file');
+      audioInput.value = '';
+
+      btnProcess.disabled = true;
+      btnPlay.disabled = true;
+      btnStop.disabled = true;
+      btnDownload.disabled = true;
+      progressFill.style.width = '0%';
+      currentTimeEl.textContent = '0:00';
+      totalTimeEl.textContent = '0:00';
+      hideStatus();
+    }
+
+    /* ========= Frequency Band Selection ========= */
+    freqBandsEl.addEventListener('click', function(e) {
+      var band = e.target.closest('.freq-band');
+      if (!band) return;
+
+      document.querySelectorAll('.freq-band').forEach(function(b) { b.classList.remove('active'); });
+      band.classList.add('active');
+
+      currentBand = band.dataset.band;
+      var freq = parseFloat(band.dataset.freq);
+      freqSlider.value = freq;
+      freqValueEl.textContent = freq.toFixed(1) + ' Hz';
+      updateInfoDisplay();
+    });
+
+    freqSlider.addEventListener('input', function() {
+      var val = parseFloat(freqSlider.value);
+      freqValueEl.textContent = val.toFixed(1) + ' Hz';
+
+      /* Auto-select band */
+      document.querySelectorAll('.freq-band').forEach(function(b) { b.classList.remove('active'); });
+      if (val <= 4) currentBand = 'delta';
+      else if (val <= 8) currentBand = 'theta';
+      else if (val <= 13) currentBand = 'alpha';
+      else if (val <= 30) currentBand = 'beta';
+      else currentBand = 'gamma';
+
+      var activeBand = document.querySelector('.freq-band[data-band="' + currentBand + '"]');
+      if (activeBand) activeBand.classList.add('active');
+      updateInfoDisplay();
+    });
+
+    depthSlider.addEventListener('input', function() {
+      depthValueEl.textContent = depthSlider.value + '%';
+      updateInfoDisplay();
+    });
+
+    binauralToggle.addEventListener('change', function() {
+      carrierGroup.style.opacity = binauralToggle.checked ? '1' : '0.4';
+      carrierGroup.style.pointerEvents = binauralToggle.checked ? 'auto' : 'none';
+      updateInfoDisplay();
+    });
+
+    carrierSlider.addEventListener('input', function() {
+      carrierValueEl.textContent = carrierSlider.value + ' Hz';
+    });
+
+    volumeSlider.addEventListener('input', function() {
+      volumeValueEl.textContent = volumeSlider.value + '%';
+      if (gainNode) {
+        gainNode.gain.value = volumeSlider.value / 100;
+      }
+    });
+
+    function updateInfoDisplay() {
+      infoBandEl.textContent = bandNames[currentBand] || currentBand;
+      infoFreqEl.textContent = parseFloat(freqSlider.value).toFixed(1) + ' Hz';
+      infoDepthEl.textContent = depthSlider.value + '%';
+      infoBinauralEl.textContent = binauralToggle.checked ? 'نعم' : 'لا';
+      waveMarker.textContent = (markerNames[currentBand] || currentBand.toUpperCase()) + ' ' + parseFloat(freqSlider.value).toFixed(1) + ' Hz';
+    }
+
+    /* ========= Audio Processing ========= */
+    btnProcess.addEventListener('click', function() {
+      if (!audioBuffer) return;
+      processAudio();
+    });
+
+    function processAudio() {
+      stopAudio();
+      showStatus('processing', 'جارٍ معالجة وتحويل الترددات...');
+      processingOverlay.classList.add('visible');
+      btnProcess.disabled = true;
+      btnPlay.disabled = true;
+      btnDownload.disabled = true;
+
+      var entrainFreq = parseFloat(freqSlider.value);
+      var depth = parseInt(depthSlider.value) / 100;
+      var useBinaural = binauralToggle.checked;
+      var carrierFreq = parseInt(carrierSlider.value);
+
+      /* Process in a timeout to not block UI */
+      setTimeout(function() {
+        try {
+          var ctx = getAudioContext();
+          var sampleRate = audioBuffer.sampleRate;
+          var numChannels = useBinaural ? 2 : audioBuffer.numberOfChannels;
+          var length = audioBuffer.length;
+
+          var offlineCtx = new OfflineAudioContext(numChannels, length, sampleRate);
+
+          /* Create processed buffer manually for precision */
+          var newBuffer = offlineCtx.createBuffer(numChannels, length, sampleRate);
+
+          for (var ch = 0; ch < audioBuffer.numberOfChannels; ch++) {
+            var inputData = audioBuffer.getChannelData(ch);
+
+            if (useBinaural) {
+              /* Left channel: AM + binaural left */
+              var leftData = newBuffer.getChannelData(0);
+              var rightData = newBuffer.getChannelData(1);
+
+              var halfDiff = entrainFreq / 2;
+              var freqL = carrierFreq - halfDiff;
+              var freqR = carrierFreq + halfDiff;
+
+              for (var i = 0; i < length; i++) {
+                var t = i / sampleRate;
+                var sample = inputData[i];
+
+                /* Amplitude modulation */
+                var amFactor = 1 - depth + depth * (0.5 + 0.5 * Math.sin(2 * Math.PI * entrainFreq * t));
+                var modSample = sample * amFactor;
+
+                /* Binaural beat tones */
+                var binauralAmp = 0.08 * depth;
+                var toneL = binauralAmp * Math.sin(2 * Math.PI * freqL * t);
+                var toneR = binauralAmp * Math.sin(2 * Math.PI * freqR * t);
+
+                if (ch === 0) {
+                  leftData[i] = modSample + toneL;
+                  rightData[i] = modSample + toneR;
+                } else {
+                  leftData[i] += modSample * 0.5;
+                  rightData[i] += modSample * 0.5;
+                }
+              }
+            } else {
+              /* Mono or multi-channel AM only */
+              var outData = newBuffer.getChannelData(Math.min(ch, numChannels - 1));
+
+              for (var j = 0; j < length; j++) {
+                var tt = j / sampleRate;
+                var samp = inputData[j];
+
+                var amf = 1 - depth + depth * (0.5 + 0.5 * Math.sin(2 * Math.PI * entrainFreq * tt));
+                outData[j] = samp * amf;
+              }
+            }
+          }
+
+          /* Isochronic pulse overlay */
+          var pulseChannel = newBuffer.getChannelData(0);
+          for (var p = 0; p < length; p++) {
+            var tp = p / sampleRate;
+            var pulse = Math.sin(2 * Math.PI * entrainFreq * tp) > 0 ? 1 : 0;
+            var isoAmp = 0.03 * depth;
+            var isoTone = isoAmp * pulse * Math.sin(2 * Math.PI * 220 * tp);
+            pulseChannel[p] += isoTone;
+            if (numChannels > 1) {
+              newBuffer.getChannelData(1)[p] += isoTone;
+            }
+          }
+
+          /* Soft clipping */
+          for (var cc = 0; cc < numChannels; cc++) {
+            var cd = newBuffer.getChannelData(cc);
+            for (var k = 0; k < length; k++) {
+              cd[k] = Math.tanh(cd[k]);
+            }
+          }
+
+          processedBuffer = newBuffer;
+
+          /* Encode to WAV for download */
+          downloadBlob = encodeWAV(newBuffer);
+
+          processingOverlay.classList.remove('visible');
+          showStatus('success', 'تمت المعالجة بنجاح! يمكنك الآن تشغيل الصوت المحوّل');
+          btnProcess.disabled = false;
+          btnPlay.disabled = false;
+          btnStop.disabled = false;
+          btnDownload.disabled = false;
+          updateInfoDisplay();
+
+        } catch (err) {
+          processingOverlay.classList.remove('visible');
+          showStatus('error', 'حدث خطأ أثناء المعالجة: ' + err.message);
+          btnProcess.disabled = false;
+        }
+      }, 100);
+    }
+
+    /* ========= WAV Encoding ========= */
+    function encodeWAV(buffer) {
+      var numChannels = buffer.numberOfChannels;
+      var sampleRate = buffer.sampleRate;
+      var length = buffer.length;
+      var bytesPerSample = 2;
+      var dataLength = length * numChannels * bytesPerSample;
+      var headerLength = 44;
+      var totalLength = headerLength + dataLength;
+
+      var arrayBuffer = new ArrayBuffer(totalLength);
+      var view = new DataView(arrayBuffer);
+
+      /* WAV header */
+      writeString(view, 0, 'RIFF');
+      view.setUint32(4, totalLength - 8, true);
+      writeString(view, 8, 'WAVE');
+      writeString(view, 12, 'fmt ');
+      view.setUint32(16, 16, true);
+      view.setUint16(20, 1, true);
+      view.setUint16(22, numChannels, true);
+      view.setUint32(24, sampleRate, true);
+      view.setUint32(28, sampleRate * numChannels * bytesPerSample, true);
+      view.setUint16(32, numChannels * bytesPerSample, true);
+      view.setUint16(34, bytesPerSample * 8, true);
+      writeString(view, 36, 'data');
+      view.setUint32(40, dataLength, true);
+
+      /* Interleave channels */
+      var channels = [];
+      for (var c = 0; c < numChannels; c++) {
+        channels.push(buffer.getChannelData(c));
+      }
+
+      var offset = 44;
+      for (var i = 0; i < length; i++) {
+        for (var ch = 0; ch < numChannels; ch++) {
+          var sample = Math.max(-1, Math.min(1, channels[ch][i]));
+          var intSample = sample < 0 ? sample * 32768 : sample * 32767;
+          view.setInt16(offset, intSample, true);
+          offset += 2;
+        }
+      }
+
+      return new Blob([arrayBuffer], { type: 'audio/wav' });
+    }
+
+    function writeString(view, offset, str) {
+      for (var i = 0; i < str.length; i++) {
+        view.setUint8(offset + i, str.charCodeAt(i));
+      }
+    }
+
+    /* ========= Playback ========= */
+    btnPlay.addEventListener('click', function() {
+      if (isPlaying) {
+        pauseAudio();
+      } else {
+        playAudio();
+      }
+    });
+
+    btnStop.addEventListener('click', function() {
+      stopAudio();
+    });
+
+    progressBar.addEventListener('click', function(e) {
+      if (!processedBuffer) return;
+      var rect = progressBar.getBoundingClientRect();
+      var ratio = (e.clientX - rect.left) / rect.width;
+      ratio = Math.max(0, Math.min(1, ratio));
+      var seekTime = ratio * processedBuffer.duration;
+
+      if (isPlaying) {
+        stopAudio();
+        pauseOffset = seekTime;
+        playAudio();
+      } else {
+        pauseOffset = seekTime;
+        currentTimeEl.textContent = formatTime(seekTime);
+        progressFill.style.width = (ratio * 100) + '%';
+      }
+    });
+
+    function playAudio() {
+      if (!processedBuffer) return;
+      var ctx = getAudioContext();
+
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
+
+      sourceNode = ctx.createBufferSource();
+      sourceNode.buffer = processedBuffer;
+
+      gainNode = ctx.createGain();
+      gainNode.gain.value = volumeSlider.value / 100;
+
+      analyserNode = ctx.createAnalyser();
+      analyserNode.fftSize = 2048;
+
+      sourceNode.connect(gainNode);
+      gainNode.connect(analyserNode);
+      analyserNode.connect(ctx.destination);
+
+      sourceNode.onended = function() {
+        if (isPlaying) {
+          stopAudio();
+        }
+      };
+
+      sourceNode.start(0, pauseOffset);
+      startTime = ctx.currentTime - pauseOffset;
+      isPlaying = true;
+
+      playIcon.className = 'fas fa-pause';
+      btnPlay.classList.add('playing');
+
+      updateProgress();
+    }
+
+    function pauseAudio() {
+      if (!isPlaying) return;
+      var ctx = getAudioContext();
+      pauseOffset = ctx.currentTime - startTime;
+      sourceNode.onended = null;
+      sourceNode.stop();
+      sourceNode.disconnect();
+      isPlaying = false;
+
+      playIcon.className = 'fas fa-play';
+      btnPlay.classList.remove('playing');
+
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
+    }
+
+    function stopAudio() {
+      if (sourceNode) {
+        sourceNode.onended = null;
+        try { sourceNode.stop(); } catch (e) { /* ignore */ }
+        try { sourceNode.disconnect(); } catch (e) { /* ignore */ }
+        sourceNode = null;
+      }
+      if (gainNode) {
+        try { gainNode.disconnect(); } catch (e) { /* ignore */ }
+        gainNode = null;
+      }
+      if (analyserNode) {
+        try { analyserNode.disconnect(); } catch (e) { /* ignore */ }
+      }
+
+      isPlaying = false;
+      pauseOffset = 0;
+      startTime = 0;
+
+      playIcon.className = 'fas fa-play';
+      btnPlay.classList.remove('playing');
+      progressFill.style.width = '0%';
+      currentTimeEl.textContent = '0:00';
+
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
+    }
+
+    function updateProgress() {
+      if (!isPlaying || !processedBuffer) return;
+      var ctx = getAudioContext();
+      var elapsed = ctx.currentTime - startTime;
+      var duration = processedBuffer.duration;
+
+      if (elapsed > duration) {
+        stopAudio();
+        return;
+      }
+
+      currentTimeEl.textContent = formatTime(elapsed);
+      progressFill.style.width = ((elapsed / duration) * 100) + '%';
+
+      drawVisualizer();
+      animationId = requestAnimationFrame(updateProgress);
+    }
+
+    /* ========= Visualizer ========= */
+    function resizeCanvas() {
+      var rect = visualizerCanvas.parentElement.getBoundingClientRect();
+      visualizerCanvas.width = rect.width * (window.devicePixelRatio || 1);
+      visualizerCanvas.height = rect.height * (window.devicePixelRatio || 1);
+      vizCtx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    function drawVisualizer() {
+      if (!analyserNode) return;
+      var w = visualizerCanvas.width / (window.devicePixelRatio || 1);
+      var h = visualizerCanvas.height / (window.devicePixelRatio || 1);
+
+      vizCtx.clearRect(0, 0, w, h);
+
+      var dataArray = new Uint8Array(analyserNode.frequencyBinCount);
+      analyserNode.getByteTimeDomainData(dataArray);
+
+      var bandColors = {
+        delta: { r: 79, g: 195, b: 247 },
+        theta: { r: 179, g: 136, b: 255 },
+        alpha: { r: 0, g: 230, b: 118 },
+        beta: { r: 255, g: 215, b: 64 },
+        gamma: { r: 255, g: 64, b: 129 }
+      };
+
+      var col = bandColors[currentBand] || bandColors.alpha;
+
+      /* Glow background wave */
+      vizCtx.beginPath();
+      vizCtx.strokeStyle = 'rgba(' + col.r + ',' + col.g + ',' + col.b + ',0.15)';
+      vizCtx.lineWidth = 8;
+      var sliceWidth = w / dataArray.length;
+      var x = 0;
+      for (var i = 0; i < dataArray.length; i++) {
+        var v = dataArray[i] / 128.0;
+        var y = v * (h / 2);
+        if (i === 0) vizCtx.moveTo(x, y);
+        else vizCtx.lineTo(x, y);
+        x += sliceWidth;
+      }
+      vizCtx.stroke();
+
+      /* Main wave */
+      vizCtx.beginPath();
+      vizCtx.strokeStyle = 'rgb(' + col.r + ',' + col.g + ',' + col.b + ')';
+      vizCtx.lineWidth = 2.5;
+      vizCtx.shadowColor = 'rgb(' + col.r + ',' + col.g + ',' + col.b + ')';
+      vizCtx.shadowBlur = 12;
+      x = 0;
+      for (var j = 0; j < dataArray.length; j++) {
+        var vv = dataArray[j] / 128.0;
+        var yy = vv * (h / 2);
+        if (j === 0) vizCtx.moveTo(x, yy);
+        else vizCtx.lineTo(x, yy);
+        x += sliceWidth;
+      }
+      vizCtx.stroke();
+      vizCtx.shadowBlur = 0;
+
+      /* Frequency bars (small) */
+      var freqData = new Uint8Array(analyserNode.frequencyBinCount);
+      analyserNode.getByteFrequencyData(freqData);
+      var barCount = 60;
+      var barWidth = w / barCount;
+      var step = Math.floor(freqData.length / barCount);
+
+      for (var b = 0; b < barCount; b++) {
+        var barVal = freqData[b * step] / 255;
+        var barH = barVal * (h * 0.3);
+        var alpha = 0.1 + barVal * 0.3;
+        vizCtx.fillStyle = 'rgba(' + col.r + ',' + col.g + ',' + col.b + ',' + alpha + ')';
+        vizCtx.fillRect(b * barWidth, h - barH, barWidth - 1, barH);
+      }
+    }
+
+    /* Idle visualizer animation */
+    function drawIdleVisualizer() {
+      if (isPlaying) return;
+      var w = visualizerCanvas.width / (window.devicePixelRatio || 1);
+      var h = visualizerCanvas.height / (window.devicePixelRatio || 1);
+
+      vizCtx.clearRect(0, 0, w, h);
+
+      var bandColors = {
+        delta: { r: 79, g: 195, b: 247 },
+        theta: { r: 179, g: 136, b: 255 },
+        alpha: { r: 0, g: 230, b: 118 },
+        beta: { r: 255, g: 215, b: 64 },
+        gamma: { r: 255, g: 64, b: 129 }
+      };
+
+      var col = bandColors[currentBand] || bandColors.alpha;
+      var time = Date.now() / 1000;
+      var freq = parseFloat(freqSlider.value);
+
+      vizCtx.beginPath();
+      vizCtx.strokeStyle = 'rgba(' + col.r + ',' + col.g + ',' + col.b + ',0.3)';
+      vizCtx.lineWidth = 2;
+      for (var x = 0; x < w; x++) {
+        var t = x / w;
+        var y = h / 2 + Math.sin(t * freq * 0.5 + time * 2) * 20 +
+                Math.sin(t * freq * 1.5 + time * 3) * 8;
+        if (x === 0) vizCtx.moveTo(x, y);
+        else vizCtx.lineTo(x, y);
+      }
+      vizCtx.stroke();
+
+      /* Center line */
+      vizCtx.beginPath();
+      vizCtx.strokeStyle = 'rgba(' + col.r + ',' + col.g + ',' + col.b + ',0.06)';
+      vizCtx.lineWidth = 1;
+      vizCtx.moveTo(0, h / 2);
+      vizCtx.lineTo(w, h / 2);
+      vizCtx.stroke();
+
+      requestAnimationFrame(drawIdleVisualizer);
+    }
+    drawIdleVisualizer();
+
+    /* ========= Download ========= */
+    btnDownload.addEventListener('click', function() {
+      if (!downloadBlob) return;
+      var url = URL.createObjectURL(downloadBlob);
+      var a = document.createElement('a');
+      a.href = url;
+      var originalName = audioFile ? audioFile.name.replace(/\.[^/.]+$/, '') : 'audio';
+      a.download = originalName + '_neuro_' + currentBand + '_' + freqSlider.value + 'Hz.wav';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    /* ========= Init ========= */
+    updateInfoDisplay();
+    carrierGroup.style.opacity = binauralToggle.checked ? '1' : '0.4';
+  </script>
+</body>
+</html>
