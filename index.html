@@ -1,0 +1,1582 @@
++    1 <!DOCTYPE html>
++    2 <html lang="ar" dir="rtl">
++    3 <head>
++    4   <meta charset="UTF-8">
++    5   <meta name="viewport" content="width=device-width, initial-scale=1.0">
++    6   <title>InnerVoice — الصوت الداخلي</title>
++    7   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Oxanium:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
++    8   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
++    9   <style>
++   10     :root {
++   11       --bg-deep: #060b18;
++   12       --bg-primary: #0b1120;
++   13       --bg-card: #111d33;
++   14       --bg-card-alt: #152240;
++   15       --bg-hover: #1a2a4a;
++   16       --accent-1: #6c5ce7;
++   17       --accent-2: #a29bfe;
++   18       --accent-3: #00cec9;
++   19       --accent-4: #fd79a8;
++   20       --accent-5: #ffeaa7;
++   21       --accent-glow: #6c5ce7;
++   22       --text-1: #dfe6e9;
++   23       --text-2: #b2bec3;
++   24       --text-3: #636e72;
++   25       --border: rgba(108, 92, 231, 0.15);
++   26       --glass: rgba(11, 17, 32, 0.7);
++   27       --r: 14px;
++   28       --r-sm: 10px;
++   29     }
++   30 
++   31     html:not(.dark) {
++   32       --bg-deep: #eef1f8;
++   33       --bg-primary: #f5f7fc;
++   34       --bg-card: #ffffff;
++   35       --bg-card-alt: #f0f3fa;
++   36       --bg-hover: #e8ecf7;
++   37       --accent-1: #5f3dc4;
++   38       --accent-2: #7950f2;
++   39       --accent-3: #0ca678;
++   40       --accent-4: #e64980;
++   41       --accent-5: #f59f00;
++   42       --accent-glow: #7950f2;
++   43       --text-1: #212529;
++   44       --text-2: #495057;
++   45       --text-3: #868e96;
++   46       --border: rgba(95, 61, 196, 0.12);
++   47       --glass: rgba(255, 255, 255, 0.85);
++   48     }
++   49 
++   50     * { margin: 0; padding: 0; box-sizing: border-box; }
++   51 
++   52     body {
++   53       font-family: 'Tajawal', sans-serif;
++   54       background: var(--bg-deep);
++   55       color: var(--text-1);
++   56       min-height: 100vh;
++   57       overflow-x: hidden;
++   58     }
++   59 
++   60     /* === Background Effects === */
++   61     .cosmos {
++   62       position: fixed; inset: 0;
++   63       pointer-events: none; z-index: 0;
++   64       overflow: hidden;
++   65     }
++   66 
++   67     .cosmos::before {
++   68       content: '';
++   69       position: absolute;
++   70       width: 600px; height: 600px;
++   71       border-radius: 50%;
++   72       background: radial-gradient(circle, rgba(108,92,231,0.12) 0%, transparent 70%);
++   73       top: -200px; left: 50%;
++   74       transform: translateX(-50%);
++   75       animation: cosmosFloat 20s ease-in-out infinite;
++   76     }
++   77 
++   78     .cosmos::after {
++   79       content: '';
++   80       position: absolute;
++   81       width: 500px; height: 500px;
++   82       border-radius: 50%;
++   83       background: radial-gradient(circle, rgba(0,206,201,0.08) 0%, transparent 70%);
++   84       bottom: -150px; right: -100px;
++   85       animation: cosmosFloat 25s ease-in-out infinite reverse;
++   86     }
++   87 
++   88     @keyframes cosmosFloat {
++   89       0%, 100% { transform: translate(0, 0) scale(1); }
++   90       33% { transform: translate(40px, -30px) scale(1.1); }
++   91       66% { transform: translate(-20px, 20px) scale(0.95); }
++   92     }
++   93 
++   94     .neural-grid {
++   95       position: fixed; inset: 0;
++   96       pointer-events: none; z-index: 0;
++   97       opacity: 0.025;
++   98       background-image:
++   99         radial-gradient(circle at 25% 25%, var(--accent-1) 1px, transparent 1px),
++  100         radial-gradient(circle at 75% 75%, var(--accent-3) 1px, transparent 1px);
++  101       background-size: 80px 80px;
++  102     }
++  103 
++  104     /* === Layout === */
++  105     .app { position: relative; z-index: 1; max-width: 820px; margin: 0 auto; padding: 16px 14px 50px; }
++  106 
++  107     /* === Header === */
++  108     .hdr { text-align: center; padding: 28px 0 18px; }
++  109 
++  110     .hdr-brain {
++  111       width: 80px; height: 80px; margin: 0 auto 14px;
++  112       position: relative;
++  113     }
++  114 
++  115     .hdr-brain canvas { width: 100%; height: 100%; }
++  116 
++  117     .hdr-pulse {
++  118       position: absolute; inset: 0;
++  119       border-radius: 50%;
++  120       border: 2px solid var(--accent-1);
++  121       animation: hdrPulse 2.5s ease-out infinite;
++  122     }
++  123 
++  124     .hdr-pulse:nth-child(2) { animation-delay: 0.8s; }
++  125 
++  126     @keyframes hdrPulse {
++  127       0% { transform: scale(1); opacity: 0.5; }
++  128       100% { transform: scale(2); opacity: 0; }
++  129     }
++  130 
++  131     .hdr h1 {
++  132       font-family: 'Oxanium', sans-serif;
++  133       font-size: 30px; font-weight: 800;
++  134       background: linear-gradient(135deg, var(--accent-1), var(--accent-3));
++  135       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
++  136       background-clip: text;
++  137       letter-spacing: 3px;
++  138       margin-bottom: 6px;
++  139     }
++  140 
++  141     .hdr .sub {
++  142       color: var(--text-2); font-size: 14px;
++  143       font-weight: 300; line-height: 1.7;
++  144       max-width: 500px; margin: 0 auto;
++  145     }
++  146 
++  147     /* === Cards === */
++  148     .crd {
++  149       background: var(--bg-card);
++  150       border: 1px solid var(--border);
++  151       border-radius: var(--r);
++  152       padding: 22px;
++  153       margin-bottom: 14px;
++  154       transition: background 0.3s;
++  155     }
++  156 
++  157     .crd:hover { background: var(--bg-hover); }
++  158 
++  159     .crd-t {
++  160       display: flex; align-items: center; gap: 10px;
++  161       font-size: 16px; font-weight: 700;
++  162       margin-bottom: 16px;
++  163     }
++  164 
++  165     .crd-t i { color: var(--accent-1); font-size: 17px; }
++  166 
++  167     /* === Upload === */
++  168     .upz {
++  169       border: 2px dashed var(--border);
++  170       border-radius: var(--r-sm);
++  171       padding: 36px 16px;
++  172       text-align: center;
++  173       cursor: pointer;
++  174       transition: all 0.3s;
++  175     }
++  176 
++  177     .upz:hover, .upz.drg { border-color: var(--accent-1); background: rgba(108,92,231,0.04); }
++  178     .upz.has { border-color: var(--accent-3); border-style: solid; padding: 18px; }
++  179     .upz input { display: none; }
++  180     .upz-ic { font-size: 36px; color: var(--accent-1); margin-bottom: 10px; opacity: 0.6; }
++  181     .upz-tx { font-size: 15px; color: var(--text-2); margin-bottom: 4px; }
++  182     .upz-hn { font-size: 12px; color: var(--text-3); }
++  183 
++  184     .fi { display: flex; align-items: center; gap: 12px; }
++  185     .fi-ic { width: 44px; height: 44px; border-radius: 11px; background: rgba(0,206,201,0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
++  186     .fi-ic i { font-size: 20px; color: var(--accent-3); }
++  187     .fi-dt { flex: 1; text-align: right; }
++  188     .fi-nm { font-weight: 600; font-size: 13px; margin-bottom: 3px; word-break: break-all; }
++  189     .fi-mt { font-size: 11px; color: var(--text-3); }
++  190     .fi-rm { width: 34px; height: 34px; border-radius: 50%; border: none; background: rgba(253,121,168,0.1); color: var(--accent-4); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
++  191     .fi-rm:hover { background: rgba(253,121,168,0.2); transform: scale(1.1); }
++  192 
++  193     /* === Processing Modes === */
++  194     .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
++  195 
++  196     .mode {
++  197       padding: 16px 12px;
++  198       border-radius: var(--r-sm);
++  199       border: 2px solid transparent;
++  200       cursor: pointer;
++  201       transition: all 0.3s;
++  202       background: var(--bg-card-alt);
++  203       text-align: center;
++  204     }
++  205 
++  206     .mode:hover { background: var(--bg-hover); }
++  207 
++  208     .mode.active {
++  209       border-color: var(--accent-1);
++  210       background: rgba(108,92,231,0.08);
++  211       box-shadow: 0 0 25px rgba(108,92,231,0.12);
++  212     }
++  213 
++  214     .mode-ic { font-size: 28px; margin-bottom: 8px; display: block; }
++  215     .mode-nm { font-size: 13px; font-weight: 700; color: var(--text-1); margin-bottom: 3px; }
++  216     .mode-ds { font-size: 11px; color: var(--text-3); line-height: 1.5; }
++  217 
++  218     /* === Presets === */
++  219     .presets { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
++  220 
++  221     .preset {
++  222       padding: 8px 16px;
++  223       border-radius: 20px;
++  224       border: 1px solid var(--border);
++  225       background: transparent;
++  226       color: var(--text-2);
++  227       font-family: 'Tajawal', sans-serif;
++  228       font-size: 13px;
++  229       font-weight: 500;
++  230       cursor: pointer;
++  231       transition: all 0.3s;
++  232       display: flex; align-items: center; gap: 6px;
++  233     }
++  234 
++  235     .preset:hover { border-color: var(--accent-1); color: var(--accent-2); }
++  236 
++  237     .preset.active {
++  238       background: var(--accent-1);
++  239       border-color: var(--accent-1);
++  240       color: #fff;
++  241     }
++  242 
++  243     /* === Sliders === */
++  244     .slg { margin-bottom: 16px; }
++  245 
++  246     .sll {
++  247       display: flex; justify-content: space-between; align-items: center;
++  248       margin-bottom: 7px;
++  249     }
++  250 
++  251     .sll span { font-size: 13px; font-weight: 500; color: var(--text-2); }
++  252 
++  253     .slv {
++  254       font-family: 'Oxanium', sans-serif;
++  255       font-size: 12px; color: var(--accent-3); font-weight: 700;
++  256     }
++  257 
++  258     input[type="range"] {
++  259       -webkit-appearance: none; width: 100%; height: 5px;
++  260       background: rgba(108,92,231,0.15); border-radius: 3px;
++  261       outline: none; cursor: pointer;
++  262     }
++  263 
++  264     html:not(.dark) input[type="range"] { background: rgba(108,92,231,0.1); }
++  265 
++  266     input[type="range"]::-webkit-slider-thumb {
++  267       -webkit-appearance: none; width: 20px; height: 20px;
++  268       border-radius: 50%; background: var(--accent-1);
++  269       box-shadow: 0 0 12px rgba(108,92,231,0.4);
++  270       cursor: pointer; transition: transform 0.2s;
++  271     }
++  272 
++  273     input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
++  274 
++  275     input[type="range"]::-moz-range-thumb {
++  276       width: 20px; height: 20px; border-radius: 50%;
++  277       background: var(--accent-1); box-shadow: 0 0 12px rgba(108,92,231,0.4);
++  278       cursor: pointer; border: none;
++  279     }
++  280 
++  281     /* === Toggle === */
++  282     .trow { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; }
++  283     .tinf { display: flex; flex-direction: column; gap: 2px; }
++  284     .ttt { font-size: 13px; font-weight: 600; }
++  285     .tds { font-size: 11px; color: var(--text-3); }
++  286 
++  287     .tsw { position: relative; width: 46px; height: 26px; flex-shrink: 0; }
++  288     .tsw input { opacity: 0; width: 0; height: 0; }
++  289     .tsl {
++  290       position: absolute; cursor: pointer; inset: 0;
++  291       background: rgba(108,92,231,0.15); border-radius: 13px; transition: 0.3s;
++  292     }
++  293     .tsl::before {
++  294       content: ''; position: absolute; height: 20px; width: 20px;
++  295       right: 3px; bottom: 3px; background: #fff;
++  296       border-radius: 50%; transition: 0.3s;
++  297     }
++  298     .tsw input:checked + .tsl { background: var(--accent-1); }
++  299     .tsw input:checked + .tsl::before { transform: translateX(-20px); }
++  300 
++  301     /* === Visualizer === */
++  302     .viz-wrap {
++  303       width: 100%; height: 160px;
++  304       border-radius: var(--r-sm);
++  305       overflow: hidden;
++  306       background: rgba(0,0,0,0.3);
++  307       position: relative;
++  308       margin-bottom: 14px;
++  309     }
++  310 
++  311     html:not(.dark) .viz-wrap { background: rgba(0,0,0,0.04); }
++  312 
++  313     .viz-wrap canvas { width: 100%; height: 100%; display: block; }
++  314 
++  315     .viz-lbl {
++  316       position: absolute; top: 8px; right: 10px;
++  317       font-size: 9px; color: var(--text-3);
++  318       text-transform: uppercase; letter-spacing: 1.5px;
++  319       font-family: 'Oxanium', sans-serif;
++  320     }
++  321 
++  322     .viz-mode {
++  323       position: absolute; bottom: 8px; left: 10px;
++  324       font-family: 'Oxanium', sans-serif;
++  325       font-size: 9px; color: var(--accent-2);
++  326       letter-spacing: 1px;
++  327       background: rgba(108,92,231,0.15);
++  328       padding: 3px 8px;
++  329       border-radius: 4px;
++  330     }
++  331 
++  332     .viz-overlay {
++  333       position: absolute; inset: 0;
++  334       display: none; align-items: center;
++  335       justify-content: center;
++  336       background: rgba(0,0,0,0.55); z-index: 2;
++  337     }
++  338 
++  339     .viz-overlay.vis { display: flex; }
++  340     .viz-overlay .spn { width: 28px; height: 28px; border: 3px solid transparent; border-top-color: var(--accent-1); border-radius: 50%; animation: spin 0.7s linear infinite; }
++  341 
++  342     @keyframes spin { to { transform: rotate(360deg); } }
++  343 
++  344     /* === Transport === */
++  345     .trns { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
++  346 
++  347     .tbtn {
++  348       width: 50px; height: 50px; border-radius: 50%;
++  349       border: 2px solid var(--accent-1); background: transparent;
++  350       color: var(--accent-1); font-size: 18px;
++  351       cursor: pointer; display: flex; align-items: center;
++  352       justify-content: center; transition: all 0.3s;
++  353       flex-shrink: 0;
++  354     }
++  355 
++  356     .tbtn:hover { background: rgba(108,92,231,0.1); box-shadow: 0 0 15px rgba(108,92,231,0.2); }
++  357     .tbtn.on { background: var(--accent-1); color: #fff; }
++  358     .tbtn:disabled { opacity: 0.25; cursor: not-allowed; }
++  359     .tbtn.sm { width: 38px; height: 38px; font-size: 14px; }
++  360 
++  361     .prg-w { flex: 1; display: flex; flex-direction: column; gap: 5px; }
++  362 
++  363     .prg-bg {
++  364       width: 100%; height: 5px;
++  365       background: rgba(108,92,231,0.12); border-radius: 3px;
++  366       cursor: pointer; overflow: hidden;
++  367     }
++  368 
++  369     .prg-fl {
++  370       height: 100%;
++  371       background: linear-gradient(90deg, var(--accent-1), var(--accent-3));
++  372       border-radius: 3px; width: 0%; transition: width 0.1s linear;
++  373     }
++  374 
++  375     .prg-tm {
++  376       display: flex; justify-content: space-between;
++  377       font-family: 'Oxanium', sans-serif; font-size: 10px; color: var(--text-3);
++  378     }
++  379 
++  380     /* === Volume === */
++  381     .vol { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
++  382     .vol i { color: var(--text-3); font-size: 15px; }
++  383     .vol input { flex: 1; }
++  384 
++  385     /* === Session Timer === */
++  386     .sess-timer {
++  387       display: flex; align-items: center; gap: 10px;
++  388       padding: 12px 14px;
++  389       border-radius: var(--r-sm);
++  390       background: var(--bg-card-alt);
++  391       margin-bottom: 14px;
++  392     }
++  393 
++  394     .sess-timer i { color: var(--accent-5); font-size: 18px; }
++  395     .sess-timer span { font-size: 13px; color: var(--text-2); flex: 1; }
++  396 
++  397     .sess-timer select {
++  398       background: var(--bg-card);
++  399       border: 1px solid var(--border);
++  400       color: var(--text-1);
++  401       padding: 6px 10px;
++  402       border-radius: 8px;
++  403       font-family: 'Tajawal', sans-serif;
++  404       font-size: 13px;
++  405       cursor: pointer;
++  406       outline: none;
++  407     }
++  408 
++  409     /* === Status === */
++  410     .sts {
++  411       display: none; align-items: center; gap: 8px;
++  412       padding: 10px 14px; border-radius: var(--r-sm);
++  413       font-size: 12px; font-weight: 500; margin-bottom: 14px;
++  414     }
++  415 
++  416     .sts.vis { display: flex; }
++  417     .sts.proc { background: rgba(108,92,231,0.08); color: var(--accent-2); border: 1px solid rgba(108,92,231,0.15); }
++  418     .sts.ok { background: rgba(0,206,201,0.08); color: var(--accent-3); border: 1px solid rgba(0,206,201,0.15); }
++  419     .sts.err { background: rgba(253,121,168,0.08); color: var(--accent-4); border: 1px solid rgba(253,121,168,0.15); }
++  420 
++  421     .sts .spn { width: 14px; height: 14px; border: 2px solid transparent; border-top-color: currentColor; border-radius: 50%; animation: spin 0.7s linear infinite; }
++  422 
++  423     /* === Buttons === */
++  424     .btn-go {
++  425       width: 100%; padding: 15px; border: none; border-radius: var(--r-sm);
++  426       font-family: 'Tajawal', sans-serif; font-size: 16px; font-weight: 700;
++  427       cursor: pointer; transition: all 0.3s;
++  428       display: flex; align-items: center; justify-content: center; gap: 10px;
++  429       background: linear-gradient(135deg, var(--accent-1), var(--accent-3));
++  430       color: #fff;
++  431     }
++  432 
++  433     .btn-go:hover { box-shadow: 0 4px 25px rgba(108,92,231,0.35); transform: translateY(-1px); }
++  434     .btn-go:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
++  435 
++  436     .btn-dl {
++  437       width: 100%; padding: 14px; border-radius: var(--r-sm);
++  438       font-family: 'Tajawal', sans-serif; font-size: 15px; font-weight: 700;
++  439       cursor: pointer; transition: all 0.3s;
++  440       display: flex; align-items: center; justify-content: center; gap: 10px;
++  441       background: rgba(0,206,201,0.08); color: var(--accent-3);
++  442       border: 1px solid rgba(0,206,201,0.2); margin-top: 8px;
++  443     }
++  444 
++  445     .btn-dl:hover { background: rgba(0,206,201,0.15); }
++  446     .btn-dl:disabled { opacity: 0.25; cursor: not-allowed; }
++  447 
++  448     /* === Info Grid === */
++  449     .igrd { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
++  450 
++  451     .iitm {
++  452       padding: 12px; border-radius: var(--r-sm);
++  453       background: var(--bg-card-alt); border: 1px solid var(--border);
++  454       text-align: center;
++  455     }
++  456 
++  457     .iitm .il { font-size: 10px; color: var(--text-3); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
++  458     .iitm .iv { font-family: 'Oxanium', sans-serif; font-size: 14px; font-weight: 700; color: var(--accent-1); }
++  459 
++  460     /* === How it works === */
++  461     .how-step {
++  462       display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start;
++  463     }
++  464 
++  465     .how-num {
++  466       width: 32px; height: 32px; border-radius: 50%;
++  467       background: rgba(108,92,231,0.1); border: 1px solid rgba(108,92,231,0.25);
++  468       display: flex; align-items: center; justify-content: center;
++  469       font-family: 'Oxanium', sans-serif; font-size: 13px;
++  470       font-weight: 700; color: var(--accent-2); flex-shrink: 0;
++  471     }
++  472 
++  473     .how-txt { font-size: 13px; color: var(--text-2); line-height: 1.8; }
++  474     .how-txt strong { color: var(--accent-1); }
++  475 
++  476     /* === Warning === */
++  477     .warn {
++  478       display: flex; align-items: flex-start; gap: 10px;
++  479       padding: 14px; border-radius: var(--r-sm);
++  480       background: rgba(255,234,167,0.06);
++  481       border: 1px solid rgba(255,234,167,0.15);
++  482     }
++  483 
++  484     .warn i { color: var(--accent-5); font-size: 18px; margin-top: 2px; flex-shrink: 0; }
++  485     .warn p { font-size: 12px; color: var(--text-2); line-height: 1.8; }
++  486 
++  487     /* === Footer === */
++  488     .ftr { text-align: center; padding: 18px; font-size: 11px; color: var(--text-3); }
++  489 
++  490     /* === Separator === */
++  491     .sep { height: 1px; background: var(--border); margin: 14px 0; }
++  492 
++  493     /* === Responsive === */
++  494     @media (max-width: 600px) {
++  495       .modes { grid-template-columns: 1fr 1fr; }
++  496       .igrd { grid-template-columns: repeat(2, 1fr); }
++  497       .hdr h1 { font-size: 24px; }
++  498       .crd { padding: 18px; }
++  499     }
++  500 
++  501     @media (max-width: 380px) {
++  502       .modes { grid-template-columns: 1fr; }
++  503       .presets { flex-direction: column; }
++  504     }
++  505 
++  506     /* === Animations === */
++  507     .fin { animation: fin 0.5s ease forwards; opacity: 0; }
++  508     @keyframes fin { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
++  509 
++  510     .crd:nth-child(1) { animation-delay: 0.03s; }
++  511     .crd:nth-child(2) { animation-delay: 0.06s; }
++  512     .crd:nth-child(3) { animation-delay: 0.09s; }
++  513     .crd:nth-child(4) { animation-delay: 0.12s; }
++  514     .crd:nth-child(5) { animation-delay: 0.15s; }
++  515     .crd:nth-child(6) { animation-delay: 0.18s; }
++  516 
++  517     /* Session countdown */
++  518     .sess-cd {
++  519       font-family: 'Oxanium', sans-serif;
++  520       font-size: 28px; font-weight: 700;
++  521       color: var(--accent-1); text-align: center;
++  522       padding: 8px 0; display: none;
++  523     }
++  524 
++  525     .sess-cd.vis { display: block; }
++  526 
++  527     /* Speed indicator */
++  528     .speed-btns { display: flex; gap: 6px; }
++  529 
++  530     .speed-btn {
++  531       padding: 5px 12px; border-radius: 6px;
++  532       border: 1px solid var(--border); background: transparent;
++  533       color: var(--text-3); font-family: 'Oxanium', sans-serif;
++  534       font-size: 12px; cursor: pointer; transition: all 0.2s;
++  535     }
++  536 
++  537     .speed-btn.active {
++  538       background: var(--accent-1); border-color: var(--accent-1);
++  539       color: #fff;
++  540     }
++  541 
++  542     .speed-btn:hover { border-color: var(--accent-1); }
++  543   </style>
++  544 </head>
++  545 <body>
++  546   <div class="cosmos"></div>
++  547   <div class="neural-grid"></div>
++  548 
++  549   <div class="app">
++  550     <!-- Header -->
++  551     <div class="hdr fin">
++  552       <div class="hdr-brain">
++  553         <div class="hdr-pulse"></div>
++  554         <div class="hdr-pulse"></div>
++  555         <canvas id="brainCanvas"></canvas>
++  556       </div>
++  557       <h1>INNERVOICE</h1>
++  558       <p class="sub">حوّل أي صوت مسموع إلى صوت داخلي يستقبله العقل مباشرة — كأنك تسمع بداخل رأسك</p>
++  559     </div>
++  560 
++  561     <!-- Upload -->
++  562     <div class="crd fin">
++  563       <div class="crd-t"><i class="fas fa-file-audio"></i> رفع المقطع الصوتي</div>
++  564       <div class="upz" id="upz">
++  565         <input type="file" id="aIn" accept="audio/*">
++  566         <div id="upPh">
++  567           <div class="upz-ic"><i class="fas fa-cloud-arrow-up"></i></div>
++  568           <div class="upz-tx">اضغط أو اسحب ملفاً صوتياً هنا</div>
++  569           <div class="upz-hn">MP3, WAV, OGG, M4A — حتى 50 ميجابايت</div>
++  570         </div>
++  571         <div id="fDisp" style="display:none">
++  572           <div class="fi">
++  573             <div class="fi-ic"><i class="fas fa-music"></i></div>
++  574             <div class="fi-dt">
++  575               <div class="fi-nm" id="fNm"></div>
++  576               <div class="fi-mt" id="fMt"></div>
++  577             </div>
++  578             <button class="fi-rm" id="fRm" type="button"><i class="fas fa-xmark"></i></button>
++  579           </div>
++  580         </div>
++  581       </div>
++  582     </div>
++  583 
++  584     <!-- Processing Mode -->
++  585     <div class="crd fin">
++  586       <div class="crd-t"><i class="fas fa-brain"></i> وضع المعالجة</div>
++  587       <div class="modes" id="modes">
++  588         <div class="mode active" data-mode="inner">
++  589           <span class="mode-ic">🧠</span>
++  590           <div class="mode-nm">الصوت الداخلي</div>
++  591           <div class="mode-ds">يحوّل الصوت ليُسمع كحديث نفسي داخلي</div>
++  592         </div>
++  593         <div class="mode" data-mode="whisper">
++  594           <span class="mode-ic">🤫</span>
++  595           <div class="mode-nm">الهمس العصبي</div>
++  596           <div class="mode-ds">همسات دقيقة تصل للعقل الباطن مباشرة</div>
++  597         </div>
++  598         <div class="mode" data-mode="silent">
++  599           <span class="mode-ic">🔇</span>
++  600           <div class="mode-nm">البث الصامت</div>
++  601           <div class="mode-ds">صوت شبه صامت على حامل ترددي يسمعه الدماغ</div>
++  602         </div>
++  603         <div class="mode" data-mode="subliminal">
++  604           <span class="mode-ic">🌌</span>
++  605           <div class="mode-nm">الطبقات اللاواعية</div>
++  606           <div class="mode-ds">يُدمج الصوت مع أصوات محيطية تخفيه عن الأذن</div>
++  607         </div>
++  608       </div>
++  609 
++  610       <!-- Presets -->
++  611       <div class="crd-t" style="margin-top:4px"><i class="fas fa-sliders"></i> إعدادات سريعة</div>
++  612       <div class="presets" id="presets">
++  613         <button class="preset" data-preset="sleep"><i class="fas fa-moon"></i> نوم عميق</button>
++  614         <button class="preset active" data-preset="meditate"><i class="fas fa-spa"></i> تأمل</button>
++  615         <button class="preset" data-preset="focus"><i class="fas fa-bullseye"></i> تركيز</button>
++  616         <button class="preset" data-preset="subliminal"><i class="fas fa-atom"></i> برمجة لاواعية</button>
++  617         <button class="preset" data-preset="energy"><i class="fas fa-bolt"></i> طاقة</button>
++  618       </div>
++  619     </div>
++  620 
++  621     <!-- Advanced Controls -->
++  622     <div class="crd fin">
++  623       <div class="crd-t"><i class="fas fa-gear"></i> إعدادات متقدمة</div>
++  624 
++  625       <!-- Brain Frequency -->
++  626       <div class="slg">
++  627         <div class="sll">
++  628           <span>تردد الموجة الدماغية</span>
++  629           <span class="slv" id="brFreqV">6.0 Hz — ثيتا</span>
++  630         </div>
++  631         <input type="range" id="brFreq" min="0.5" max="100" step="0.5" value="6">
++  632       </div>
++  633 
++  634       <!-- Subliminal Depth -->
++  635       <div class="slg">
++  636         <div class="sll">
++  637           <span>عمق التضمين (تحت عتبة السمع)</span>
++  638           <span class="slv" id="subDepthV">-35 dB</span>
++  639         </div>
++  640         <input type="range" id="subDepth" min="-60" max="-10" step="1" value="-35">
++  641       </div>
++  642 
++  643       <!-- Modulation Strength -->
++  644       <div class="slg">
++  645         <div class="sll">
++  646           <span>قوة التعديل العصبي</span>
++  647           <span class="slv" id="modStrV">75%</span>
++  648         </div>
++  649         <input type="range" id="modStr" min="0" max="100" step="1" value="75">
++  650       </div>
++  651 
++  652       <!-- Carrier Frequency -->
++  653       <div class="slg">
++  654         <div class="sll">
++  655           <span>تردد الحامل (Carrier)</span>
++  656           <span class="slv" id="carrV">180 Hz</span>
++  657         </div>
++  658         <input type="range" id="carr" min="60" max="600" step="1" value="180">
++  659       </div>
++  660 
++  661       <div class="sep"></div>
++  662 
++  663       <!-- Binaural -->
++  664       <div class="trow">
++  665         <div class="tinf">
++  666           <div class="ttt">نغمات ثنائية الأذن</div>
++  667           <div class="tds">ترددان مختلفان للأذنين — يتطلب سماعات</div>
++  668         </div>
++  669         <label class="tsw"><input type="checkbox" id="binTog" checked><span class="tsl"></span></label>
++  670       </div>
++  671 
++  672       <!-- Ambient Masking -->
++  673       <div class="trow">
++  674         <div class="tinf">
++  675           <div class="ttt">قناع صوتي محيطي</div>
++  676           <div class="tds">يخفي الصوت المضمّن خلف ضجيج وردي طبيعي</div>
++  677         </div>
++  678         <label class="tsw"><input type="checkbox" id="ambTog"><span class="tsl"></span></label>
++  679       </div>
++  680 
++  681       <!-- Ambient Volume -->
++  682       <div class="slg" id="ambVolG" style="opacity:0.4;pointer-events:none">
++  683         <div class="sll">
++  684           <span>مستوى القناع المحيطي</span>
++  685           <span class="slv" id="ambVolV">40%</span>
++  686         </div>
++  687         <input type="range" id="ambVol" min="0" max="100" step="1" value="40">
++  688       </div>
++  689 
++  690       <div class="sep"></div>
++  691 
++  692       <!-- Speed Control -->
++  693       <div class="sll" style="margin-bottom:10px">
++  694         <span style="font-size:13px;font-weight:500;color:var(--text-2)">سرعة التشغيل</span>
++  695       </div>
++  696       <div class="speed-btns" id="speedBtns">
++  697         <button class="speed-btn" data-speed="0.5">0.5×</button>
++  698         <button class="speed-btn" data-speed="0.75">0.75×</button>
++  699         <button class="speed-btn active" data-speed="1">1×</button>
++  700         <button class="speed-btn" data-speed="1.25">1.25×</button>
++  701         <button class="speed-btn" data-speed="1.5">1.5×</button>
++  702       </div>
++  703     </div>
++  704 
++  705     <!-- Player -->
++  706     <div class="crd fin">
++  707       <div class="crd-t"><i class="fas fa-wave-square"></i> التشغيل والتصور العصبي</div>
++  708 
++  709       <div class="viz-wrap">
++  710         <canvas id="vizC"></canvas>
++  711         <div class="viz-lbl">INNER VOICE SIGNAL</div>
++  712         <div class="viz-mode" id="vizMode">INNER VOICE — 6.0 Hz</div>
++  713         <div class="viz-overlay" id="vizOvl"><div class="spn"></div></div>
++  714       </div>
++  715 
++  716       <!-- Session Timer -->
++  717       <div class="sess-timer">
++  718         <i class="fas fa-hourglass-half"></i>
++  719         <span>مؤقت الجلسة</span>
++  720         <select id="sessSel">
++  721           <option value="0">بدون مؤقت</option>
++  722           <option value="5">5 دقائق</option>
++  723           <option value="10">10 دقائق</option>
++  724           <option value="15" selected>15 دقيقة</option>
++  725           <option value="20">20 دقيقة</option>
++  726           <option value="30">30 دقيقة</option>
++  727           <option value="45">45 دقيقة</option>
++  728           <option value="60">ساعة</option>
++  729         </select>
++  730       </div>
++  731 
++  732       <div class="sess-cd" id="sessCd"></div>
++  733 
++  734       <!-- Transport -->
++  735       <div class="trns">
++  736         <button class="tbtn" id="btnP" disabled><i class="fas fa-play" id="pIc"></i></button>
++  737         <button class="tbtn sm" id="btnS" disabled><i class="fas fa-stop"></i></button>
++  738         <button class="tbtn sm" id="btnL" disabled title="تكرار"><i class="fas fa-repeat"></i></button>
++  739         <div class="prg-w">
++  740           <div class="prg-bg" id="prgBg"><div class="prg-fl" id="prgFl"></div></div>
++  741           <div class="prg-tm"><span id="curT">0:00</span><span id="totT">0:00</span></div>
++  742         </div>
++  743       </div>
++  744 
++  745       <!-- Volume -->
++  746       <div class="vol">
++  747         <i class="fas fa-volume-high"></i>
++  748         <input type="range" id="volSl" min="0" max="100" step="1" value="80">
++  749         <span class="slv" id="volV" style="min-width:38px;text-align:center">80%</span>
++  750       </div>
++  751 
++  752       <!-- Status -->
++  753       <div class="sts" id="stsBar">
++  754         <div class="spn" id="stsSpn" style="display:none"></div>
++  755         <i class="fas fa-circle-info" id="stsIc"></i>
++  756         <span id="stsTx"></span>
++  757       </div>
++  758 
++  759       <!-- Process Button -->
++  760       <button class="btn-go" id="btnGo" disabled>
++  761         <i class="fas fa-bolt"></i>
++  762         تحويل إلى صوت داخلي
++  763       </button>
++  764 
++  765       <!-- Download -->
++  766       <button class="btn-dl" id="btnDl" disabled>
++  767         <i class="fas fa-download"></i>
++  768         تحميل الصوت الداخلي
++  769       </button>
++  770     </div>
++  771 
++  772     <!-- Info -->
++  773     <div class="crd fin">
++  774       <div class="crd-t"><i class="fas fa-chart-bar"></i> معلومات الجلسة</div>
++  775       <div class="igrd">
++  776         <div class="iitm"><div class="il">الوضع</div><div class="iv" id="iMode">الصوت الداخلي</div></div>
++  777         <div class="iitm"><div class="il">التردد</div><div class="iv" id="iFreq">6 Hz</div></div>
++  778         <div class="iitm"><div class="il">العمق</div><div class="iv" id="iDepth">-35 dB</div></div>
++  779         <div class="iitm"><div class="il">ثنائي</div><div class="iv" id="iBin">نعم</div></div>
++  780         <div class="iitm"><div class="il">السرعة</div><div class="iv" id="iSpd">1×</div></div>
++  781         <div class="iitm"><div class="il">القناع</div><div class="iv" id="iAmb">لا</div></div>
++  782       </div>
++  783     </div>
++  784 
++  785     <!-- How it works -->
++  786     <div class="crd fin">
++  787       <div class="crd-t"><i class="fas fa-lightbulb"></i> كيف يعمل؟</div>
++  788 
++  789       <div class="how-step">
++  790         <div class="how-num">1</div>
++  791         <div class="how-txt">
++  792           <strong>تحليل الصوت:</strong>
++  793           يُحلَّل الصوت ويُستخرج منه الترددات الأساسية التي تحمل المعنى والمحتوى الكلامي.
++  794         </div>
++  795       </div>
++  796 
++  797       <div class="how-step">
++  798         <div class="how-num">2</div>
++  799         <div class="how-txt">
++  800           <strong>تضمين تحت الوعي:</strong>
++  801           يُخفَّض حجم الصوت أسفل عتبة السمع الواعي ويُضمَّن داخل موجة حاملة يستقبلها الجهاز العصبي.
++  802         </div>
++  803       </div>
++  804 
++  805       <div class="how-step">
++  806         <div class="how-num">3</div>
++  807         <div class="how-txt">
++  808           <strong>تعديل الموجات الدماغية:</strong>
++  809           يُعدَّل سعة الإشارة بتردد الموجة الدماغية المختار (ثيتا، ألفا...) مما يُحفّز الدماغ على الاستقبال المباشر.
++  810         </div>
++  811       </div>
++  812 
++  813       <div class="how-step">
++  814         <div class="how-num">4</div>
++  815         <div class="how-txt">
++  816           <strong>نغمات ثنائية الأذن:</strong>
++  817           تردد مختلف لكل أذن يُنتج نغمة "وهمية" يولّدها الدماغ بنفسه — وهي تقنية Brainwave Entrainment المُثبتة علمياً.
++  818         </div>
++  819       </div>
++  820 
++  821       <div class="sep"></div>
++  822 
++  823       <div class="warn">
++  824         <i class="fas fa-triangle-exclamation"></i>
++  825         <p>
++  826           يُنصح بشدة باستخدام <strong>سماعات الرأس</strong> لتجربة مثالية.
++  827           الأثر يتضاعف مع الاستماع المنتظم. ابدأ بـ 15 دقيقة يومياً ثم زِد تدريجياً.
++  828           لا يُغني عن الاستشارة الطبية في حالات ضعف السمع.
++  829         </p>
++  830       </div>
++  831     </div>
++  832 
++  833     <div class="ftr">InnerVoice — تقنية الإدراك السمعي الداخلي</div>
++  834   </div>
++  835 
++  836   <script>
++  837     /* ======== Dark Mode ======== */
++  838     (function(){
++  839       if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches){
++  840         document.documentElement.classList.add('dark');
++  841       }
++  842       window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',function(e){
++  843         e.matches ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark');
++  844       });
++  845     })();
++  846 
++  847     /* ======== State ======== */
++  848     var S = {
++  849       file: null, buf: null, procBuf: null, blob: null,
++  850       ctx: null, src: null, gain: null, ana: null,
++  851       playing: false, startT: 0, pauseOff: 0, animId: null,
++  852       loop: false, speed: 1, sessTimer: null, sessEnd: 0,
++  853       currentMode: 'inner', currentPreset: 'meditate'
++  854     };
++  855 
++  856     /* ======== DOM ======== */
++  857     var $ = function(id){ return document.getElementById(id); };
++  858     var upz=$('upz'), aIn=$('aIn'), upPh=$('upPh'), fDisp=$('fDisp'),
++  859         fNm=$('fNm'), fMt=$('fMt'), fRm=$('fRm'),
++  860         modesEl=$('modes'), presetsEl=$('presets'),
++  861         brFreq=$('brFreq'), brFreqV=$('brFreqV'),
++  862         subDepth=$('subDepth'), subDepthV=$('subDepthV'),
++  863         modStr=$('modStr'), modStrV=$('modStrV'),
++  864         carr=$('carr'), carrV=$('carrV'),
++  865         binTog=$('binTog'), ambTog=$('ambTog'),
++  866         ambVol=$('ambVol'), ambVolV=$('ambVolV'), ambVolG=$('ambVolG'),
++  867         speedBtns=$('speedBtns'),
++  868         vizC=$('vizC'), vizMode=$('vizMode'), vizOvl=$('vizOvl'),
++  869         sessSel=$('sessSel'), sessCd=$('sessCd'),
++  870         btnP=$('btnP'), btnS=$('btnS'), btnL=$('btnL'), pIc=$('pIc'),
++  871         prgBg=$('prgBg'), prgFl=$('prgFl'), curT=$('curT'), totT=$('totT'),
++  872         volSl=$('volSl'), volV=$('volV'),
++  873         stsBar=$('stsBar'), stsSpn=$('stsSpn'), stsIc=$('stsIc'), stsTx=$('stsTx'),
++  874         btnGo=$('btnGo'), btnDl=$('btnDl'),
++  875         iMode=$('iMode'), iFreq=$('iFreq'), iDepth=$('iDepth'),
++  876         iBin=$('iBin'), iSpd=$('iSpd'), iAmb=$('iAmb');
++  877 
++  878     var vCtx = vizC.getContext('2d');
++  879 
++  880     var modeNames = { inner:'الصوت الداخلي', whisper:'الهمس العصبي', silent:'البث الصامت', subliminal:'الطبقات اللاواعية' };
++  881     var modeNamesEn = { inner:'INNER VOICE', whisper:'NEURAL WHISPER', silent:'SILENT CAST', subliminal:'SUBLIMINAL LAYERS' };
++  882 
++  883     /* ======== Utility ======== */
++  884     function fmtT(s){ var m=Math.floor(s/60),ss=Math.floor(s%60); return m+':'+(ss<10?'0':'')+ss; }
++  885     function fmtSz(b){ return b<1024?b+' B':b<1048576?(b/1024).toFixed(1)+' KB':(b/1048576).toFixed(1)+' MB'; }
++  886     function getBandName(hz){
++  887       if(hz<=4) return 'دلتا';
++  888       if(hz<=8) return 'ثيتا';
++  889       if(hz<=13) return 'ألفا';
++  890       if(hz<=30) return 'بيتا';
++  891       return 'غاما';
++  892     }
++  893     function getBandNameEn(hz){
++  894       if(hz<=4) return 'DELTA';
++  895       if(hz<=8) return 'THETA';
++  896       if(hz<=13) return 'ALPHA';
++  897       if(hz<=30) return 'BETA';
++  898       return 'GAMMA';
++  899     }
++  900 
++  901     function showSts(type,text){
++  902       stsBar.className='sts vis '+type;
++  903       stsTx.textContent=text;
++  904       if(type==='proc'){ stsSpn.style.display='block'; stsIc.style.display='none'; }
++  905       else { stsSpn.style.display='none'; stsIc.style.display='block'; stsIc.className=type==='ok'?'fas fa-circle-check':'fas fa-circle-xmark'; }
++  906     }
++  907     function hideSts(){ stsBar.className='sts'; }
++  908 
++  909     function getCtx(){
++  910       if(!S.ctx) S.ctx = new (window.AudioContext||window.webkitAudioContext)();
++  911       return S.ctx;
++  912     }
++  913 
++  914     function updateInfo(){
++  915       var hz = parseFloat(brFreq.value);
++  916       iMode.textContent = modeNames[S.currentMode];
++  917       iFreq.textContent = hz.toFixed(1)+' Hz';
++  918       iDepth.textContent = subDepth.value+' dB';
++  919       iBin.textContent = binTog.checked?'نعم':'لا';
++  920       iSpd.textContent = S.speed+'×';
++  921       iAmb.textContent = ambTog.checked?'نعم':'لا';
++  922       vizMode.textContent = modeNamesEn[S.currentMode]+' — '+hz.toFixed(1)+' Hz';
++  923     }
++  924 
++  925     /* ======== Brain Logo Canvas ======== */
++  926     (function(){
++  927       var bc = $('brainCanvas');
++  928       var bx = bc.getContext('2d');
++  929       var dpr = window.devicePixelRatio||1;
++  930       bc.width = 80*dpr; bc.height = 80*dpr;
++  931       bx.scale(dpr,dpr);
++  932 
++  933       function drawBrain(){
++  934         var t = Date.now()/1000;
++  935         bx.clearRect(0,0,80,80);
++  936 
++  937         // brain outline
++  938         bx.save();
++  939         bx.translate(40,40);
++  940         bx.beginPath();
++  941         for(var a=0;a<Math.PI*2;a+=0.02){
++  942           var r = 22 + Math.sin(a*3+t*2)*2 + Math.cos(a*5+t*1.5)*1.5;
++  943           var x = Math.cos(a)*r, y = Math.sin(a)*r;
++  944           a===0?bx.moveTo(x,y):bx.lineTo(x,y);
++  945         }
++  946         bx.closePath();
++  947         bx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent-1').trim();
++  948         bx.lineWidth = 1.5;
++  949         bx.globalAlpha = 0.5;
++  950         bx.stroke();
++  951 
++  952         // neural wave
++  953         bx.beginPath();
++  954         bx.globalAlpha = 0.9;
++  955         bx.lineWidth = 2;
++  956         for(var x2=-25;x2<=25;x2++){
++  957           var y2 = Math.sin(x2*0.25+t*3)*8 + Math.sin(x2*0.15+t*2)*4;
++  958           x2===-25?bx.moveTo(x2,y2):bx.lineTo(x2,y2);
++  959         }
++  960         bx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent-3').trim();
++  961         bx.stroke();
++  962 
++  963         // center dot
++  964         bx.beginPath();
++  965         bx.arc(0,0,3,0,Math.PI*2);
++  966         bx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent-2').trim();
++  967         bx.globalAlpha = 0.7 + Math.sin(t*4)*0.3;
++  968         bx.fill();
++  969 
++  970         bx.restore();
++  971         requestAnimationFrame(drawBrain);
++  972       }
++  973       drawBrain();
++  974     })();
++  975 
++  976     /* ======== Upload ======== */
++  977     upz.addEventListener('click',function(e){
++  978       if(e.target===fRm||fRm.contains(e.target))return;
++  979       aIn.click();
++  980     });
++  981 
++  982     upz.addEventListener('dragover',function(e){e.preventDefault();upz.classList.add('drg');});
++  983     upz.addEventListener('dragleave',function(){upz.classList.remove('drg');});
++  984     upz.addEventListener('drop',function(e){
++  985       e.preventDefault();upz.classList.remove('drg');
++  986       if(e.dataTransfer.files.length>0 && e.dataTransfer.files[0].type.startsWith('audio/'))
++  987         loadFile(e.dataTransfer.files[0]);
++  988     });
++  989 
++  990     aIn.addEventListener('change',function(){ if(aIn.files.length>0) loadFile(aIn.files[0]); });
++  991     fRm.addEventListener('click',function(e){ e.stopPropagation(); resetAll(); });
++  992 
++  993     function loadFile(f){
++  994       if(f.size>50*1024*1024){ showSts('err','حجم الملف يتجاوز 50 ميجابايت'); return; }
++  995       S.file=f;
++  996       fNm.textContent=f.name;
++  997       var ext=f.type.split('/');
++  998       fMt.textContent=fmtSz(f.size)+' • '+(ext[1]||'audio').toUpperCase();
++  999       upPh.style.display='none'; fDisp.style.display='block'; upz.classList.add('has');
++ 1000       btnGo.disabled=false; hideSts();
++ 1001 
++ 1002       var ctx=getCtx(), rd=new FileReader();
++ 1003       rd.onload=function(ev){
++ 1004         ctx.decodeAudioData(ev.target.result).then(function(buf){
++ 1005           S.buf=buf; totT.textContent=fmtT(buf.duration);
++ 1006           showSts('ok','تم تحميل الملف — جاهز للتحويل');
++ 1007         }).catch(function(){ showSts('err','تعذّر قراءة الملف الصوتي'); btnGo.disabled=true; });
++ 1008       };
++ 1009       rd.readAsArrayBuffer(f);
++ 1010     }
++ 1011 
++ 1012     function resetAll(){
++ 1013       stopPlay();
++ 1014       S.file=null; S.buf=null; S.procBuf=null; S.blob=null;
++ 1015       upPh.style.display=''; fDisp.style.display='none'; upz.classList.remove('has');
++ 1016       aIn.value=''; btnGo.disabled=true; btnP.disabled=true; btnS.disabled=true;
++ 1017       btnL.disabled=true; btnDl.disabled=true;
++ 1018       prgFl.style.width='0%'; curT.textContent='0:00'; totT.textContent='0:00';
++ 1019       hideSts(); clearSessTimer();
++ 1020     }
++ 1021 
++ 1022     /* ======== Mode Selection ======== */
++ 1023     modesEl.addEventListener('click',function(e){
++ 1024       var m=e.target.closest('.mode'); if(!m)return;
++ 1025       document.querySelectorAll('.mode').forEach(function(x){x.classList.remove('active');});
++ 1026       m.classList.add('active');
++ 1027       S.currentMode=m.dataset.mode;
++ 1028 
++ 1029       // auto-adjust settings per mode
++ 1030       if(S.currentMode==='inner'){ subDepth.value=-35; modStr.value=75; }
++ 1031       else if(S.currentMode==='whisper'){ subDepth.value=-25; modStr.value=60; }
++ 1032       else if(S.currentMode==='silent'){ subDepth.value=-55; modStr.value=90; }
++ 1033       else if(S.currentMode==='subliminal'){ subDepth.value=-45; modStr.value=80; ambTog.checked=true; updateAmbState(); }
++ 1034       updateSliderDisplays(); updateInfo();
++ 1035     });
++ 1036 
++ 1037     /* ======== Presets ======== */
++ 1038     var presetConfigs = {
++ 1039       sleep:    {freq:2,  depth:-50, mod:85, carrier:120, bin:true, amb:true, ambV:50, speed:0.75, mode:'subliminal'},
++ 1040       meditate: {freq:6,  depth:-35, mod:75, carrier:180, bin:true, amb:false, ambV:40, speed:1, mode:'inner'},
++ 1041       focus:    {freq:14, depth:-30, mod:65, carrier:250, bin:true, amb:false, ambV:30, speed:1, mode:'whisper'},
++ 1042       subliminal:{freq:4, depth:-50, mod:90, carrier:150, bin:true, amb:true, ambV:55, speed:0.75, mode:'subliminal'},
++ 1043       energy:   {freq:40, depth:-25, mod:70, carrier:300, bin:true, amb:false, ambV:20, speed:1.25, mode:'inner'}
++ 1044     };
++ 1045 
++ 1046     presetsEl.addEventListener('click',function(e){
++ 1047       var btn=e.target.closest('.preset'); if(!btn)return;
++ 1048       document.querySelectorAll('.preset').forEach(function(x){x.classList.remove('active');});
++ 1049       btn.classList.add('active');
++ 1050       S.currentPreset=btn.dataset.preset;
++ 1051       var c=presetConfigs[S.currentPreset];
++ 1052       brFreq.value=c.freq; subDepth.value=c.depth; modStr.value=c.mod;
++ 1053       carr.value=c.carrier; binTog.checked=c.bin;
++ 1054       ambTog.checked=c.amb; ambVol.value=c.ambV; S.speed=c.speed;
++ 1055       updateAmbState();
++ 1056       // update mode
++ 1057       S.currentMode=c.mode;
++ 1058       document.querySelectorAll('.mode').forEach(function(x){x.classList.remove('active');});
++ 1059       var mEl=document.querySelector('.mode[data-mode="'+c.mode+'"]');
++ 1060       if(mEl) mEl.classList.add('active');
++ 1061       // update speed buttons
++ 1062       document.querySelectorAll('.speed-btn').forEach(function(x){
++ 1063         x.classList.toggle('active', parseFloat(x.dataset.speed)===S.speed);
++ 1064       });
++ 1065       updateSliderDisplays(); updateInfo();
++ 1066     });
++ 1067 
++ 1068     /* ======== Sliders ======== */
++ 1069     function updateSliderDisplays(){
++ 1070       var hz=parseFloat(brFreq.value);
++ 1071       brFreqV.textContent=hz.toFixed(1)+' Hz — '+getBandName(hz);
++ 1072       subDepthV.textContent=subDepth.value+' dB';
++ 1073       modStrV.textContent=modStr.value+'%';
++ 1074       carrV.textContent=carr.value+' Hz';
++ 1075       ambVolV.textContent=ambVol.value+'%';
++ 1076     }
++ 1077 
++ 1078     brFreq.addEventListener('input',function(){ updateSliderDisplays(); updateInfo(); });
++ 1079     subDepth.addEventListener('input',function(){ updateSliderDisplays(); updateInfo(); });
++ 1080     modStr.addEventListener('input',function(){ updateSliderDisplays(); updateInfo(); });
++ 1081     carr.addEventListener('input',function(){ updateSliderDisplays(); updateInfo(); });
++ 1082     ambVol.addEventListener('input',function(){ updateSliderDisplays(); });
++ 1083     volSl.addEventListener('input',function(){
++ 1084       volV.textContent=volSl.value+'%';
++ 1085       if(S.gain) S.gain.gain.value=volSl.value/100;
++ 1086     });
++ 1087 
++ 1088     function updateAmbState(){
++ 1089       ambVolG.style.opacity=ambTog.checked?'1':'0.4';
++ 1090       ambVolG.style.pointerEvents=ambTog.checked?'auto':'none';
++ 1091       updateInfo();
++ 1092     }
++ 1093 
++ 1094     binTog.addEventListener('change',function(){ updateInfo(); });
++ 1095     ambTog.addEventListener('change',function(){ updateAmbState(); });
++ 1096 
++ 1097     /* ======== Speed ======== */
++ 1098     speedBtns.addEventListener('click',function(e){
++ 1099       var b=e.target.closest('.speed-btn'); if(!b)return;
++ 1100       document.querySelectorAll('.speed-btn').forEach(function(x){x.classList.remove('active');});
++ 1101       b.classList.add('active');
++ 1102       S.speed=parseFloat(b.dataset.speed);
++ 1103       updateInfo();
++ 1104     });
++ 1105 
++ 1106     /* ======== Loop ======== */
++ 1107     btnL.addEventListener('click',function(){
++ 1108       S.loop=!S.loop;
++ 1109       btnL.classList.toggle('on',S.loop);
++ 1110     });
++ 1111 
++ 1112     /* ======== Process Audio ======== */
++ 1113     btnGo.addEventListener('click',function(){ if(S.buf) processAudio(); });
++ 1114 
++ 1115     function processAudio(){
++ 1116       stopPlay(); showSts('proc','جارٍ التحويل إلى صوت داخلي...');
++ 1117       vizOvl.classList.add('vis');
++ 1118       btnGo.disabled=true; btnP.disabled=true; btnDl.disabled=true;
++ 1119 
++ 1120       var entrainHz = parseFloat(brFreq.value);
++ 1121       var subliminalDb = parseInt(subDepth.value);
++ 1122       var modDepth = parseInt(modStr.value)/100;
++ 1123       var carrierHz = parseInt(carr.value);
++ 1124       var useBin = binTog.checked;
++ 1125       var useAmb = ambTog.checked;
++ 1126       var ambLevel = parseInt(ambVol.value)/100;
++ 1127       var mode = S.currentMode;
++ 1128 
++ 1129       setTimeout(function(){
++ 1130         try {
++ 1131           var sampleRate = S.buf.sampleRate;
++ 1132           var length = S.buf.length;
++ 1133           var numCh = useBin ? 2 : S.buf.numberOfChannels;
++ 1134           var offCtx = new OfflineAudioContext(numCh, length, sampleRate);
++ 1135           var newBuf = offCtx.createBuffer(numCh, length, sampleRate);
++ 1136 
++ 1137           /* Subliminal amplitude factor */
++ 1138           var subAmp = Math.pow(10, subliminalDb / 20);
++ 1139 
++ 1140           /* Inner voice frequency band (200-4000 Hz) emphasis coefficients */
++ 1141           /* We use a gentle bandpass simulation */
++ 1142 
++ 1143           for(var ch = 0; ch < S.buf.numberOfChannels; ch++){
++ 1144             var inData = S.buf.getChannelData(ch);
++ 1145 
++ 1146             /* === Apply inner-voice frequency shaping === */
++ 1147             /* Simple recursive bandpass emphasis around 300-3500Hz (voice fundamental range) */
++ 1148             var shaped = new Float32Array(length);
++ 1149             /* Single-pole high-pass at ~200Hz */
++ 1150             var hpAlpha = 1 - Math.exp(-2 * Math.PI * 200 / sampleRate);
++ 1151             /* Single-pole low-pass at ~4000Hz */
++ 1152             var lpAlpha = Math.exp(-2 * Math.PI * 4000 / sampleRate);
++ 1153             var hpPrev = 0, lpPrev = 0;
++ 1154 
++ 1155             for(var i = 0; i < length; i++){
++ 1156               /* High-pass filter */
++ 1157               hpPrev = hpPrev + hpAlpha * (inData[i] - hpPrev);
++ 1158               var hp = inData[i] - hpPrev;
++ 1159               /* Low-pass filter */
++ 1160               lpPrev = lpPrev * lpAlpha + hp * (1 - lpAlpha);
++ 1161               shaped[i] = lpPrev;
++ 1162             }
++ 1163 
++ 1164             /* Mix: keep some original for naturalness depending on mode */
++ 1165             var shapeMix;
++ 1166             if(mode === 'inner') shapeMix = 0.7;
++ 1167             else if(mode === 'whisper') shapeMix = 0.5;
++ 1168             else if(mode === 'silent') shapeMix = 0.85;
++ 1169             else shapeMix = 0.6;
++ 1170 
++ 1171             var mixed = new Float32Array(length);
++ 1172             for(var m2 = 0; m2 < length; m2++){
++ 1173               mixed[m2] = inData[m2] * (1 - shapeMix) + shaped[m2] * shapeMix;
++ 1174             }
++ 1175 
++ 1176             /* === Apply subliminal amplitude reduction === */
++ 1177             for(var s2 = 0; s2 < length; s2++){
++ 1178               mixed[s2] *= subAmp;
++ 1179             }
++ 1180 
++ 1181             /* === Whisper effect: add breathy noise === */
++ 1182             if(mode === 'whisper' || mode === 'inner'){
++ 1183               var whisperAmt = mode === 'whisper' ? 0.15 : 0.05;
++ 1184               for(var w = 0; w < length; w++){
++ 1185                 var envFollower = Math.abs(mixed[w]);
++ 1186                 /* Add shaped noise that follows the envelope */
++ 1187                 var noise = (Math.random() * 2 - 1) * envFollower * whisperAmt;
++ 1188                 mixed[w] += noise;
++ 1189               }
++ 1190             }
++ 1191 
++ 1192             /* === Amplitude Modulation at brainwave frequency === */
++ 1193             for(var a2 = 0; a2 < length; a2++){
++ 1194               var t = a2 / sampleRate;
++ 1195               var amFactor = 1 - modDepth + modDepth * (0.5 + 0.5 * Math.sin(2 * Math.PI * entrainHz * t));
++ 1196               mixed[a2] *= amFactor;
++ 1197             }
++ 1198 
++ 1199             /* === Write to output buffer === */
++ 1200             if(useBin){
++ 1201               var leftD = newBuf.getChannelData(0);
++ 1202               var rightD = newBuf.getChannelData(1);
++ 1203               var halfDiff = entrainHz / 2;
++ 1204               var fL = carrierHz - halfDiff;
++ 1205               var fR = carrierHz + halfDiff;
++ 1206 
++ 1207               for(var b2 = 0; b2 < length; b2++){
++ 1208                 var tb = b2 / sampleRate;
++ 1209                 /* Binaural beat tones */
++ 1210                 var binAmp = 0.06 * modDepth * subAmp * 5; /* scale binaural relative */
++ 1211                 binAmp = Math.min(binAmp, 0.08);
++ 1212                 var toneL = binAmp * Math.sin(2 * Math.PI * fL * tb);
++ 1213                 var toneR = binAmp * Math.sin(2 * Math.PI * fR * tb);
++ 1214 
++ 1215                 if(ch === 0){
++ 1216                   leftD[b2] = mixed[b2] + toneL;
++ 1217                   rightD[b2] = mixed[b2] + toneR;
++ 1218                 } else {
++ 1219                   leftD[b2] += mixed[b2] * 0.5;
++ 1220                   rightD[b2] += mixed[b2] * 0.5;
++ 1221                 }
++ 1222               }
++ 1223             } else {
++ 1224               var outD = newBuf.getChannelData(Math.min(ch, numCh - 1));
++ 1225               for(var o2 = 0; o2 < length; o2++){
++ 1226                 outD[o2] += mixed[o2];
++ 1227               }
++ 1228             }
++ 1229           }
++ 1230 
++ 1231           /* === Isochronic pulse layer === */
++ 1232           for(var pc = 0; pc < numCh; pc++){
++ 1233             var pData = newBuf.getChannelData(pc);
++ 1234             for(var p2 = 0; p2 < length; p2++){
++ 1235               var tp = p2 / sampleRate;
++ 1236               var pulse = Math.sin(2 * Math.PI * entrainHz * tp) > 0 ? 1 : 0;
++ 1237               var isoAmp = 0.02 * modDepth * subAmp * 3;
++ 1238               isoAmp = Math.min(isoAmp, 0.03);
++ 1239               pData[p2] += isoAmp * pulse * Math.sin(2 * Math.PI * 180 * tp);
++ 1240             }
++ 1241           }
++ 1242 
++ 1243           /* === Ambient pink noise masking === */
++ 1244           if(useAmb){
++ 1245             /* Generate pink noise using Voss-McCartney algorithm (simplified) */
++ 1246             for(var ac = 0; ac < numCh; ac++){
++ 1247               var aData = newBuf.getChannelData(ac);
++ 1248               var b0=0,b1=0,b2x=0,b3=0,b4=0,b5=0,b6=0;
++ 1249               for(var an = 0; an < length; an++){
++ 1250                 var white = Math.random() * 2 - 1;
++ 1251                 b0 = 0.99886 * b0 + white * 0.0555179;
++ 1252                 b1 = 0.99332 * b1 + white * 0.0750759;
++ 1253                 b2x = 0.96900 * b2x + white * 0.1538520;
++ 1254                 b3 = 0.86650 * b3 + white * 0.3104856;
++ 1255                 b4 = 0.55000 * b4 + white * 0.5329522;
++ 1256                 b5 = -0.7616 * b5 - white * 0.0168980;
++ 1257                 var pink = (b0 + b1 + b2x + b3 + b4 + b5 + b6 + white * 0.5362) * 0.11;
++ 1258                 b6 = white * 0.115926;
++ 1259                 aData[an] += pink * ambLevel * 0.3;
++ 1260               }
++ 1261             }
++ 1262           }
++ 1263 
++ 1264           /* === Soft clipping === */
++ 1265           for(var cc = 0; cc < numCh; cc++){
++ 1266             var cd = newBuf.getChannelData(cc);
++ 1267             for(var k = 0; k < length; k++){
++ 1268               cd[k] = Math.tanh(cd[k]);
++ 1269             }
++ 1270           }
++ 1271 
++ 1272           /* === Normalize to prevent clipping while maintaining relative levels === */
++ 1273           var maxVal = 0;
++ 1274           for(var nc = 0; nc < numCh; nc++){
++ 1275             var nd = newBuf.getChannelData(nc);
++ 1276             for(var n2 = 0; n2 < length; n2++){
++ 1277               var av = Math.abs(nd[n2]);
++ 1278               if(av > maxVal) maxVal = av;
++ 1279             }
++ 1280           }
++ 1281           if(maxVal > 0.95){
++ 1282             var normFactor = 0.95 / maxVal;
++ 1283             for(var nc2 = 0; nc2 < numCh; nc2++){
++ 1284               var nd2 = newBuf.getChannelData(nc2);
++ 1285               for(var n3 = 0; n3 < length; n3++){
++ 1286                 nd2[n3] *= normFactor;
++ 1287               }
++ 1288             }
++ 1289           }
++ 1290 
++ 1291           S.procBuf = newBuf;
++ 1292           S.blob = encodeWAV(newBuf);
++ 1293 
++ 1294           vizOvl.classList.remove('vis');
++ 1295           showSts('ok','تم التحويل بنجاح! اضغط تشغيل للاستماع للصوت الداخلي');
++ 1296           btnGo.disabled=false; btnP.disabled=false; btnS.disabled=false;
++ 1297           btnL.disabled=false; btnDl.disabled=false;
++ 1298           updateInfo();
++ 1299 
++ 1300         } catch(err){
++ 1301           vizOvl.classList.remove('vis');
++ 1302           showSts('err','خطأ: '+err.message);
++ 1303           btnGo.disabled=false;
++ 1304         }
++ 1305       }, 120);
++ 1306     }
++ 1307 
++ 1308     /* ======== WAV Encoder ======== */
++ 1309     function encodeWAV(buf){
++ 1310       var nCh=buf.numberOfChannels, sr=buf.sampleRate, len=buf.length, bps=2;
++ 1311       var dLen=len*nCh*bps, total=44+dLen;
++ 1312       var ab=new ArrayBuffer(total), v=new DataView(ab);
++ 1313       function ws(o,s){ for(var i=0;i<s.length;i++) v.setUint8(o+i,s.charCodeAt(i)); }
++ 1314       ws(0,'RIFF'); v.setUint32(4,total-8,true); ws(8,'WAVE'); ws(12,'fmt ');
++ 1315       v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,nCh,true);
++ 1316       v.setUint32(24,sr,true); v.setUint32(28,sr*nCh*bps,true);
++ 1317       v.setUint16(32,nCh*bps,true); v.setUint16(34,bps*8,true);
++ 1318       ws(36,'data'); v.setUint32(40,dLen,true);
++ 1319       var chs=[]; for(var c=0;c<nCh;c++) chs.push(buf.getChannelData(c));
++ 1320       var off=44;
++ 1321       for(var i=0;i<len;i++){
++ 1322         for(var c2=0;c2<nCh;c2++){
++ 1323           var s=Math.max(-1,Math.min(1,chs[c2][i]));
++ 1324           v.setInt16(off,s<0?s*32768:s*32767,true); off+=2;
++ 1325         }
++ 1326       }
++ 1327       return new Blob([ab],{type:'audio/wav'});
++ 1328     }
++ 1329 
++ 1330     /* ======== Playback ======== */
++ 1331     btnP.addEventListener('click',function(){ S.playing?pausePlay():startPlay(); });
++ 1332     btnS.addEventListener('click',function(){ stopPlay(); });
++ 1333 
++ 1334     prgBg.addEventListener('click',function(e){
++ 1335       if(!S.procBuf) return;
++ 1336       var r=prgBg.getBoundingClientRect();
++ 1337       var ratio=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));
++ 1338       var seek=ratio*S.procBuf.duration;
++ 1339       if(S.playing){ stopPlay(); S.pauseOff=seek; startPlay(); }
++ 1340       else { S.pauseOff=seek; curT.textContent=fmtT(seek); prgFl.style.width=(ratio*100)+'%'; }
++ 1341     });
++ 1342 
++ 1343     function startPlay(){
++ 1344       if(!S.procBuf) return;
++ 1345       var ctx=getCtx();
++ 1346       if(ctx.state==='suspended') ctx.resume();
++ 1347 
++ 1348       S.src=ctx.createBufferSource();
++ 1349       S.src.buffer=S.procBuf;
++ 1350       S.src.playbackRate.value=S.speed;
++ 1351       S.src.loop=S.loop;
++ 1352 
++ 1353       S.gain=ctx.createGain();
++ 1354       S.gain.gain.value=volSl.value/100;
++ 1355 
++ 1356       S.ana=ctx.createAnalyser();
++ 1357       S.ana.fftSize=2048;
++ 1358 
++ 1359       S.src.connect(S.gain);
++ 1360       S.gain.connect(S.ana);
++ 1361       S.ana.connect(ctx.destination);
++ 1362 
++ 1363       S.src.onended=function(){ if(S.playing && !S.loop) stopPlay(); };
++ 1364 
++ 1365       S.src.start(0, S.pauseOff);
++ 1366       S.startT=ctx.currentTime-S.pauseOff;
++ 1367       S.playing=true;
++ 1368 
++ 1369       pIc.className='fas fa-pause'; btnP.classList.add('on');
++ 1370       startSessTimer();
++ 1371       tick();
++ 1372     }
++ 1373 
++ 1374     function pausePlay(){
++ 1375       if(!S.playing) return;
++ 1376       var ctx=getCtx();
++ 1377       S.pauseOff=ctx.currentTime-S.startT;
++ 1378       S.src.onended=null; S.src.stop(); S.src.disconnect();
++ 1379       S.playing=false;
++ 1380       pIc.className='fas fa-play'; btnP.classList.remove('on');
++ 1381       if(S.animId){ cancelAnimationFrame(S.animId); S.animId=null; }
++ 1382       clearSessTimer();
++ 1383     }
++ 1384 
++ 1385     function stopPlay(){
++ 1386       if(S.src){
++ 1387         S.src.onended=null;
++ 1388         try{S.src.stop();}catch(e){/* */}
++ 1389         try{S.src.disconnect();}catch(e){/* */}
++ 1390         S.src=null;
++ 1391       }
++ 1392       if(S.gain){ try{S.gain.disconnect();}catch(e){/* */} S.gain=null; }
++ 1393       if(S.ana){ try{S.ana.disconnect();}catch(e){/* */} }
++ 1394       S.playing=false; S.pauseOff=0; S.startT=0;
++ 1395       pIc.className='fas fa-play'; btnP.classList.remove('on');
++ 1396       prgFl.style.width='0%'; curT.textContent='0:00';
++ 1397       if(S.animId){ cancelAnimationFrame(S.animId); S.animId=null; }
++ 1398       clearSessTimer();
++ 1399     }
++ 1400 
++ 1401     function tick(){
++ 1402       if(!S.playing||!S.procBuf) return;
++ 1403       var ctx=getCtx();
++ 1404       var elapsed=(ctx.currentTime-S.startT)*S.speed;
++ 1405       var dur=S.procBuf.duration;
++ 1406       if(!S.loop && elapsed>dur){ stopPlay(); return; }
++ 1407       if(S.loop) elapsed=elapsed%dur;
++ 1408       curT.textContent=fmtT(elapsed);
++ 1409       prgFl.style.width=((elapsed/dur)*100)+'%';
++ 1410       drawViz();
++ 1411       S.animId=requestAnimationFrame(tick);
++ 1412     }
++ 1413 
++ 1414     /* ======== Session Timer ======== */
++ 1415     function startSessTimer(){
++ 1416       clearSessTimer();
++ 1417       var mins=parseInt(sessSel.value);
++ 1418       if(mins<=0){ sessCd.classList.remove('vis'); return; }
++ 1419       S.sessEnd=Date.now()+mins*60000;
++ 1420       sessCd.classList.add('vis');
++ 1421       updateSessDisplay();
++ 1422       S.sessTimer=setInterval(function(){
++ 1423         var rem=S.sessEnd-Date.now();
++ 1424         if(rem<=0){ stopPlay(); clearSessTimer(); showSts('ok','انتهت الجلسة!'); return; }
++ 1425         updateSessDisplay();
++ 1426       },1000);
++ 1427     }
++ 1428 
++ 1429     function updateSessDisplay(){
++ 1430       var rem=Math.max(0,S.sessEnd-Date.now());
++ 1431       var m=Math.floor(rem/60000), s=Math.floor((rem%60000)/1000);
++ 1432       sessCd.textContent=m+':'+(s<10?'0':'')+s;
++ 1433     }
++ 1434 
++ 1435     function clearSessTimer(){
++ 1436       if(S.sessTimer){ clearInterval(S.sessTimer); S.sessTimer=null; }
++ 1437       sessCd.classList.remove('vis');
++ 1438     }
++ 1439 
++ 1440     /* ======== Visualizer ======== */
++ 1441     function resizeViz(){
++ 1442       var r=vizC.parentElement.getBoundingClientRect();
++ 1443       var dpr=window.devicePixelRatio||1;
++ 1444       vizC.width=r.width*dpr; vizC.height=r.height*dpr;
++ 1445       vCtx.scale(dpr,dpr);
++ 1446     }
++ 1447     resizeViz(); window.addEventListener('resize',resizeViz);
++ 1448 
++ 1449     function getBandColor(hz){
++ 1450       if(hz<=4) return {r:108,g:92,b:231};
++ 1451       if(hz<=8) return {r:162,g:155,b:254};
++ 1452       if(hz<=13) return {r:0,g:206,b:201};
++ 1453       if(hz<=30) return {r:255,g:234,b:167};
++ 1454       return {r:253,g:121,b:168};
++ 1455     }
++ 1456 
++ 1457     function drawViz(){
++ 1458       if(!S.ana) return;
++ 1459       var w=vizC.width/(window.devicePixelRatio||1);
++ 1460       var h=vizC.height/(window.devicePixelRatio||1);
++ 1461       vCtx.clearRect(0,0,w,h);
++ 1462 
++ 1463       var hz=parseFloat(brFreq.value);
++ 1464       var col=getBandColor(hz);
++ 1465       var cs='rgb('+col.r+','+col.g+','+col.b+')';
++ 1466       var ca=function(a){return 'rgba('+col.r+','+col.g+','+col.b+','+a+')';};
++ 1467 
++ 1468       var td=new Uint8Array(S.ana.frequencyBinCount);
++ 1469       S.ana.getByteTimeDomainData(td);
++ 1470 
++ 1471       /* Background glow */
++ 1472       vCtx.beginPath();
++ 1473       vCtx.strokeStyle=ca(0.1);
++ 1474       vCtx.lineWidth=10;
++ 1475       var sw=w/td.length, x=0;
++ 1476       for(var i=0;i<td.length;i++){
++ 1477         var v=td[i]/128, y=v*(h/2);
++ 1478         i===0?vCtx.moveTo(x,y):vCtx.lineTo(x,y);
++ 1479         x+=sw;
++ 1480       }
++ 1481       vCtx.stroke();
++ 1482 
++ 1483       /* Main waveform */
++ 1484       vCtx.beginPath();
++ 1485       vCtx.strokeStyle=cs;
++ 1486       vCtx.lineWidth=2;
++ 1487       vCtx.shadowColor=cs;
++ 1488       vCtx.shadowBlur=15;
++ 1489       x=0;
++ 1490       for(var j=0;j<td.length;j++){
++ 1491         var vv=td[j]/128, yy=vv*(h/2);
++ 1492         j===0?vCtx.moveTo(x,yy):vCtx.lineTo(x,yy);
++ 1493         x+=sw;
++ 1494       }
++ 1495       vCtx.stroke();
++ 1496       vCtx.shadowBlur=0;
++ 1497 
++ 1498       /* Frequency spectrum */
++ 1499       var fd=new Uint8Array(S.ana.frequencyBinCount);
++ 1500       S.ana.getByteFrequencyData(fd);
++ 1501       var bCnt=80, bW=w/bCnt, step=Math.floor(fd.length/bCnt);
++ 1502       for(var b=0;b<bCnt;b++){
++ 1503         var bv=fd[b*step]/255, bH=bv*(h*0.25), al=0.05+bv*0.25;
++ 1504         vCtx.fillStyle=ca(al);
++ 1505         vCtx.fillRect(b*bW, h-bH, bW-1, bH);
++ 1506       }
++ 1507 
++ 1508       /* Neural activity dots (subtle) */
++ 1509       var t=Date.now()/1000;
++ 1510       for(var d=0;d<8;d++){
++ 1511         var dx=w*(0.1+d*0.11)+Math.sin(t*2+d)*15;
++ 1512         var dy=h/2+Math.cos(t*1.5+d*0.8)*25;
++ 1513         var dr=2+Math.sin(t*3+d)*1;
++ 1514         vCtx.beginPath();
++ 1515         vCtx.arc(dx,dy,dr,0,Math.PI*2);
++ 1516         vCtx.fillStyle=ca(0.3+Math.sin(t*4+d)*0.2);
++ 1517         vCtx.fill();
++ 1518       }
++ 1519     }
++ 1520 
++ 1521     /* Idle animation */
++ 1522     function drawIdle(){
++ 1523       if(S.playing) return;
++ 1524       var w=vizC.width/(window.devicePixelRatio||1);
++ 1525       var h=vizC.height/(window.devicePixelRatio||1);
++ 1526       vCtx.clearRect(0,0,w,h);
++ 1527       var hz=parseFloat(brFreq.value);
++ 1528       var col=getBandColor(hz);
++ 1529       var ca=function(a){return 'rgba('+col.r+','+col.g+','+col.b+','+a+')';};
++ 1530       var t=Date.now()/1000;
++ 1531 
++ 1532       /* Slow wave */
++ 1533       vCtx.beginPath();
++ 1534       vCtx.strokeStyle=ca(0.2);
++ 1535       vCtx.lineWidth=1.5;
++ 1536       for(var x=0;x<w;x++){
++ 1537         var frac=x/w;
++ 1538         var y=h/2+Math.sin(frac*hz*0.4+t*1.5)*18+Math.sin(frac*hz*1.2+t*2.5)*7;
++ 1539         x===0?vCtx.moveTo(x,y):vCtx.lineTo(x,y);
++ 1540       }
++ 1541       vCtx.stroke();
++ 1542 
++ 1543       /* Floating particles */
++ 1544       for(var p=0;p<12;p++){
++ 1545         var px=(t*15+p*70)%w;
++ 1546         var py=h/2+Math.sin(t*0.8+p*0.5)*30;
++ 1547         var pr=1.5+Math.sin(t*2+p)*0.8;
++ 1548         vCtx.beginPath();
++ 1549         vCtx.arc(px,py,pr,0,Math.PI*2);
++ 1550         vCtx.fillStyle=ca(0.15+Math.sin(t*3+p)*0.1);
++ 1551         vCtx.fill();
++ 1552       }
++ 1553 
++ 1554       /* Center line */
++ 1555       vCtx.beginPath();
++ 1556       vCtx.strokeStyle=ca(0.04);
++ 1557       vCtx.lineWidth=1;
++ 1558       vCtx.moveTo(0,h/2); vCtx.lineTo(w,h/2);
++ 1559       vCtx.stroke();
++ 1560 
++ 1561       requestAnimationFrame(drawIdle);
++ 1562     }
++ 1563     drawIdle();
++ 1564 
++ 1565     /* ======== Download ======== */
++ 1566     btnDl.addEventListener('click',function(){
++ 1567       if(!S.blob) return;
++ 1568       var url=URL.createObjectURL(S.blob);
++ 1569       var a=document.createElement('a');
++ 1570       a.href=url;
++ 1571       var nm=S.file?S.file.name.replace(/\.[^/.]+$/,''):'audio';
++ 1572       a.download=nm+'_innervoice_'+S.currentMode+'_'+brFreq.value+'Hz.wav';
++ 1573       document.body.appendChild(a); a.click();
++ 1574       document.body.removeChild(a); URL.revokeObjectURL(url);
++ 1575     });
++ 1576 
++ 1577     /* ======== Init ======== */
++ 1578     updateSliderDisplays();
++ 1579     updateInfo();
++ 1580   </script>
++ 1581 </body>
++ 1582 </html>
