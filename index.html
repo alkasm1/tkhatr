@@ -3,1820 +3,1261 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NeuroSound - محوّل الترددات العصبية</title>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <title>NeuroSound — الصوت الداخلي</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Oxanium:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     :root {
-      --bg-primary: #0a0e1a;
-      --bg-secondary: #111827;
-      --bg-card: #1a2235;
-      --bg-card-hover: #1f2a42;
-      --accent-cyan: #00e5ff;
-      --accent-purple: #b388ff;
-      --accent-pink: #ff4081;
-      --accent-green: #00e676;
-      --accent-gold: #ffd740;
-      --text-primary: #e8eaf6;
-      --text-secondary: #90a4ae;
-      --text-muted: #546e7a;
-      --border-color: rgba(0, 229, 255, 0.15);
-      --glow-cyan: 0 0 20px rgba(0, 229, 255, 0.3);
-      --glow-purple: 0 0 20px rgba(179, 136, 255, 0.3);
-      --radius: 16px;
-      --radius-sm: 10px;
-    }
-
-    html.dark {
-      /* Already dark by default */
+      --bg-deep: #060b18;
+      --bg-primary: #0b1120;
+      --bg-card: #111d35;
+      --bg-card-alt: #162244;
+      --bg-input: #0d1629;
+      --accent-main: #6ee7b7;
+      --accent-blue: #38bdf8;
+      --accent-violet: #a78bfa;
+      --accent-rose: #fb7185;
+      --accent-amber: #fbbf24;
+      --accent-teal: #2dd4bf;
+      --text-primary: #e2e8f0;
+      --text-secondary: #94a3b8;
+      --text-muted: #475569;
+      --border: rgba(110, 231, 183, 0.12);
+      --glow-main: 0 0 30px rgba(110, 231, 183, 0.15);
+      --glow-blue: 0 0 25px rgba(56, 189, 248, 0.15);
+      --radius: 18px;
+      --radius-sm: 12px;
+      --radius-xs: 8px;
     }
 
     html:not(.dark) {
-      --bg-primary: #f0f4f8;
-      --bg-secondary: #e2e8f0;
+      --bg-deep: #f1f5f9;
+      --bg-primary: #f8fafc;
       --bg-card: #ffffff;
-      --bg-card-hover: #f7fafc;
-      --accent-cyan: #0097a7;
-      --accent-purple: #7c4dff;
-      --accent-pink: #e91e63;
-      --accent-green: #00c853;
-      --accent-gold: #ff8f00;
-      --text-primary: #1a202c;
-      --text-secondary: #4a5568;
-      --text-muted: #718096;
-      --border-color: rgba(0, 151, 167, 0.2);
-      --glow-cyan: 0 0 15px rgba(0, 151, 167, 0.15);
-      --glow-purple: 0 0 15px rgba(124, 77, 255, 0.15);
+      --bg-card-alt: #f1f5f9;
+      --bg-input: #e2e8f0;
+      --accent-main: #059669;
+      --accent-blue: #0284c7;
+      --accent-violet: #7c3aed;
+      --accent-rose: #e11d48;
+      --accent-amber: #d97706;
+      --accent-teal: #0d9488;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --border: rgba(5, 150, 105, 0.15);
+      --glow-main: 0 0 20px rgba(5, 150, 105, 0.08);
+      --glow-blue: 0 0 15px rgba(2, 132, 199, 0.08);
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Tajawal', sans-serif;
-      background: var(--bg-primary);
+      background: var(--bg-deep);
       color: var(--text-primary);
       min-height: 100vh;
       overflow-x: hidden;
     }
 
-    /* Animated background */
-    .bg-grid {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.04;
-      background-image:
-        linear-gradient(var(--accent-cyan) 1px, transparent 1px),
-        linear-gradient(90deg, var(--accent-cyan) 1px, transparent 1px);
-      background-size: 60px 60px;
+    /* Atmospheric background */
+    .atmosphere {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
     }
-
-    .bg-orb {
-      position: fixed;
+    .atmosphere::before {
+      content: '';
+      position: absolute;
+      width: 600px; height: 600px;
       border-radius: 50%;
-      filter: blur(80px);
-      pointer-events: none;
-      z-index: 0;
+      background: radial-gradient(circle, rgba(110,231,183,0.06) 0%, transparent 70%);
+      top: -200px; left: 50%; transform: translateX(-50%);
+      animation: breathe 8s ease-in-out infinite;
+    }
+    .atmosphere::after {
+      content: '';
+      position: absolute;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(167,139,250,0.04) 0%, transparent 70%);
+      bottom: -150px; right: -100px;
+      animation: breathe 10s ease-in-out infinite reverse;
+    }
+    @keyframes breathe {
+      0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.8; }
+      50% { transform: translateX(-50%) scale(1.15); opacity: 1; }
     }
 
-    .bg-orb-1 {
-      width: 400px; height: 400px;
-      background: rgba(0, 229, 255, 0.08);
-      top: -100px; right: -100px;
-      animation: floatOrb 12s ease-in-out infinite;
-    }
-
-    .bg-orb-2 {
-      width: 350px; height: 350px;
-      background: rgba(179, 136, 255, 0.06);
-      bottom: -80px; left: -80px;
-      animation: floatOrb 15s ease-in-out infinite reverse;
-    }
-
-    @keyframes floatOrb {
-      0%, 100% { transform: translate(0, 0); }
-      50% { transform: translate(30px, -30px); }
-    }
-
-    .app-container {
-      position: relative;
-      z-index: 1;
-      max-width: 800px;
+    .app {
+      position: relative; z-index: 1;
+      max-width: 820px;
       margin: 0 auto;
-      padding: 20px 16px 40px;
+      padding: 16px 14px 50px;
     }
 
     /* Header */
     .header {
       text-align: center;
-      padding: 30px 0 20px;
+      padding: 28px 0 10px;
     }
-
-    .logo-icon {
-      width: 70px; height: 70px;
-      margin: 0 auto 16px;
+    .neuro-orb {
+      width: 80px; height: 80px;
+      margin: 0 auto 14px;
       position: relative;
+      display: flex; align-items: center; justify-content: center;
     }
-
-    .logo-icon svg {
-      width: 100%; height: 100%;
-    }
-
-    .logo-pulse {
+    .neuro-orb .ring {
       position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 70px; height: 70px;
       border-radius: 50%;
-      border: 2px solid var(--accent-cyan);
-      animation: logoPulse 2s ease-out infinite;
+      border: 1.5px solid;
+      animation: orbSpin 6s linear infinite;
     }
-
-    @keyframes logoPulse {
-      0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
-      100% { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
+    .neuro-orb .ring-1 { width: 80px; height: 80px; border-color: rgba(110,231,183,0.25); }
+    .neuro-orb .ring-2 { width: 60px; height: 60px; border-color: rgba(167,139,250,0.2); animation-direction: reverse; animation-duration: 8s; }
+    .neuro-orb .ring-3 { width: 42px; height: 42px; border-color: rgba(56,189,248,0.15); animation-duration: 10s; }
+    @keyframes orbSpin { to { transform: rotate(360deg); } }
+    .neuro-orb .core {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: radial-gradient(circle, var(--accent-main), transparent);
+      animation: corePulse 3s ease-in-out infinite;
+    }
+    @keyframes corePulse {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.3); opacity: 1; }
     }
 
     .header h1 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 28px;
-      font-weight: 900;
-      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-family: 'Oxanium', sans-serif;
+      font-size: 26px; font-weight: 800;
+      background: linear-gradient(135deg, var(--accent-main), var(--accent-blue), var(--accent-violet));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
-      letter-spacing: 2px;
-      margin-bottom: 8px;
+      letter-spacing: 3px;
+      margin-bottom: 6px;
     }
-
-    .header p {
+    .header .tagline {
       color: var(--text-secondary);
-      font-size: 15px;
-      font-weight: 300;
-      line-height: 1.6;
+      font-size: 14px; font-weight: 300; line-height: 1.7;
     }
 
-    /* Cards */
-    .card {
+    /* Section cards */
+    .section {
       background: var(--bg-card);
-      border: 1px solid var(--border-color);
+      border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 24px;
-      margin-bottom: 16px;
-      transition: all 0.3s ease;
-    }
-
-    .card:hover {
-      background: var(--bg-card-hover);
-    }
-
-    .card-title {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 17px;
-      font-weight: 700;
-      margin-bottom: 18px;
-      color: var(--text-primary);
-    }
-
-    .card-title i {
-      color: var(--accent-cyan);
-      font-size: 18px;
-    }
-
-    /* Upload Area */
-    .upload-zone {
-      border: 2px dashed var(--border-color);
-      border-radius: var(--radius-sm);
-      padding: 40px 20px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .upload-zone:hover, .upload-zone.drag-over {
-      border-color: var(--accent-cyan);
-      background: rgba(0, 229, 255, 0.04);
-    }
-
-    .upload-zone.has-file {
-      border-color: var(--accent-green);
-      border-style: solid;
-      padding: 20px;
-    }
-
-    .upload-zone input {
-      display: none;
-    }
-
-    .upload-icon {
-      font-size: 40px;
-      color: var(--accent-cyan);
-      margin-bottom: 12px;
-      opacity: 0.7;
-    }
-
-    .upload-text {
-      font-size: 15px;
-      color: var(--text-secondary);
-      margin-bottom: 6px;
-    }
-
-    .upload-hint {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    .file-info {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .file-icon-wrap {
-      width: 48px; height: 48px;
-      border-radius: 12px;
-      background: rgba(0, 230, 118, 0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .file-icon-wrap i {
-      font-size: 22px;
-      color: var(--accent-green);
-    }
-
-    .file-details {
-      flex: 1;
-      text-align: right;
-    }
-
-    .file-name {
-      font-weight: 600;
-      font-size: 14px;
-      color: var(--text-primary);
-      margin-bottom: 4px;
-      word-break: break-all;
-    }
-
-    .file-meta {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .file-remove {
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      border: none;
-      background: rgba(255, 64, 129, 0.1);
-      color: var(--accent-pink);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-      flex-shrink: 0;
-    }
-
-    .file-remove:hover {
-      background: rgba(255, 64, 129, 0.2);
-      transform: scale(1.1);
-    }
-
-    /* Frequency Bands */
-    .freq-bands {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
-      margin-bottom: 20px;
-    }
-
-    .freq-band {
-      text-align: center;
-      padding: 14px 6px;
-      border-radius: var(--radius-sm);
-      border: 2px solid transparent;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      background: rgba(255,255,255,0.03);
-    }
-
-    html:not(.dark) .freq-band {
-      background: rgba(0,0,0,0.02);
-    }
-
-    .freq-band:hover {
-      background: rgba(255,255,255,0.06);
-    }
-
-    .freq-band.active {
-      border-color: var(--band-color);
-      background: var(--band-bg);
-      box-shadow: 0 0 20px var(--band-glow);
-    }
-
-    .freq-band[data-band="delta"] { --band-color: #4fc3f7; --band-bg: rgba(79,195,247,0.08); --band-glow: rgba(79,195,247,0.15); }
-    .freq-band[data-band="theta"] { --band-color: #b388ff; --band-bg: rgba(179,136,255,0.08); --band-glow: rgba(179,136,255,0.15); }
-    .freq-band[data-band="alpha"] { --band-color: #00e676; --band-bg: rgba(0,230,118,0.08); --band-glow: rgba(0,230,118,0.15); }
-    .freq-band[data-band="beta"] { --band-color: #ffd740; --band-bg: rgba(255,215,64,0.08); --band-glow: rgba(255,215,64,0.15); }
-    .freq-band[data-band="gamma"] { --band-color: #ff4081; --band-bg: rgba(255,64,129,0.08); --band-glow: rgba(255,64,129,0.15); }
-
-    .band-icon {
-      font-size: 22px;
-      margin-bottom: 6px;
-    }
-
-    .band-name {
-      font-size: 13px;
-      font-weight: 700;
-      margin-bottom: 2px;
-    }
-
-    .band-freq {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .band-desc {
-      font-size: 10px;
-      color: var(--text-muted);
-      margin-top: 4px;
-      line-height: 1.4;
-    }
-
-    /* Sliders */
-    .slider-group {
-      margin-bottom: 18px;
-    }
-
-    .slider-label {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-
-    .slider-label span {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text-secondary);
-    }
-
-    .slider-value {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 13px;
-      color: var(--accent-cyan);
-      font-weight: 700;
-    }
-
-    input[type="range"] {
-      -webkit-appearance: none;
-      width: 100%;
-      height: 6px;
-      background: rgba(255,255,255,0.08);
-      border-radius: 3px;
-      outline: none;
-      cursor: pointer;
-    }
-
-    html:not(.dark) input[type="range"] {
-      background: rgba(0,0,0,0.08);
-    }
-
-    input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: var(--accent-cyan);
-      box-shadow: var(--glow-cyan);
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-
-    input[type="range"]::-webkit-slider-thumb:hover {
-      transform: scale(1.2);
-    }
-
-    input[type="range"]::-moz-range-thumb {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: var(--accent-cyan);
-      box-shadow: var(--glow-cyan);
-      cursor: pointer;
-      border: none;
-    }
-
-    /* Visualizer */
-    .visualizer-wrap {
-      width: 100%;
-      height: 140px;
-      border-radius: var(--radius-sm);
-      overflow: hidden;
-      background: rgba(0,0,0,0.3);
-      position: relative;
-      margin-bottom: 16px;
-    }
-
-    html:not(.dark) .visualizer-wrap {
-      background: rgba(0,0,0,0.05);
-    }
-
-    .visualizer-wrap canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-
-    .viz-label {
-      position: absolute;
-      top: 8px;
-      right: 10px;
-      font-size: 10px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-family: 'Orbitron', sans-serif;
-    }
-
-    /* Transport Controls */
-    .transport {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .btn-transport {
-      width: 52px; height: 52px;
-      border-radius: 50%;
-      border: 2px solid var(--accent-cyan);
-      background: transparent;
-      color: var(--accent-cyan);
-      font-size: 20px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      flex-shrink: 0;
-    }
-
-    .btn-transport:hover {
-      background: rgba(0, 229, 255, 0.1);
-      box-shadow: var(--glow-cyan);
-    }
-
-    .btn-transport.playing {
-      background: var(--accent-cyan);
-      color: var(--bg-primary);
-    }
-
-    .btn-transport:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-    }
-
-    .progress-wrap {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .progress-bar-bg {
-      width: 100%;
-      height: 6px;
-      background: rgba(255,255,255,0.08);
-      border-radius: 3px;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-    }
-
-    html:not(.dark) .progress-bar-bg {
-      background: rgba(0,0,0,0.08);
-    }
-
-    .progress-bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
-      border-radius: 3px;
-      width: 0%;
-      transition: width 0.1s linear;
-    }
-
-    .progress-time {
-      display: flex;
-      justify-content: space-between;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    /* Action Buttons */
-    .btn-action {
-      width: 100%;
-      padding: 16px;
-      border: none;
-      border-radius: var(--radius-sm);
-      font-family: 'Tajawal', sans-serif;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .btn-process {
-      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
-      color: #fff;
-    }
-
-    .btn-process:hover {
-      box-shadow: 0 4px 25px rgba(0, 229, 255, 0.3);
-      transform: translateY(-1px);
-    }
-
-    .btn-process:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-
-    .btn-download {
-      background: rgba(0, 230, 118, 0.1);
-      color: var(--accent-green);
-      border: 1px solid rgba(0, 230, 118, 0.3);
-      margin-top: 10px;
-    }
-
-    .btn-download:hover {
-      background: rgba(0, 230, 118, 0.18);
-    }
-
-    .btn-download:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-    }
-
-    /* Status */
-    .status-bar {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 16px;
-      border-radius: var(--radius-sm);
-      font-size: 13px;
-      font-weight: 500;
-      margin-bottom: 16px;
-      display: none;
-    }
-
-    .status-bar.visible {
-      display: flex;
-    }
-
-    .status-bar.processing {
-      background: rgba(0, 229, 255, 0.08);
-      color: var(--accent-cyan);
-      border: 1px solid rgba(0, 229, 255, 0.15);
-    }
-
-    .status-bar.success {
-      background: rgba(0, 230, 118, 0.08);
-      color: var(--accent-green);
-      border: 1px solid rgba(0, 230, 118, 0.15);
-    }
-
-    .status-bar.error {
-      background: rgba(255, 64, 129, 0.08);
-      color: var(--accent-pink);
-      border: 1px solid rgba(255, 64, 129, 0.15);
-    }
-
-    .spinner {
-      width: 16px; height: 16px;
-      border: 2px solid transparent;
-      border-top-color: currentColor;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* Info Section */
-    .info-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .info-item {
-      padding: 14px;
-      border-radius: var(--radius-sm);
-      background: rgba(255,255,255,0.02);
-      border: 1px solid var(--border-color);
-    }
-
-    html:not(.dark) .info-item {
-      background: rgba(0,0,0,0.02);
-    }
-
-    .info-item .info-label {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .info-item .info-value {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--accent-cyan);
-    }
-
-    /* Binaural toggle */
-    .toggle-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 0;
-    }
-
-    .toggle-info {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .toggle-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .toggle-desc {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .toggle-switch {
-      position: relative;
-      width: 50px;
-      height: 28px;
-      flex-shrink: 0;
-    }
-
-    .toggle-switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .toggle-slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(255,255,255,0.1);
-      border-radius: 14px;
-      transition: 0.3s;
-    }
-
-    html:not(.dark) .toggle-slider {
-      background: rgba(0,0,0,0.1);
-    }
-
-    .toggle-slider::before {
-      content: '';
-      position: absolute;
-      height: 22px; width: 22px;
-      right: 3px;
-      bottom: 3px;
-      background: #fff;
-      border-radius: 50%;
-      transition: 0.3s;
-    }
-
-    .toggle-switch input:checked + .toggle-slider {
-      background: var(--accent-cyan);
-    }
-
-    .toggle-switch input:checked + .toggle-slider::before {
-      transform: translateX(-22px);
-    }
-
-    /* Volume */
-    .volume-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .volume-row i {
-      color: var(--text-muted);
-      font-size: 16px;
-    }
-
-    .volume-row input[type="range"] {
-      flex: 1;
-    }
-
-    /* Responsive */
-    @media (max-width: 600px) {
-      .freq-bands {
-        grid-template-columns: repeat(3, 1fr);
-      }
-
-      .freq-bands .freq-band:nth-child(4),
-      .freq-bands .freq-band:nth-child(5) {
-        grid-column: span 1;
-      }
-
-      .header h1 {
-        font-size: 22px;
-      }
-
-      .info-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .card {
-        padding: 18px;
-      }
-    }
-
-    @media (max-width: 380px) {
-      .freq-bands {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    /* Animations */
-    .fade-in {
-      animation: fadeIn 0.5s ease forwards;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
+      padding: 22px;
+      margin-bottom: 14px;
+      animation: cardIn 0.4s ease both;
+    }
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .card:nth-child(1) { animation-delay: 0.05s; }
-    .card:nth-child(2) { animation-delay: 0.1s; }
-    .card:nth-child(3) { animation-delay: 0.15s; }
-    .card:nth-child(4) { animation-delay: 0.2s; }
-
-    /* Processing overlay on visualizer */
-    .processing-overlay {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0,0,0,0.5);
-      z-index: 2;
-      display: none;
+    .sec-head {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 16px;
     }
-
-    .processing-overlay.visible {
-      display: flex;
+    .sec-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0;
     }
+    .sec-title { font-size: 16px; font-weight: 700; }
+    .sec-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 
-    .processing-overlay .spinner {
-      width: 30px; height: 30px;
-      border-width: 3px;
-      color: var(--accent-cyan);
-    }
-
-    /* Waveform marker */
-    .wave-marker {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 9px;
-      color: var(--accent-purple);
-      position: absolute;
-      bottom: 8px;
-      right: 10px;
-      letter-spacing: 1px;
-    }
-
-    /* Footer */
-    .footer {
+    /* Upload */
+    .upload-area {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-sm);
+      padding: 36px 16px;
       text-align: center;
-      padding: 20px;
-      font-size: 12px;
-      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+    }
+    .upload-area:hover, .upload-area.hovering { border-color: var(--accent-main); background: rgba(110,231,183,0.03); }
+    .upload-area.loaded { border-style: solid; border-color: var(--accent-main); padding: 16px; }
+    .upload-area input { display: none; }
+    .upload-ph i { font-size: 36px; color: var(--accent-main); opacity: 0.5; margin-bottom: 10px; }
+    .upload-ph p { font-size: 14px; color: var(--text-secondary); }
+    .upload-ph small { font-size: 12px; color: var(--text-muted); }
+
+    .file-row {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .file-row .f-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: rgba(110,231,183,0.1);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .file-row .f-icon i { font-size: 20px; color: var(--accent-main); }
+    .file-row .f-info { flex: 1; }
+    .file-row .f-name { font-size: 14px; font-weight: 600; word-break: break-all; }
+    .file-row .f-meta { font-size: 11px; color: var(--text-muted); }
+    .btn-x {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: none; background: rgba(251,113,133,0.1); color: var(--accent-rose);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: 0.2s; flex-shrink: 0; font-size: 14px;
+    }
+    .btn-x:hover { background: rgba(251,113,133,0.2); transform: scale(1.1); }
+
+    /* Mode selector */
+    .modes-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .mode-card {
+      padding: 16px 14px;
+      border-radius: var(--radius-sm);
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: var(--bg-card-alt);
+      text-align: center;
+    }
+    .mode-card:hover { border-color: var(--border); }
+    .mode-card.active { border-color: var(--mode-color); background: var(--mode-bg); box-shadow: 0 0 25px var(--mode-glow); }
+    .mode-card[data-mode="inner"]    { --mode-color: #6ee7b7; --mode-bg: rgba(110,231,183,0.06); --mode-glow: rgba(110,231,183,0.1); }
+    .mode-card[data-mode="subliminal"] { --mode-color: #a78bfa; --mode-bg: rgba(167,139,250,0.06); --mode-glow: rgba(167,139,250,0.1); }
+    .mode-card[data-mode="meditate"]  { --mode-color: #38bdf8; --mode-bg: rgba(56,189,248,0.06); --mode-glow: rgba(56,189,248,0.1); }
+    .mode-card[data-mode="focus"]     { --mode-color: #fbbf24; --mode-bg: rgba(251,191,36,0.06); --mode-glow: rgba(251,191,36,0.1); }
+
+    .mode-emoji { font-size: 28px; margin-bottom: 6px; }
+    .mode-name { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+    .mode-desc { font-size: 11px; color: var(--text-muted); line-height: 1.5; }
+
+    /* Sliders */
+    .ctrl-group { margin-bottom: 16px; }
+    .ctrl-row {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 6px;
+    }
+    .ctrl-label { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+    .ctrl-val {
+      font-family: 'Oxanium', sans-serif;
+      font-size: 13px; font-weight: 700; color: var(--accent-main);
+      min-width: 50px; text-align: left;
     }
 
-    .footer a {
-      color: var(--accent-cyan);
-      text-decoration: none;
+    input[type="range"] {
+      -webkit-appearance: none; width: 100%; height: 5px;
+      background: rgba(110,231,183,0.1); border-radius: 3px; outline: none; cursor: pointer;
+    }
+    html:not(.dark) input[type="range"] { background: rgba(5,150,105,0.1); }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 20px; height: 20px;
+      border-radius: 50%; background: var(--accent-main);
+      box-shadow: var(--glow-main); cursor: pointer; transition: transform 0.2s;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+    input[type="range"]::-moz-range-thumb {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--accent-main); box-shadow: var(--glow-main); border: none; cursor: pointer;
+    }
+
+    /* Toggles */
+    .tog-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .tog-row:last-child { border-bottom: none; }
+    .tog-text .tog-title { font-size: 13px; font-weight: 600; }
+    .tog-text .tog-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .tog {
+      position: relative; width: 46px; height: 26px; flex-shrink: 0;
+    }
+    .tog input { opacity: 0; width: 0; height: 0; }
+    .tog-track {
+      position: absolute; inset: 0;
+      background: rgba(255,255,255,0.08); border-radius: 13px;
+      cursor: pointer; transition: 0.3s;
+    }
+    html:not(.dark) .tog-track { background: rgba(0,0,0,0.1); }
+    .tog-track::before {
+      content: ''; position: absolute;
+      height: 20px; width: 20px;
+      right: 3px; bottom: 3px;
+      background: #fff; border-radius: 50%;
+      transition: 0.3s;
+    }
+    .tog input:checked + .tog-track { background: var(--accent-main); }
+    .tog input:checked + .tog-track::before { transform: translateX(-20px); }
+
+    /* Visualizer */
+    .viz-box {
+      width: 100%; height: 130px;
+      border-radius: var(--radius-sm);
+      background: rgba(0,0,0,0.25);
+      position: relative; overflow: hidden;
+      margin-bottom: 14px;
+    }
+    html:not(.dark) .viz-box { background: rgba(0,0,0,0.04); }
+    .viz-box canvas { width: 100%; height: 100%; display: block; }
+    .viz-tag {
+      position: absolute; top: 8px; right: 10px;
+      font-family: 'Oxanium', sans-serif;
+      font-size: 9px; color: var(--text-muted);
+      letter-spacing: 1.5px; text-transform: uppercase;
+    }
+    .viz-mode-tag {
+      position: absolute; bottom: 8px; left: 10px;
+      font-family: 'Oxanium', sans-serif;
+      font-size: 9px; letter-spacing: 1px;
+      color: var(--accent-main); opacity: 0.7;
+    }
+
+    /* Transport */
+    .transport { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .btn-round {
+      width: 50px; height: 50px; border-radius: 50%;
+      border: 2px solid var(--accent-main); background: transparent;
+      color: var(--accent-main); font-size: 18px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.3s; flex-shrink: 0;
+    }
+    .btn-round:hover { background: rgba(110,231,183,0.08); box-shadow: var(--glow-main); }
+    .btn-round.on { background: var(--accent-main); color: var(--bg-primary); }
+    .btn-round.sm { width: 38px; height: 38px; font-size: 14px; }
+    .btn-round:disabled { opacity: 0.25; cursor: not-allowed; }
+
+    .prog-wrap { flex: 1; }
+    .prog-bg {
+      width: 100%; height: 5px;
+      background: rgba(110,231,183,0.08); border-radius: 3px;
+      cursor: pointer; overflow: hidden; margin-bottom: 5px;
+    }
+    .prog-fill {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, var(--accent-main), var(--accent-blue));
+      border-radius: 3px; transition: width 0.1s linear;
+    }
+    .prog-times {
+      display: flex; justify-content: space-between;
+      font-family: 'Oxanium', sans-serif; font-size: 11px; color: var(--text-muted);
+    }
+
+    .vol-row {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 16px;
+    }
+    .vol-row i { color: var(--text-muted); font-size: 14px; }
+    .vol-row input { flex: 1; }
+    .vol-row .ctrl-val { min-width: 36px; }
+
+    /* Buttons */
+    .btn-main {
+      width: 100%; padding: 15px; border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Tajawal', sans-serif;
+      font-size: 16px; font-weight: 700;
+      cursor: pointer; transition: all 0.3s;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .btn-process {
+      background: linear-gradient(135deg, var(--accent-main), var(--accent-teal));
+      color: #0b1120;
+    }
+    html:not(.dark) .btn-process { color: #fff; }
+    .btn-process:hover { box-shadow: 0 6px 30px rgba(110,231,183,0.25); transform: translateY(-1px); }
+    .btn-process:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .btn-dl {
+      background: rgba(56,189,248,0.08); color: var(--accent-blue);
+      border: 1px solid rgba(56,189,248,0.2); margin-top: 10px;
+    }
+    .btn-dl:hover { background: rgba(56,189,248,0.14); }
+    .btn-dl:disabled { opacity: 0.25; cursor: not-allowed; }
+
+    /* Status */
+    .status {
+      display: none; align-items: center; gap: 8px;
+      padding: 10px 14px; border-radius: var(--radius-xs);
+      font-size: 13px; font-weight: 500; margin-bottom: 14px;
+    }
+    .status.on { display: flex; }
+    .status.working { background: rgba(110,231,183,0.06); color: var(--accent-main); border: 1px solid rgba(110,231,183,0.12); }
+    .status.done    { background: rgba(56,189,248,0.06); color: var(--accent-blue); border: 1px solid rgba(56,189,248,0.12); }
+    .status.fail    { background: rgba(251,113,133,0.06); color: var(--accent-rose); border: 1px solid rgba(251,113,133,0.12); }
+    .spin {
+      width: 14px; height: 14px;
+      border: 2px solid transparent; border-top-color: currentColor;
+      border-radius: 50%; animation: sp 0.7s linear infinite;
+    }
+    @keyframes sp { to { transform: rotate(360deg); } }
+
+    /* Info grid */
+    .info-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
+    }
+    .info-cell {
+      padding: 12px;
+      border-radius: var(--radius-xs);
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border);
+    }
+    .info-cell .il { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .info-cell .iv { font-family: 'Oxanium', sans-serif; font-size: 15px; font-weight: 700; color: var(--accent-main); }
+
+    /* Preset chips */
+    .presets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .preset-chip {
+      padding: 7px 14px; border-radius: 20px;
+      font-size: 12px; font-weight: 600;
+      background: var(--bg-card-alt); border: 1px solid var(--border);
+      cursor: pointer; transition: 0.2s; color: var(--text-secondary);
+    }
+    .preset-chip:hover { border-color: var(--accent-main); color: var(--accent-main); }
+    .preset-chip.active { background: rgba(110,231,183,0.1); border-color: var(--accent-main); color: var(--accent-main); }
+
+    /* Explanation */
+    .explain p { font-size: 13px; color: var(--text-secondary); line-height: 1.9; margin-bottom: 8px; }
+    .explain strong { color: var(--accent-main); }
+    .explain .highlight { color: var(--accent-violet); font-weight: 700; }
+    .explain .note {
+      padding: 12px 16px; border-radius: var(--radius-xs);
+      background: rgba(56,189,248,0.05); border-right: 3px solid var(--accent-blue);
+      margin-top: 10px; font-size: 12px; color: var(--text-secondary); line-height: 1.8;
+    }
+    html:not(.dark) .explain .note { border-right-color: var(--accent-blue); }
+
+    .footer {
+      text-align: center; padding: 20px; font-size: 11px;
+      color: var(--text-muted); font-family: 'Oxanium', sans-serif; letter-spacing: 1px;
+    }
+
+    /* Responsive */
+    @media (max-width: 500px) {
+      .modes-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .mode-card { padding: 12px 10px; }
+      .mode-emoji { font-size: 24px; }
+      .header h1 { font-size: 22px; }
+      .section { padding: 18px; }
     }
   </style>
 </head>
 <body>
-  <div class="bg-grid"></div>
-  <div class="bg-orb bg-orb-1"></div>
-  <div class="bg-orb bg-orb-2"></div>
+<div class="atmosphere"></div>
 
-  <div class="app-container">
-    <!-- Header -->
-    <div class="header fade-in">
-      <div class="logo-icon">
-        <div class="logo-pulse"></div>
-        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="50" cy="50" r="35" stroke="url(#grad1)" stroke-width="2.5" fill="none" opacity="0.5"/>
-          <circle cx="50" cy="50" r="25" stroke="url(#grad1)" stroke-width="2" fill="none" opacity="0.3"/>
-          <path d="M30 50 Q 37 30, 44 50 Q 51 70, 58 50 Q 65 30, 72 50" stroke="var(--accent-cyan)" stroke-width="3" fill="none" stroke-linecap="round"/>
-          <circle cx="50" cy="50" r="5" fill="var(--accent-purple)" opacity="0.8"/>
-          <defs>
-            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:var(--accent-cyan)"/>
-              <stop offset="100%" style="stop-color:var(--accent-purple)"/>
-            </linearGradient>
-          </defs>
-        </svg>
-      </div>
-      <h1>NEUROSOUND</h1>
-      <p>محوّل الترددات العصبية — حوّل أي صوت إلى ترددات يستقبلها الدماغ مباشرة</p>
+<div class="app">
+  <!-- Header -->
+  <div class="header">
+    <div class="neuro-orb">
+      <div class="ring ring-1"></div>
+      <div class="ring ring-2"></div>
+      <div class="ring ring-3"></div>
+      <div class="core"></div>
     </div>
+    <h1>NEUROSOUND</h1>
+    <p class="tagline">حوّل أي صوت إلى تجربة سمعية داخلية — كأنك تسمع بعقلك</p>
+  </div>
 
-    <!-- Upload Card -->
-    <div class="card fade-in">
-      <div class="card-title">
+  <!-- 1. Upload -->
+  <div class="section" style="animation-delay:0.05s">
+    <div class="sec-head">
+      <div class="sec-icon" style="background:rgba(110,231,183,0.1);color:var(--accent-main);">
         <i class="fas fa-file-audio"></i>
-        رفع المقطع الصوتي
       </div>
-      <div class="upload-zone" id="uploadZone">
-        <input type="file" id="audioInput" accept="audio/*">
-        <div id="uploadPlaceholder">
-          <div class="upload-icon"><i class="fas fa-cloud-arrow-up"></i></div>
-          <div class="upload-text">اضغط أو اسحب ملفاً صوتياً هنا</div>
-          <div class="upload-hint">MP3, WAV, OGG, M4A — حتى 50 ميجابايت</div>
-        </div>
-        <div id="fileInfoDisplay" style="display:none;">
-          <div class="file-info">
-            <div class="file-icon-wrap"><i class="fas fa-music"></i></div>
-            <div class="file-details">
-              <div class="file-name" id="fileName"></div>
-              <div class="file-meta" id="fileMeta"></div>
-            </div>
-            <button class="file-remove" id="removeFile" type="button"><i class="fas fa-xmark"></i></button>
-          </div>
-        </div>
+      <div>
+        <div class="sec-title">رفع المقطع الصوتي</div>
+        <div class="sec-desc">MP3, WAV, OGG, M4A — حتى 50 ميجابايت</div>
       </div>
     </div>
-
-    <!-- Frequency Band Selection -->
-    <div class="card fade-in">
-      <div class="card-title">
-        <i class="fas fa-brain"></i>
-        نطاق التردد العصبي
+    <div class="upload-area" id="uploadZone">
+      <input type="file" id="audioInput" accept="audio/*">
+      <div id="uploadPh">
+        <div><i class="fas fa-cloud-arrow-up"></i></div>
+        <p>اضغط أو اسحب ملفاً صوتياً</p>
+        <small>سيتم تحويله إلى صوت داخلي يستقبله الدماغ</small>
       </div>
-      <div class="freq-bands" id="freqBands">
-        <div class="freq-band" data-band="delta" data-freq="2">
-          <div class="band-icon">🌊</div>
-          <div class="band-name" style="color:#4fc3f7;">دلتا</div>
-          <div class="band-freq">0.5–4 Hz</div>
-          <div class="band-desc">نوم عميق</div>
+      <div id="fileRow" style="display:none" class="file-row">
+        <div class="f-icon"><i class="fas fa-music"></i></div>
+        <div class="f-info">
+          <div class="f-name" id="fName"></div>
+          <div class="f-meta" id="fMeta"></div>
         </div>
-        <div class="freq-band" data-band="theta" data-freq="6">
-          <div class="band-icon">🧘</div>
-          <div class="band-name" style="color:#b388ff;">ثيتا</div>
-          <div class="band-freq">4–8 Hz</div>
-          <div class="band-desc">تأمل وإبداع</div>
-        </div>
-        <div class="freq-band active" data-band="alpha" data-freq="10">
-          <div class="band-icon">✨</div>
-          <div class="band-name" style="color:#00e676;">ألفا</div>
-          <div class="band-freq">8–13 Hz</div>
-          <div class="band-desc">استرخاء وهدوء</div>
-        </div>
-        <div class="freq-band" data-band="beta" data-freq="20">
-          <div class="band-icon">⚡</div>
-          <div class="band-name" style="color:#ffd740;">بيتا</div>
-          <div class="band-freq">13–30 Hz</div>
-          <div class="band-desc">تركيز ويقظة</div>
-        </div>
-        <div class="freq-band" data-band="gamma" data-freq="40">
-          <div class="band-icon">🔮</div>
-          <div class="band-name" style="color:#ff4081;">غاما</div>
-          <div class="band-freq">30–100 Hz</div>
-          <div class="band-desc">إدراك عالي</div>
-        </div>
+        <button class="btn-x" id="btnRemove" type="button"><i class="fas fa-xmark"></i></button>
       </div>
-
-      <!-- Fine-tune frequency -->
-      <div class="slider-group">
-        <div class="slider-label">
-          <span>التردد الدقيق</span>
-          <span class="slider-value" id="freqValue">10.0 Hz</span>
-        </div>
-        <input type="range" id="freqSlider" min="0.5" max="100" step="0.5" value="10">
-      </div>
-
-      <!-- Modulation depth -->
-      <div class="slider-group">
-        <div class="slider-label">
-          <span>عمق التعديل</span>
-          <span class="slider-value" id="depthValue">70%</span>
-        </div>
-        <input type="range" id="depthSlider" min="0" max="100" step="1" value="70">
-      </div>
-
-      <!-- Binaural toggle -->
-      <div class="toggle-row">
-        <div class="toggle-info">
-          <div class="toggle-title">نغمات ثنائية الأذن (Binaural)</div>
-          <div class="toggle-desc">يُرسل تردداً مختلفاً لكل أذن لتحفيز الدماغ — استخدم سماعات</div>
-        </div>
-        <label class="toggle-switch">
-          <input type="checkbox" id="binauralToggle" checked>
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
-
-      <!-- Carrier frequency for binaural -->
-      <div class="slider-group" id="carrierGroup">
-        <div class="slider-label">
-          <span>تردد الحامل (Carrier)</span>
-          <span class="slider-value" id="carrierValue">200 Hz</span>
-        </div>
-        <input type="range" id="carrierSlider" min="80" max="500" step="1" value="200">
-      </div>
-    </div>
-
-    <!-- Player & Visualizer -->
-    <div class="card fade-in">
-      <div class="card-title">
-        <i class="fas fa-wave-square"></i>
-        التشغيل والتصور
-      </div>
-
-      <div class="visualizer-wrap">
-        <canvas id="visualizer"></canvas>
-        <div class="viz-label">NEURAL WAVEFORM</div>
-        <div class="wave-marker" id="waveMarker">ALPHA 10 Hz</div>
-        <div class="processing-overlay" id="processingOverlay">
-          <div class="spinner"></div>
-        </div>
-      </div>
-
-      <!-- Transport -->
-      <div class="transport">
-        <button class="btn-transport" id="btnPlay" disabled>
-          <i class="fas fa-play" id="playIcon"></i>
-        </button>
-        <button class="btn-transport" id="btnStop" disabled style="width:40px;height:40px;font-size:16px;">
-          <i class="fas fa-stop"></i>
-        </button>
-        <div class="progress-wrap">
-          <div class="progress-bar-bg" id="progressBar">
-            <div class="progress-bar-fill" id="progressFill"></div>
-          </div>
-          <div class="progress-time">
-            <span id="currentTime">0:00</span>
-            <span id="totalTime">0:00</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Volume -->
-      <div class="volume-row">
-        <i class="fas fa-volume-high"></i>
-        <input type="range" id="volumeSlider" min="0" max="100" step="1" value="80">
-        <span class="slider-value" id="volumeValue" style="min-width:40px;text-align:center;">80%</span>
-      </div>
-
-      <!-- Status -->
-      <div class="status-bar" id="statusBar">
-        <div class="spinner" id="statusSpinner" style="display:none;"></div>
-        <i class="fas fa-circle-info" id="statusIcon"></i>
-        <span id="statusText"></span>
-      </div>
-
-      <!-- Process Button -->
-      <button class="btn-action btn-process" id="btnProcess" disabled>
-        <i class="fas fa-bolt"></i>
-        معالجة وتحويل التردد
-      </button>
-
-      <!-- Download Button -->
-      <button class="btn-action btn-download" id="btnDownload" disabled>
-        <i class="fas fa-download"></i>
-        تحميل الملف المعالَج
-      </button>
-    </div>
-
-    <!-- Info Card -->
-    <div class="card fade-in">
-      <div class="card-title">
-        <i class="fas fa-circle-info"></i>
-        معلومات المعالجة
-      </div>
-      <div class="info-grid">
-        <div class="info-item">
-          <div class="info-label">النطاق المختار</div>
-          <div class="info-value" id="infoband">ألفا</div>
-        </div>
-        <div class="info-item">
-          <div class="info-label">التردد</div>
-          <div class="info-value" id="infoFreq">10 Hz</div>
-        </div>
-        <div class="info-item">
-          <div class="info-label">عمق التعديل</div>
-          <div class="info-value" id="infoDepth">70%</div>
-        </div>
-        <div class="info-item">
-          <div class="info-label">ثنائي الأذن</div>
-          <div class="info-value" id="infoBinaural">نعم</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- How it works -->
-    <div class="card fade-in">
-      <div class="card-title">
-        <i class="fas fa-lightbulb"></i>
-        كيف يعمل البرنامج؟
-      </div>
-      <div style="color:var(--text-secondary); font-size:14px; line-height:1.9;">
-        <p style="margin-bottom:10px;">
-          <strong style="color:var(--accent-cyan);">١. تعديل السعة (AM):</strong>
-          يتم تعديل سعة الصوت الأصلي بتردد الموجة الدماغية المختار، مما يخلق نبضات إيقاعية يستجيب لها الدماغ تلقائياً.
-        </p>
-        <p style="margin-bottom:10px;">
-          <strong style="color:var(--accent-purple);">٢. نغمات ثنائية الأذن:</strong>
-          عند التفعيل، يُرسل تردد مختلف قليلاً لكل أذن. الفرق بين الترددين يُنتج نغمة "وهمية" يسمعها الدماغ مباشرة ويتزامن معها.
-        </p>
-        <p style="margin-bottom:10px;">
-          <strong style="color:var(--accent-green);">٣. تحفيز الموجات الدماغية:</strong>
-          هذه التقنية تُعرف بـ "Brainwave Entrainment" وتُستخدم علمياً لتحسين التركيز والاسترخاء والنوم العميق.
-        </p>
-        <p style="color:var(--accent-gold);">
-          <i class="fas fa-headphones"></i>
-          يُنصح باستخدام سماعات الرأس للحصول على أفضل تجربة، خاصة مع النغمات الثنائية.
-        </p>
-      </div>
-    </div>
-
-    <div class="footer">
-      NeuroSound — تقنية تحفيز الموجات الدماغية
     </div>
   </div>
 
-  <script>
-    /* ========= Dark Mode Detection ========= */
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(event) {
-      if (event.matches) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
+  <!-- 2. Mode Selection -->
+  <div class="section" style="animation-delay:0.1s">
+    <div class="sec-head">
+      <div class="sec-icon" style="background:rgba(167,139,250,0.1);color:var(--accent-violet);">
+        <i class="fas fa-brain"></i>
+      </div>
+      <div>
+        <div class="sec-title">وضع التحويل</div>
+        <div class="sec-desc">اختر الطريقة التي يستقبل بها دماغك الصوت</div>
+      </div>
+    </div>
+    <div class="modes-grid" id="modesGrid">
+      <div class="mode-card active" data-mode="inner">
+        <div class="mode-emoji">🧠</div>
+        <div class="mode-name" style="color:var(--accent-main)">الصوت الداخلي</div>
+        <div class="mode-desc">يحول الصوت ليبدو كأنه حديث نفسك الداخلي</div>
+      </div>
+      <div class="mode-card" data-mode="subliminal">
+        <div class="mode-emoji">👁️</div>
+        <div class="mode-name" style="color:var(--accent-violet)">تحت الوعي</div>
+        <div class="mode-desc">رسائل صوتية لاواعية يستقبلها العقل الباطن</div>
+      </div>
+      <div class="mode-card" data-mode="meditate">
+        <div class="mode-emoji">🌊</div>
+        <div class="mode-name" style="color:var(--accent-blue)">تأمل عميق</div>
+        <div class="mode-desc">دمج مع موجات ثيتا للوصول للعقل اللاواعي</div>
+      </div>
+      <div class="mode-card" data-mode="focus">
+        <div class="mode-emoji">⚡</div>
+        <div class="mode-name" style="color:var(--accent-amber)">تحفيز ذهني</div>
+        <div class="mode-desc">ترددات غاما لتحفيز الإدراك والوعي الفائق</div>
+      </div>
+    </div>
+
+    <!-- Presets -->
+    <div class="presets" id="presets">
+      <div class="preset-chip active" data-preset="balanced">⚖️ متوازن</div>
+      <div class="preset-chip" data-preset="deep">🌀 عميق جداً</div>
+      <div class="preset-chip" data-preset="gentle">🍃 لطيف</div>
+      <div class="preset-chip" data-preset="intense">🔥 مكثّف</div>
+    </div>
+  </div>
+
+  <!-- 3. Controls -->
+  <div class="section" style="animation-delay:0.15s">
+    <div class="sec-head">
+      <div class="sec-icon" style="background:rgba(56,189,248,0.1);color:var(--accent-blue);">
+        <i class="fas fa-sliders"></i>
+      </div>
+      <div>
+        <div class="sec-title">ضبط المعالجة</div>
+        <div class="sec-desc">تحكم دقيق في كيفية تحويل الصوت</div>
+      </div>
+    </div>
+
+    <div class="ctrl-group">
+      <div class="ctrl-row"><span class="ctrl-label">تردد التحفيز العصبي</span><span class="ctrl-val" id="vFreq">10.0 Hz</span></div>
+      <input type="range" id="sFreq" min="0.5" max="100" step="0.5" value="10">
+    </div>
+    <div class="ctrl-group">
+      <div class="ctrl-row"><span class="ctrl-label">عمق التحويل الداخلي</span><span class="ctrl-val" id="vDepth">75%</span></div>
+      <input type="range" id="sDepth" min="0" max="100" step="1" value="75">
+    </div>
+    <div class="ctrl-group">
+      <div class="ctrl-row"><span class="ctrl-label">مستوى الهمس (Whisper)</span><span class="ctrl-val" id="vWhisper">60%</span></div>
+      <input type="range" id="sWhisper" min="0" max="100" step="1" value="60">
+    </div>
+    <div class="ctrl-group">
+      <div class="ctrl-row"><span class="ctrl-label">رنين الجمجمة (Resonance)</span><span class="ctrl-val" id="vResonance">50%</span></div>
+      <input type="range" id="sResonance" min="0" max="100" step="1" value="50">
+    </div>
+    <div class="ctrl-group">
+      <div class="ctrl-row"><span class="ctrl-label">مستوى الصوت تحت الوعي</span><span class="ctrl-val" id="vSublevel">40%</span></div>
+      <input type="range" id="sSublevel" min="5" max="100" step="1" value="40">
+    </div>
+
+    <div class="tog-row">
+      <div class="tog-text">
+        <div class="tog-title">نغمات ثنائية الأذن (Binaural)</div>
+        <div class="tog-desc">يخلق صوتاً وهمياً داخل الدماغ — يتطلب سماعات</div>
+      </div>
+      <label class="tog"><input type="checkbox" id="tBinaural" checked><span class="tog-track"></span></label>
+    </div>
+    <div class="tog-row">
+      <div class="tog-text">
+        <div class="tog-title">تأثير الهمس الداخلي</div>
+        <div class="tog-desc">يحول الصوت لهمسة داخلية كحديث النفس</div>
+      </div>
+      <label class="tog"><input type="checkbox" id="tWhisper" checked><span class="tog-track"></span></label>
+    </div>
+    <div class="tog-row">
+      <div class="tog-text">
+        <div class="tog-title">محاكاة رنين الجمجمة</div>
+        <div class="tog-desc">يضيف رنين طبيعي يشبه التوصيل العظمي</div>
+      </div>
+      <label class="tog"><input type="checkbox" id="tResonance" checked><span class="tog-track"></span></label>
+    </div>
+    <div class="tog-row">
+      <div class="tog-text">
+        <div class="tog-title">ضغط ديناميكي</div>
+        <div class="tog-desc">يجعل الصوت متساوياً كالصوت الداخلي الطبيعي</div>
+      </div>
+      <label class="tog"><input type="checkbox" id="tCompress" checked><span class="tog-track"></span></label>
+    </div>
+    <div class="tog-row">
+      <div class="tog-text">
+        <div class="tog-title">مزج مركزي (Crossfeed)</div>
+        <div class="tog-desc">يجعل الصوت يبدو قادماً من مركز الرأس</div>
+      </div>
+      <label class="tog"><input type="checkbox" id="tCrossfeed" checked><span class="tog-track"></span></label>
+    </div>
+  </div>
+
+  <!-- 4. Player -->
+  <div class="section" style="animation-delay:0.2s">
+    <div class="sec-head">
+      <div class="sec-icon" style="background:rgba(251,191,36,0.1);color:var(--accent-amber);">
+        <i class="fas fa-wave-square"></i>
+      </div>
+      <div>
+        <div class="sec-title">التشغيل والتصور</div>
+      </div>
+    </div>
+
+    <div class="viz-box">
+      <canvas id="vizCanvas"></canvas>
+      <div class="viz-tag">NEURAL WAVEFORM</div>
+      <div class="viz-mode-tag" id="vizModeTag">INNER VOICE — 10 Hz</div>
+    </div>
+
+    <div class="transport">
+      <button class="btn-round" id="btnPlay" disabled><i class="fas fa-play" id="iPlay"></i></button>
+      <button class="btn-round sm" id="btnStop" disabled><i class="fas fa-stop"></i></button>
+      <div class="prog-wrap">
+        <div class="prog-bg" id="progBar"><div class="prog-fill" id="progFill"></div></div>
+        <div class="prog-times"><span id="tCur">0:00</span><span id="tTotal">0:00</span></div>
+      </div>
+    </div>
+
+    <div class="vol-row">
+      <i class="fas fa-volume-high"></i>
+      <input type="range" id="sVol" min="0" max="100" step="1" value="80">
+      <span class="ctrl-val" id="vVol">80%</span>
+    </div>
+
+    <div class="status" id="statusBar">
+      <div class="spin" id="statusSpin" style="display:none"></div>
+      <i class="fas fa-circle-info" id="statusIco"></i>
+      <span id="statusMsg"></span>
+    </div>
+
+    <button class="btn-main btn-process" id="btnProcess" disabled>
+      <i class="fas fa-bolt"></i>
+      <span>تحويل إلى صوت داخلي</span>
+    </button>
+    <button class="btn-main btn-dl" id="btnDL" disabled>
+      <i class="fas fa-download"></i>
+      <span>تحميل الملف المحوّل</span>
+    </button>
+  </div>
+
+  <!-- 5. Info -->
+  <div class="section" style="animation-delay:0.25s">
+    <div class="sec-head">
+      <div class="sec-icon" style="background:rgba(45,212,191,0.1);color:var(--accent-teal);">
+        <i class="fas fa-chart-bar"></i>
+      </div>
+      <div><div class="sec-title">معلومات المعالجة</div></div>
+    </div>
+    <div class="info-grid">
+      <div class="info-cell"><div class="il">الوضع</div><div class="iv" id="iMode">الصوت الداخلي</div></div>
+      <div class="info-cell"><div class="il">التردد</div><div class="iv" id="iFreq">10.0 Hz</div></div>
+      <div class="info-cell"><div class="il">عمق التحويل</div><div class="iv" id="iDepth">75%</div></div>
+      <div class="info-cell"><div class="il">ثنائي الأذن</div><div class="iv" id="iBin">نعم</div></div>
+    </div>
+  </div>
+
+  <!-- 6. How It Works -->
+  <div class="section explain" style="animation-delay:0.3s">
+    <div class="sec-head">
+      <div class="sec-icon" style="background:rgba(251,113,133,0.1);color:var(--accent-rose);">
+        <i class="fas fa-lightbulb"></i>
+      </div>
+      <div><div class="sec-title">كيف يعمل الصوت الداخلي؟</div></div>
+    </div>
+    <p><strong>١. تأثير الهمس (Whisper Effect):</strong> يزيل الترددات العالية الحادة ويُبقي النطاق 200–800 Hz حيث يتشكّل "صوتك الداخلي"، فيبدو الصوت وكأنه حديث نفسك.</p>
+    <p><strong>٢. رنين الجمجمة (Bone Resonance):</strong> يُعزّز الترددات المنخفضة (80–300 Hz) التي تشبه ما تسمعه عبر عظام الجمجمة، مما يخلق إحساساً بأن الصوت يأتي من داخل رأسك.</p>
+    <p><span class="highlight">٣. المزج المركزي (Crossfeed):</span> يمزج القنوات الصوتية بطريقة تجعل الصوت يبدو متمركزاً داخل الدماغ بدلاً من الأذنين.</p>
+    <p><strong>٤. النغمات الثنائية (Binaural Beats):</strong> تردد مختلف لكل أذن → يُنتج نغمة "وهمية" يصنعها الدماغ نفسه ويسمعها مباشرة.</p>
+    <p><strong>٥. الضغط الديناميكي:</strong> يُسوّي مستوى الصوت ليصبح ثابتاً وهادئاً كما يبدو الصوت الداخلي الطبيعي في ذهنك.</p>
+    <div class="note">
+      <i class="fas fa-headphones"></i>
+      <strong>مهم:</strong> استخدم سماعات الرأس للحصول على التجربة الكاملة. النغمات الثنائية والمزج المركزي لا يعملان بدون سماعات. اجلس في مكان هادئ وأغمض عينيك لأفضل تجربة.
+    </div>
+  </div>
+
+  <div class="footer">NEUROSOUND — INNER VOICE TECHNOLOGY</div>
+</div>
+
+<script>
+/* ============ DARK MODE ============ */
+(function(){
+  function applyTheme(dark) {
+    if (dark) document.documentElement.classList.add('dark');
+    else document.documentElement.classList.remove('dark');
+  }
+  if (window.matchMedia) {
+    applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches);
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e){ applyTheme(e.matches); });
+  } else {
+    applyTheme(true);
+  }
+})();
+
+/* ============ STATE ============ */
+var S = {
+  file: null,
+  rawBuffer: null,
+  processed: null,
+  blob: null,
+  ctx: null,
+  src: null,
+  gain: null,
+  analyser: null,
+  playing: false,
+  startT: 0,
+  pauseOff: 0,
+  animId: null,
+  mode: 'inner'
+};
+
+/* ============ DOM ============ */
+var $ = function(id){ return document.getElementById(id); };
+var uploadZone = $('uploadZone'), audioInput = $('audioInput'),
+    uploadPh = $('uploadPh'), fileRow = $('fileRow'),
+    fName = $('fName'), fMeta = $('fMeta'), btnRemove = $('btnRemove');
+var modesGrid = $('modesGrid'), presetsEl = $('presets');
+var sFreq = $('sFreq'), vFreq = $('vFreq'),
+    sDepth = $('sDepth'), vDepth = $('vDepth'),
+    sWhisper = $('sWhisper'), vWhisper = $('vWhisper'),
+    sResonance = $('sResonance'), vResonance = $('vResonance'),
+    sSublevel = $('sSublevel'), vSublevel = $('vSublevel');
+var tBinaural = $('tBinaural'), tWhisper = $('tWhisper'),
+    tResonance = $('tResonance'), tCompress = $('tCompress'), tCrossfeed = $('tCrossfeed');
+var btnPlay = $('btnPlay'), btnStop = $('btnStop'), iPlay = $('iPlay');
+var progBar = $('progBar'), progFill = $('progFill'), tCur = $('tCur'), tTotal = $('tTotal');
+var sVol = $('sVol'), vVol = $('vVol');
+var statusBar = $('statusBar'), statusSpin = $('statusSpin'), statusIco = $('statusIco'), statusMsg = $('statusMsg');
+var btnProcess = $('btnProcess'), btnDL = $('btnDL');
+var vizCanvas = $('vizCanvas'), vizCtx = vizCanvas.getContext('2d'), vizModeTag = $('vizModeTag');
+var iMode = $('iMode'), iFreq = $('iFreq'), iDepth = $('iDepth'), iBin = $('iBin');
+
+var modeNames = { inner:'الصوت الداخلي', subliminal:'تحت الوعي', meditate:'تأمل عميق', focus:'تحفيز ذهني' };
+var modeTags  = { inner:'INNER VOICE', subliminal:'SUBLIMINAL', meditate:'DEEP MEDITATION', focus:'NEURO FOCUS' };
+var modeColors = {
+  inner:  {r:110,g:231,b:183},
+  subliminal:{r:167,g:139,b:250},
+  meditate:{r:56,g:189,b:248},
+  focus:  {r:251,g:191,b:36}
+};
+
+/* ============ UTILS ============ */
+function fmtTime(s){ var m=Math.floor(s/60),ss=Math.floor(s%60); return m+':'+(ss<10?'0':'')+ss; }
+function fmtSize(b){ return b<1048576?(b/1024).toFixed(1)+' KB':(b/1048576).toFixed(1)+' MB'; }
+
+function showSt(type, msg){
+  statusBar.className = 'status on ' + type;
+  statusMsg.textContent = msg;
+  if(type==='working'){ statusSpin.style.display='block'; statusIco.style.display='none'; }
+  else { statusSpin.style.display='none'; statusIco.style.display=''; statusIco.className=type==='done'?'fas fa-circle-check':'fas fa-circle-xmark'; }
+}
+function hideSt(){ statusBar.className='status'; }
+function getCtx(){ if(!S.ctx) S.ctx = new (window.AudioContext||window.webkitAudioContext)(); return S.ctx; }
+
+/* ============ UPLOAD ============ */
+uploadZone.addEventListener('click', function(e){ if(e.target===btnRemove||btnRemove.contains(e.target)) return; audioInput.click(); });
+uploadZone.addEventListener('dragover', function(e){ e.preventDefault(); uploadZone.classList.add('hovering'); });
+uploadZone.addEventListener('dragleave', function(){ uploadZone.classList.remove('hovering'); });
+uploadZone.addEventListener('drop', function(e){ e.preventDefault(); uploadZone.classList.remove('hovering'); if(e.dataTransfer.files.length && e.dataTransfer.files[0].type.startsWith('audio/')) loadFile(e.dataTransfer.files[0]); });
+audioInput.addEventListener('change', function(){ if(audioInput.files.length) loadFile(audioInput.files[0]); });
+btnRemove.addEventListener('click', function(e){ e.stopPropagation(); resetAll(); });
+
+function loadFile(f){
+  if(f.size>50*1048576){ showSt('fail','حجم الملف يتجاوز الحد'); return; }
+  S.file = f;
+  fName.textContent = f.name;
+  fMeta.textContent = fmtSize(f.size)+' • '+f.type.split('/')[1].toUpperCase();
+  uploadPh.style.display='none'; fileRow.style.display='flex'; uploadZone.classList.add('loaded');
+  btnProcess.disabled=false; hideSt();
+  var r=new FileReader();
+  r.onload=function(e){
+    getCtx().decodeAudioData(e.target.result).then(function(buf){
+      S.rawBuffer=buf; tTotal.textContent=fmtTime(buf.duration);
+      showSt('done','جاهز للتحويل إلى صوت داخلي');
+    }).catch(function(){ showSt('fail','تعذّر قراءة الملف'); btnProcess.disabled=true; });
+  };
+  r.readAsArrayBuffer(f);
+}
+
+function resetAll(){
+  stopAudio();
+  S.file=null; S.rawBuffer=null; S.processed=null; S.blob=null;
+  uploadPh.style.display=''; fileRow.style.display='none'; uploadZone.classList.remove('loaded');
+  audioInput.value='';
+  btnProcess.disabled=true; btnPlay.disabled=true; btnStop.disabled=true; btnDL.disabled=true;
+  progFill.style.width='0%'; tCur.textContent='0:00'; tTotal.textContent='0:00';
+  hideSt();
+}
+
+/* ============ MODE SELECT ============ */
+modesGrid.addEventListener('click', function(e){
+  var card = e.target.closest('.mode-card');
+  if(!card) return;
+  document.querySelectorAll('.mode-card').forEach(function(c){ c.classList.remove('active'); });
+  card.classList.add('active');
+  S.mode = card.dataset.mode;
+  applyModeDefaults();
+  updateInfo();
+});
+
+presetsEl.addEventListener('click', function(e){
+  var chip = e.target.closest('.preset-chip');
+  if(!chip) return;
+  document.querySelectorAll('.preset-chip').forEach(function(c){ c.classList.remove('active'); });
+  chip.classList.add('active');
+  applyPreset(chip.dataset.preset);
+});
+
+function applyModeDefaults(){
+  var m = S.mode;
+  if(m==='inner')     { sFreq.value=10; sDepth.value=75; sWhisper.value=60; sResonance.value=50; sSublevel.value=40; tBinaural.checked=true; tWhisper.checked=true; tResonance.checked=true; tCompress.checked=true; tCrossfeed.checked=true; }
+  if(m==='subliminal'){ sFreq.value=6;  sDepth.value=90; sWhisper.value=80; sResonance.value=60; sSublevel.value=20; tBinaural.checked=true; tWhisper.checked=true; tResonance.checked=true; tCompress.checked=true; tCrossfeed.checked=true; }
+  if(m==='meditate')  { sFreq.value=4;  sDepth.value=70; sWhisper.value=50; sResonance.value=70; sSublevel.value=35; tBinaural.checked=true; tWhisper.checked=true; tResonance.checked=true; tCompress.checked=true; tCrossfeed.checked=true; }
+  if(m==='focus')     { sFreq.value=40; sDepth.value=60; sWhisper.value=30; sResonance.value=40; sSublevel.value=50; tBinaural.checked=true; tWhisper.checked=false; tResonance.checked=true; tCompress.checked=true; tCrossfeed.checked=true; }
+  syncSliderDisplays();
+}
+
+function applyPreset(p){
+  if(p==='balanced') { sDepth.value=75; sWhisper.value=60; sResonance.value=50; sSublevel.value=40; }
+  if(p==='deep')     { sDepth.value=95; sWhisper.value=85; sResonance.value=75; sSublevel.value=25; }
+  if(p==='gentle')   { sDepth.value=50; sWhisper.value=40; sResonance.value=35; sSublevel.value=55; }
+  if(p==='intense')  { sDepth.value=100;sWhisper.value=90; sResonance.value=80; sSublevel.value=15; }
+  syncSliderDisplays();
+}
+
+function syncSliderDisplays(){
+  vFreq.textContent = parseFloat(sFreq.value).toFixed(1)+' Hz';
+  vDepth.textContent = sDepth.value+'%';
+  vWhisper.textContent = sWhisper.value+'%';
+  vResonance.textContent = sResonance.value+'%';
+  vSublevel.textContent = sSublevel.value+'%';
+  updateInfo();
+}
+
+/* Slider events */
+[sFreq,sDepth,sWhisper,sResonance,sSublevel,sVol].forEach(function(sl){
+  sl.addEventListener('input', syncSliderDisplays);
+});
+sVol.addEventListener('input', function(){
+  vVol.textContent = sVol.value+'%';
+  if(S.gain) S.gain.gain.value = sVol.value/100;
+});
+
+function updateInfo(){
+  iMode.textContent = modeNames[S.mode]||S.mode;
+  iFreq.textContent = parseFloat(sFreq.value).toFixed(1)+' Hz';
+  iDepth.textContent = sDepth.value+'%';
+  iBin.textContent = tBinaural.checked?'نعم':'لا';
+  vizModeTag.textContent = (modeTags[S.mode]||'')+ ' — ' + parseFloat(sFreq.value).toFixed(1) + ' Hz';
+}
+updateInfo();
+
+/* ============ AUDIO PROCESSING ENGINE ============ */
+btnProcess.addEventListener('click', function(){
+  if(!S.rawBuffer) return;
+  processAudio();
+});
+
+function processAudio(){
+  stopAudio();
+  showSt('working','جارٍ تحويل الصوت إلى تجربة داخلية...');
+  btnProcess.disabled=true; btnPlay.disabled=true; btnDL.disabled=true;
+
+  setTimeout(function(){
+    try {
+      var freq      = parseFloat(sFreq.value);
+      var depth     = parseInt(sDepth.value)/100;
+      var whisperAmt= parseInt(sWhisper.value)/100;
+      var resAmt    = parseInt(sResonance.value)/100;
+      var subLevel  = parseInt(sSublevel.value)/100;
+      var useBin    = tBinaural.checked;
+      var useWhisper= tWhisper.checked;
+      var useRes    = tResonance.checked;
+      var useComp   = tCompress.checked;
+      var useCross  = tCrossfeed.checked;
+
+      var raw = S.rawBuffer;
+      var sr  = raw.sampleRate;
+      var len = raw.length;
+      var outCh = 2; // always stereo for binaural/crossfeed
+
+      var buf = new (window.OfflineAudioContext||window.webkitOfflineAudioContext)(outCh, len, sr).createBuffer(outCh, len, sr);
+
+      // Get mono mix of input
+      var mono = new Float32Array(len);
+      for(var c=0; c<raw.numberOfChannels; c++){
+        var ch = raw.getChannelData(c);
+        for(var i=0;i<len;i++) mono[i] += ch[i];
       }
-    });
+      var chCount = raw.numberOfChannels;
+      for(var i2=0;i2<len;i2++) mono[i2] /= chCount;
 
-    /* ========= State ========= */
-    var audioFile = null;
-    var audioBuffer = null;
-    var processedBuffer = null;
-    var audioContext = null;
-    var sourceNode = null;
-    var gainNode = null;
-    var analyserNode = null;
-    var binauralOscL = null;
-    var binauralOscR = null;
-    var binauralGainL = null;
-    var binauralGainR = null;
-    var mergerNode = null;
-    var isPlaying = false;
-    var startTime = 0;
-    var pauseOffset = 0;
-    var animationId = null;
-    var downloadBlob = null;
-
-    /* ========= DOM Refs ========= */
-    var uploadZone = document.getElementById('uploadZone');
-    var audioInput = document.getElementById('audioInput');
-    var uploadPlaceholder = document.getElementById('uploadPlaceholder');
-    var fileInfoDisplay = document.getElementById('fileInfoDisplay');
-    var fileNameEl = document.getElementById('fileName');
-    var fileMetaEl = document.getElementById('fileMeta');
-    var removeFileBtn = document.getElementById('removeFile');
-    var freqBandsEl = document.getElementById('freqBands');
-    var freqSlider = document.getElementById('freqSlider');
-    var freqValueEl = document.getElementById('freqValue');
-    var depthSlider = document.getElementById('depthSlider');
-    var depthValueEl = document.getElementById('depthValue');
-    var binauralToggle = document.getElementById('binauralToggle');
-    var carrierSlider = document.getElementById('carrierSlider');
-    var carrierValueEl = document.getElementById('carrierValue');
-    var carrierGroup = document.getElementById('carrierGroup');
-    var btnPlay = document.getElementById('btnPlay');
-    var btnStop = document.getElementById('btnStop');
-    var playIcon = document.getElementById('playIcon');
-    var progressBar = document.getElementById('progressBar');
-    var progressFill = document.getElementById('progressFill');
-    var currentTimeEl = document.getElementById('currentTime');
-    var totalTimeEl = document.getElementById('totalTime');
-    var volumeSlider = document.getElementById('volumeSlider');
-    var volumeValueEl = document.getElementById('volumeValue');
-    var statusBar = document.getElementById('statusBar');
-    var statusSpinner = document.getElementById('statusSpinner');
-    var statusIcon = document.getElementById('statusIcon');
-    var statusText = document.getElementById('statusText');
-    var btnProcess = document.getElementById('btnProcess');
-    var btnDownload = document.getElementById('btnDownload');
-    var visualizerCanvas = document.getElementById('visualizer');
-    var vizCtx = visualizerCanvas.getContext('2d');
-    var waveMarker = document.getElementById('waveMarker');
-    var processingOverlay = document.getElementById('processingOverlay');
-
-    /* Info display */
-    var infoBandEl = document.getElementById('infoband');
-    var infoFreqEl = document.getElementById('infoFreq');
-    var infoDepthEl = document.getElementById('infoDepth');
-    var infoBinauralEl = document.getElementById('infoBinaural');
-
-    var bandNames = {
-      delta: 'دلتا',
-      theta: 'ثيتا',
-      alpha: 'ألفا',
-      beta: 'بيتا',
-      gamma: 'غاما'
-    };
-
-    var markerNames = {
-      delta: 'DELTA',
-      theta: 'THETA',
-      alpha: 'ALPHA',
-      beta: 'BETA',
-      gamma: 'GAMMA'
-    };
-
-    var currentBand = 'alpha';
-
-    /* ========= Utility ========= */
-    function formatTime(seconds) {
-      var m = Math.floor(seconds / 60);
-      var s = Math.floor(seconds % 60);
-      return m + ':' + (s < 10 ? '0' : '') + s;
-    }
-
-    function formatSize(bytes) {
-      if (bytes < 1024) return bytes + ' B';
-      if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-      return (bytes / 1048576).toFixed(1) + ' MB';
-    }
-
-    function showStatus(type, text) {
-      statusBar.className = 'status-bar visible ' + type;
-      statusText.textContent = text;
-      if (type === 'processing') {
-        statusSpinner.style.display = 'block';
-        statusIcon.style.display = 'none';
-      } else {
-        statusSpinner.style.display = 'none';
-        statusIcon.style.display = 'block';
-        statusIcon.className = type === 'success' ? 'fas fa-circle-check' : 'fas fa-circle-xmark';
-      }
-    }
-
-    function hideStatus() {
-      statusBar.className = 'status-bar';
-    }
-
-    function getAudioContext() {
-      if (!audioContext) {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      return audioContext;
-    }
-
-    /* ========= File Upload ========= */
-    uploadZone.addEventListener('click', function(e) {
-      if (e.target === removeFileBtn || removeFileBtn.contains(e.target)) return;
-      audioInput.click();
-    });
-
-    uploadZone.addEventListener('dragover', function(e) {
-      e.preventDefault();
-      uploadZone.classList.add('drag-over');
-    });
-
-    uploadZone.addEventListener('dragleave', function() {
-      uploadZone.classList.remove('drag-over');
-    });
-
-    uploadZone.addEventListener('drop', function(e) {
-      e.preventDefault();
-      uploadZone.classList.remove('drag-over');
-      var files = e.dataTransfer.files;
-      if (files.length > 0 && files[0].type.startsWith('audio/')) {
-        handleFile(files[0]);
-      }
-    });
-
-    audioInput.addEventListener('change', function() {
-      if (audioInput.files.length > 0) {
-        handleFile(audioInput.files[0]);
-      }
-    });
-
-    removeFileBtn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      resetFile();
-    });
-
-    function handleFile(file) {
-      if (file.size > 50 * 1024 * 1024) {
-        showStatus('error', 'حجم الملف يتجاوز 50 ميجابايت');
-        return;
-      }
-
-      audioFile = file;
-      fileNameEl.textContent = file.name;
-      fileMetaEl.textContent = formatSize(file.size) + ' • ' + file.type.split('/')[1].toUpperCase();
-
-      uploadPlaceholder.style.display = 'none';
-      fileInfoDisplay.style.display = 'block';
-      uploadZone.classList.add('has-file');
-
-      btnProcess.disabled = false;
-      hideStatus();
-
-      /* Decode audio */
-      var ctx = getAudioContext();
-      var reader = new FileReader();
-      reader.onload = function(ev) {
-        ctx.decodeAudioData(ev.target.result).then(function(buffer) {
-          audioBuffer = buffer;
-          totalTimeEl.textContent = formatTime(buffer.duration);
-          showStatus('success', 'تم تحميل الملف — جاهز للمعالجة');
-        }).catch(function() {
-          showStatus('error', 'تعذّر قراءة الملف الصوتي');
-          btnProcess.disabled = true;
-        });
-      };
-      reader.readAsArrayBuffer(file);
-    }
-
-    function resetFile() {
-      stopAudio();
-      audioFile = null;
-      audioBuffer = null;
-      processedBuffer = null;
-      downloadBlob = null;
-
-      uploadPlaceholder.style.display = '';
-      fileInfoDisplay.style.display = 'none';
-      uploadZone.classList.remove('has-file');
-      audioInput.value = '';
-
-      btnProcess.disabled = true;
-      btnPlay.disabled = true;
-      btnStop.disabled = true;
-      btnDownload.disabled = true;
-      progressFill.style.width = '0%';
-      currentTimeEl.textContent = '0:00';
-      totalTimeEl.textContent = '0:00';
-      hideStatus();
-    }
-
-    /* ========= Frequency Band Selection ========= */
-    freqBandsEl.addEventListener('click', function(e) {
-      var band = e.target.closest('.freq-band');
-      if (!band) return;
-
-      document.querySelectorAll('.freq-band').forEach(function(b) { b.classList.remove('active'); });
-      band.classList.add('active');
-
-      currentBand = band.dataset.band;
-      var freq = parseFloat(band.dataset.freq);
-      freqSlider.value = freq;
-      freqValueEl.textContent = freq.toFixed(1) + ' Hz';
-      updateInfoDisplay();
-    });
-
-    freqSlider.addEventListener('input', function() {
-      var val = parseFloat(freqSlider.value);
-      freqValueEl.textContent = val.toFixed(1) + ' Hz';
-
-      /* Auto-select band */
-      document.querySelectorAll('.freq-band').forEach(function(b) { b.classList.remove('active'); });
-      if (val <= 4) currentBand = 'delta';
-      else if (val <= 8) currentBand = 'theta';
-      else if (val <= 13) currentBand = 'alpha';
-      else if (val <= 30) currentBand = 'beta';
-      else currentBand = 'gamma';
-
-      var activeBand = document.querySelector('.freq-band[data-band="' + currentBand + '"]');
-      if (activeBand) activeBand.classList.add('active');
-      updateInfoDisplay();
-    });
-
-    depthSlider.addEventListener('input', function() {
-      depthValueEl.textContent = depthSlider.value + '%';
-      updateInfoDisplay();
-    });
-
-    binauralToggle.addEventListener('change', function() {
-      carrierGroup.style.opacity = binauralToggle.checked ? '1' : '0.4';
-      carrierGroup.style.pointerEvents = binauralToggle.checked ? 'auto' : 'none';
-      updateInfoDisplay();
-    });
-
-    carrierSlider.addEventListener('input', function() {
-      carrierValueEl.textContent = carrierSlider.value + ' Hz';
-    });
-
-    volumeSlider.addEventListener('input', function() {
-      volumeValueEl.textContent = volumeSlider.value + '%';
-      if (gainNode) {
-        gainNode.gain.value = volumeSlider.value / 100;
-      }
-    });
-
-    function updateInfoDisplay() {
-      infoBandEl.textContent = bandNames[currentBand] || currentBand;
-      infoFreqEl.textContent = parseFloat(freqSlider.value).toFixed(1) + ' Hz';
-      infoDepthEl.textContent = depthSlider.value + '%';
-      infoBinauralEl.textContent = binauralToggle.checked ? 'نعم' : 'لا';
-      waveMarker.textContent = (markerNames[currentBand] || currentBand.toUpperCase()) + ' ' + parseFloat(freqSlider.value).toFixed(1) + ' Hz';
-    }
-
-    /* ========= Audio Processing ========= */
-    btnProcess.addEventListener('click', function() {
-      if (!audioBuffer) return;
-      processAudio();
-    });
-
-    function processAudio() {
-      stopAudio();
-      showStatus('processing', 'جارٍ معالجة وتحويل الترددات...');
-      processingOverlay.classList.add('visible');
-      btnProcess.disabled = true;
-      btnPlay.disabled = true;
-      btnDownload.disabled = true;
-
-      var entrainFreq = parseFloat(freqSlider.value);
-      var depth = parseInt(depthSlider.value) / 100;
-      var useBinaural = binauralToggle.checked;
-      var carrierFreq = parseInt(carrierSlider.value);
-
-      /* Process in a timeout to not block UI */
-      setTimeout(function() {
-        try {
-          var ctx = getAudioContext();
-          var sampleRate = audioBuffer.sampleRate;
-          var numChannels = useBinaural ? 2 : audioBuffer.numberOfChannels;
-          var length = audioBuffer.length;
-
-          var offlineCtx = new OfflineAudioContext(numChannels, length, sampleRate);
-
-          /* Create processed buffer manually for precision */
-          var newBuffer = offlineCtx.createBuffer(numChannels, length, sampleRate);
-
-          for (var ch = 0; ch < audioBuffer.numberOfChannels; ch++) {
-            var inputData = audioBuffer.getChannelData(ch);
-
-            if (useBinaural) {
-              /* Left channel: AM + binaural left */
-              var leftData = newBuffer.getChannelData(0);
-              var rightData = newBuffer.getChannelData(1);
-
-              var halfDiff = entrainFreq / 2;
-              var freqL = carrierFreq - halfDiff;
-              var freqR = carrierFreq + halfDiff;
-
-              for (var i = 0; i < length; i++) {
-                var t = i / sampleRate;
-                var sample = inputData[i];
-
-                /* Amplitude modulation */
-                var amFactor = 1 - depth + depth * (0.5 + 0.5 * Math.sin(2 * Math.PI * entrainFreq * t));
-                var modSample = sample * amFactor;
-
-                /* Binaural beat tones */
-                var binauralAmp = 0.08 * depth;
-                var toneL = binauralAmp * Math.sin(2 * Math.PI * freqL * t);
-                var toneR = binauralAmp * Math.sin(2 * Math.PI * freqR * t);
-
-                if (ch === 0) {
-                  leftData[i] = modSample + toneL;
-                  rightData[i] = modSample + toneR;
-                } else {
-                  leftData[i] += modSample * 0.5;
-                  rightData[i] += modSample * 0.5;
-                }
-              }
-            } else {
-              /* Mono or multi-channel AM only */
-              var outData = newBuffer.getChannelData(Math.min(ch, numChannels - 1));
-
-              for (var j = 0; j < length; j++) {
-                var tt = j / sampleRate;
-                var samp = inputData[j];
-
-                var amf = 1 - depth + depth * (0.5 + 0.5 * Math.sin(2 * Math.PI * entrainFreq * tt));
-                outData[j] = samp * amf;
-              }
-            }
-          }
-
-          /* Isochronic pulse overlay */
-          var pulseChannel = newBuffer.getChannelData(0);
-          for (var p = 0; p < length; p++) {
-            var tp = p / sampleRate;
-            var pulse = Math.sin(2 * Math.PI * entrainFreq * tp) > 0 ? 1 : 0;
-            var isoAmp = 0.03 * depth;
-            var isoTone = isoAmp * pulse * Math.sin(2 * Math.PI * 220 * tp);
-            pulseChannel[p] += isoTone;
-            if (numChannels > 1) {
-              newBuffer.getChannelData(1)[p] += isoTone;
-            }
-          }
-
-          /* Soft clipping */
-          for (var cc = 0; cc < numChannels; cc++) {
-            var cd = newBuffer.getChannelData(cc);
-            for (var k = 0; k < length; k++) {
-              cd[k] = Math.tanh(cd[k]);
-            }
-          }
-
-          processedBuffer = newBuffer;
-
-          /* Encode to WAV for download */
-          downloadBlob = encodeWAV(newBuffer);
-
-          processingOverlay.classList.remove('visible');
-          showStatus('success', 'تمت المعالجة بنجاح! يمكنك الآن تشغيل الصوت المحوّل');
-          btnProcess.disabled = false;
-          btnPlay.disabled = false;
-          btnStop.disabled = false;
-          btnDownload.disabled = false;
-          updateInfoDisplay();
-
-        } catch (err) {
-          processingOverlay.classList.remove('visible');
-          showStatus('error', 'حدث خطأ أثناء المعالجة: ' + err.message);
-          btnProcess.disabled = false;
+      // ---- Stage 1: Whisper / inner voice filter ----
+      // Simulate internal voice by heavy low-pass + resonant bandpass around 200-800Hz
+      var whispered = new Float32Array(len);
+      if(useWhisper && whisperAmt > 0){
+        // Simple IIR low-pass at ~900Hz and resonance boost at ~400Hz
+        var lpCutoff = 900 - whisperAmt * 400; // 500-900 Hz
+        var rc = 1.0/(2*Math.PI*lpCutoff);
+        var dt = 1.0/sr;
+        var lpAlpha = dt/(rc+dt);
+        var prev = 0;
+        for(var w=0;w<len;w++){
+          prev = prev + lpAlpha*(mono[w]-prev);
+          whispered[w] = prev;
         }
-      }, 100);
-    }
-
-    /* ========= WAV Encoding ========= */
-    function encodeWAV(buffer) {
-      var numChannels = buffer.numberOfChannels;
-      var sampleRate = buffer.sampleRate;
-      var length = buffer.length;
-      var bytesPerSample = 2;
-      var dataLength = length * numChannels * bytesPerSample;
-      var headerLength = 44;
-      var totalLength = headerLength + dataLength;
-
-      var arrayBuffer = new ArrayBuffer(totalLength);
-      var view = new DataView(arrayBuffer);
-
-      /* WAV header */
-      writeString(view, 0, 'RIFF');
-      view.setUint32(4, totalLength - 8, true);
-      writeString(view, 8, 'WAVE');
-      writeString(view, 12, 'fmt ');
-      view.setUint32(16, 16, true);
-      view.setUint16(20, 1, true);
-      view.setUint16(22, numChannels, true);
-      view.setUint32(24, sampleRate, true);
-      view.setUint32(28, sampleRate * numChannels * bytesPerSample, true);
-      view.setUint16(32, numChannels * bytesPerSample, true);
-      view.setUint16(34, bytesPerSample * 8, true);
-      writeString(view, 36, 'data');
-      view.setUint32(40, dataLength, true);
-
-      /* Interleave channels */
-      var channels = [];
-      for (var c = 0; c < numChannels; c++) {
-        channels.push(buffer.getChannelData(c));
-      }
-
-      var offset = 44;
-      for (var i = 0; i < length; i++) {
-        for (var ch = 0; ch < numChannels; ch++) {
-          var sample = Math.max(-1, Math.min(1, channels[ch][i]));
-          var intSample = sample < 0 ? sample * 32768 : sample * 32767;
-          view.setInt16(offset, intSample, true);
-          offset += 2;
+        // Bandpass resonance around 350Hz for "inner voice" character
+        var bpFreq = 350;
+        var bpQ = 2 + whisperAmt * 4;
+        var bpW0 = 2*Math.PI*bpFreq/sr;
+        var bpAlp = Math.sin(bpW0)/(2*bpQ);
+        var b0=bpAlp, b1=0, b2=-bpAlp;
+        var a0=1+bpAlp, a1=-2*Math.cos(bpW0), a2=1-bpAlp;
+        b0/=a0; b1/=a0; b2/=a0; a1/=a0; a2/=a0;
+        var bx1=0,bx2=0,by1=0,by2=0;
+        var bpOut = new Float32Array(len);
+        for(var bp=0;bp<len;bp++){
+          var xn = whispered[bp];
+          bpOut[bp] = b0*xn + b1*bx1 + b2*bx2 - a1*by1 - a2*by2;
+          bx2=bx1; bx1=xn; by2=by1; by1=bpOut[bp];
         }
-      }
-
-      return new Blob([arrayBuffer], { type: 'audio/wav' });
-    }
-
-    function writeString(view, offset, str) {
-      for (var i = 0; i < str.length; i++) {
-        view.setUint8(offset + i, str.charCodeAt(i));
-      }
-    }
-
-    /* ========= Playback ========= */
-    btnPlay.addEventListener('click', function() {
-      if (isPlaying) {
-        pauseAudio();
-      } else {
-        playAudio();
-      }
-    });
-
-    btnStop.addEventListener('click', function() {
-      stopAudio();
-    });
-
-    progressBar.addEventListener('click', function(e) {
-      if (!processedBuffer) return;
-      var rect = progressBar.getBoundingClientRect();
-      var ratio = (e.clientX - rect.left) / rect.width;
-      ratio = Math.max(0, Math.min(1, ratio));
-      var seekTime = ratio * processedBuffer.duration;
-
-      if (isPlaying) {
-        stopAudio();
-        pauseOffset = seekTime;
-        playAudio();
-      } else {
-        pauseOffset = seekTime;
-        currentTimeEl.textContent = formatTime(seekTime);
-        progressFill.style.width = (ratio * 100) + '%';
-      }
-    });
-
-    function playAudio() {
-      if (!processedBuffer) return;
-      var ctx = getAudioContext();
-
-      if (ctx.state === 'suspended') {
-        ctx.resume();
-      }
-
-      sourceNode = ctx.createBufferSource();
-      sourceNode.buffer = processedBuffer;
-
-      gainNode = ctx.createGain();
-      gainNode.gain.value = volumeSlider.value / 100;
-
-      analyserNode = ctx.createAnalyser();
-      analyserNode.fftSize = 2048;
-
-      sourceNode.connect(gainNode);
-      gainNode.connect(analyserNode);
-      analyserNode.connect(ctx.destination);
-
-      sourceNode.onended = function() {
-        if (isPlaying) {
-          stopAudio();
+        // Blend whispered + bandpass resonance
+        var wMix = whisperAmt;
+        for(var ww=0;ww<len;ww++){
+          whispered[ww] = mono[ww]*(1-wMix) + (whispered[ww]*0.6 + bpOut[ww]*0.4)*wMix;
         }
-      };
+      } else {
+        for(var cp=0;cp<len;cp++) whispered[cp]=mono[cp];
+      }
 
-      sourceNode.start(0, pauseOffset);
-      startTime = ctx.currentTime - pauseOffset;
-      isPlaying = true;
+      // ---- Stage 2: Skull bone resonance ----
+      var resonated = new Float32Array(len);
+      if(useRes && resAmt > 0){
+        // Boost low frequencies 80-300Hz (bone conduction simulation)
+        var rFreq = 150;
+        var rQ = 1.5 + resAmt * 3;
+        var rW0 = 2*Math.PI*rFreq/sr;
+        var rAlp = Math.sin(rW0)/(2*rQ);
+        var A = Math.pow(10, (resAmt*12)/40); // boost up to 12dB
+        var rb0 = 1+rAlp*A, rb1 = -2*Math.cos(rW0), rb2 = 1-rAlp*A;
+        var ra0 = 1+rAlp/A, ra1 = -2*Math.cos(rW0), ra2 = 1-rAlp/A;
+        rb0/=ra0; rb1/=ra0; rb2/=ra0; ra1/=ra0; ra2/=ra0;
+        var rx1=0,rx2=0,ry1=0,ry2=0;
+        for(var rr=0;rr<len;rr++){
+          var rxn = whispered[rr];
+          resonated[rr] = rb0*rxn + rb1*rx1 + rb2*rx2 - ra1*ry1 - ra2*ry2;
+          rx2=rx1; rx1=rxn; ry2=ry1; ry1=resonated[rr];
+        }
+        // Add a subtle reverb-like delay simulating skull cavity resonance
+        var delayMs = 8 + resAmt * 12; // 8-20ms
+        var delaySamples = Math.round(sr * delayMs / 1000);
+        var feedback = 0.2 + resAmt * 0.3;
+        for(var rd=delaySamples;rd<len;rd++){
+          resonated[rd] += resonated[rd-delaySamples] * feedback;
+        }
+      } else {
+        for(var cr=0;cr<len;cr++) resonated[cr]=whispered[cr];
+      }
 
-      playIcon.className = 'fas fa-pause';
-      btnPlay.classList.add('playing');
+      // ---- Stage 3: Dynamic compression ----
+      var compressed = new Float32Array(len);
+      if(useComp){
+        var envThresh = 0.15;
+        var ratio = 4;
+        var atk = Math.exp(-1/(sr*0.005));
+        var rel = Math.exp(-1/(sr*0.1));
+        var env = 0;
+        for(var dc=0;dc<len;dc++){
+          var absVal = Math.abs(resonated[dc]);
+          if(absVal>env) env = atk*env + (1-atk)*absVal;
+          else env = rel*env + (1-rel)*absVal;
+          var gainReduction = 1;
+          if(env>envThresh){
+            var dbOver = 20*Math.log10(env/envThresh);
+            var dbReduced = dbOver * (1-1/ratio);
+            gainReduction = Math.pow(10, -dbReduced/20);
+          }
+          compressed[dc] = resonated[dc] * gainReduction;
+        }
+        // Normalize
+        var peak = 0;
+        for(var np=0;np<len;np++) if(Math.abs(compressed[np])>peak) peak=Math.abs(compressed[np]);
+        if(peak>0.001){
+          var norm = 0.85/peak;
+          for(var nn=0;nn<len;nn++) compressed[nn]*=norm;
+        }
+      } else {
+        for(var cc2=0;cc2<len;cc2++) compressed[cc2]=resonated[cc2];
+      }
 
-      updateProgress();
+      // ---- Stage 4: Amplitude modulation (brainwave entrainment) ----
+      var modulated = new Float32Array(len);
+      for(var am=0;am<len;am++){
+        var t=am/sr;
+        var amFactor = 1 - depth + depth*(0.5+0.5*Math.sin(2*Math.PI*freq*t));
+        modulated[am] = compressed[am] * amFactor;
+      }
+
+      // ---- Stage 5: Sub-level volume reduction (subliminal) ----
+      for(var sv=0;sv<len;sv++){
+        modulated[sv] *= subLevel;
+      }
+
+      // ---- Stage 6: Binaural beats + crossfeed → stereo output ----
+      var leftOut  = buf.getChannelData(0);
+      var rightOut = buf.getChannelData(1);
+
+      var halfDiff = freq/2;
+      var carrierF = 200;
+      var binAmp = useBin ? 0.06*depth : 0;
+
+      for(var out=0;out<len;out++){
+        var t2 = out/sr;
+        var sample = modulated[out];
+
+        if(useCross){
+          // Crossfeed: blend L/R strongly to center the sound in the head
+          // With mono source, add subtle ITD (interaural time difference) simulation
+          var itdSamples = 6; // ~0.15ms at 44.1kHz ≈ minimal ITD
+          var lSamp = sample;
+          var rSamp = (out >= itdSamples) ? modulated[out-itdSamples]*0.95 : sample*0.95;
+          // Mix towards center
+          var crossAmt = 0.85;
+          leftOut[out]  = lSamp*(1-crossAmt*0.5) + rSamp*(crossAmt*0.5);
+          rightOut[out] = rSamp*(1-crossAmt*0.5) + lSamp*(crossAmt*0.5);
+        } else {
+          leftOut[out] = sample;
+          rightOut[out] = sample;
+        }
+
+        // Add binaural tones
+        if(useBin){
+          leftOut[out]  += binAmp * Math.sin(2*Math.PI*(carrierF-halfDiff)*t2);
+          rightOut[out] += binAmp * Math.sin(2*Math.PI*(carrierF+halfDiff)*t2);
+        }
+
+        // Isochronic pulse
+        var pulse = Math.sin(2*Math.PI*freq*t2) > 0 ? 1 : 0;
+        var isoAmp = 0.02 * depth;
+        var isoTone = isoAmp * pulse * Math.sin(2*Math.PI*180*t2);
+        leftOut[out]  += isoTone;
+        rightOut[out] += isoTone;
+      }
+
+      // Soft clip
+      for(var sc=0;sc<len;sc++){
+        leftOut[sc]  = Math.tanh(leftOut[sc]);
+        rightOut[sc] = Math.tanh(rightOut[sc]);
+      }
+
+      S.processed = buf;
+      S.blob = encodeWAV(buf);
+
+      showSt('done','تم التحويل! الصوت جاهز كتجربة داخلية');
+      btnProcess.disabled=false; btnPlay.disabled=false; btnStop.disabled=false; btnDL.disabled=false;
+      updateInfo();
+
+    } catch(err){
+      showSt('fail','خطأ: '+err.message);
+      btnProcess.disabled=false;
     }
+  }, 80);
+}
 
-    function pauseAudio() {
-      if (!isPlaying) return;
-      var ctx = getAudioContext();
-      pauseOffset = ctx.currentTime - startTime;
-      sourceNode.onended = null;
-      sourceNode.stop();
-      sourceNode.disconnect();
-      isPlaying = false;
-
-      playIcon.className = 'fas fa-play';
-      btnPlay.classList.remove('playing');
-
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-        animationId = null;
-      }
+/* ============ WAV ENCODE ============ */
+function encodeWAV(buffer){
+  var nCh=buffer.numberOfChannels, sr=buffer.sampleRate, len=buffer.length;
+  var bps=2, dataLen=len*nCh*bps, total=44+dataLen;
+  var ab=new ArrayBuffer(total), v=new DataView(ab);
+  function ws(o,s){for(var i=0;i<s.length;i++) v.setUint8(o+i,s.charCodeAt(i));}
+  ws(0,'RIFF'); v.setUint32(4,total-8,true); ws(8,'WAVE'); ws(12,'fmt ');
+  v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,nCh,true);
+  v.setUint32(24,sr,true); v.setUint32(28,sr*nCh*bps,true);
+  v.setUint16(32,nCh*bps,true); v.setUint16(34,16,true);
+  ws(36,'data'); v.setUint32(40,dataLen,true);
+  var chs=[]; for(var c=0;c<nCh;c++) chs.push(buffer.getChannelData(c));
+  var off=44;
+  for(var i=0;i<len;i++){
+    for(var ch=0;ch<nCh;ch++){
+      var s=Math.max(-1,Math.min(1,chs[ch][i]));
+      v.setInt16(off, s<0?s*32768:s*32767, true);
+      off+=2;
     }
+  }
+  return new Blob([ab],{type:'audio/wav'});
+}
 
-    function stopAudio() {
-      if (sourceNode) {
-        sourceNode.onended = null;
-        try { sourceNode.stop(); } catch (e) { /* ignore */ }
-        try { sourceNode.disconnect(); } catch (e) { /* ignore */ }
-        sourceNode = null;
-      }
-      if (gainNode) {
-        try { gainNode.disconnect(); } catch (e) { /* ignore */ }
-        gainNode = null;
-      }
-      if (analyserNode) {
-        try { analyserNode.disconnect(); } catch (e) { /* ignore */ }
-      }
+/* ============ PLAYBACK ============ */
+btnPlay.addEventListener('click', function(){ if(S.playing) pauseAudio(); else playAudio(); });
+btnStop.addEventListener('click', stopAudio);
+progBar.addEventListener('click', function(e){
+  if(!S.processed) return;
+  var r=progBar.getBoundingClientRect();
+  var ratio=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));
+  var seekT = ratio*S.processed.duration;
+  if(S.playing){ stopAudio(); S.pauseOff=seekT; playAudio(); }
+  else { S.pauseOff=seekT; tCur.textContent=fmtTime(seekT); progFill.style.width=(ratio*100)+'%'; }
+});
 
-      isPlaying = false;
-      pauseOffset = 0;
-      startTime = 0;
+function playAudio(){
+  if(!S.processed) return;
+  var ctx=getCtx();
+  if(ctx.state==='suspended') ctx.resume();
+  S.src = ctx.createBufferSource();
+  S.src.buffer = S.processed;
+  S.gain = ctx.createGain();
+  S.gain.gain.value = sVol.value/100;
+  S.analyser = ctx.createAnalyser();
+  S.analyser.fftSize = 2048;
+  S.src.connect(S.gain); S.gain.connect(S.analyser); S.analyser.connect(ctx.destination);
+  S.src.onended = function(){ if(S.playing) stopAudio(); };
+  S.src.start(0, S.pauseOff);
+  S.startT = ctx.currentTime - S.pauseOff;
+  S.playing = true;
+  iPlay.className='fas fa-pause'; btnPlay.classList.add('on');
+  tickProgress();
+}
 
-      playIcon.className = 'fas fa-play';
-      btnPlay.classList.remove('playing');
-      progressFill.style.width = '0%';
-      currentTimeEl.textContent = '0:00';
+function pauseAudio(){
+  if(!S.playing) return;
+  S.pauseOff = getCtx().currentTime - S.startT;
+  S.src.onended=null;
+  S.src.stop(); S.src.disconnect();
+  S.playing=false;
+  iPlay.className='fas fa-play'; btnPlay.classList.remove('on');
+  if(S.animId){ cancelAnimationFrame(S.animId); S.animId=null; }
+}
 
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-        animationId = null;
-      }
-    }
+function stopAudio(){
+  if(S.src){ S.src.onended=null; try{S.src.stop();}catch(e){} try{S.src.disconnect();}catch(e){} S.src=null; }
+  if(S.gain){ try{S.gain.disconnect();}catch(e){} S.gain=null; }
+  if(S.analyser){ try{S.analyser.disconnect();}catch(e){} }
+  S.playing=false; S.pauseOff=0; S.startT=0;
+  iPlay.className='fas fa-play'; btnPlay.classList.remove('on');
+  progFill.style.width='0%'; tCur.textContent='0:00';
+  if(S.animId){ cancelAnimationFrame(S.animId); S.animId=null; }
+}
 
-    function updateProgress() {
-      if (!isPlaying || !processedBuffer) return;
-      var ctx = getAudioContext();
-      var elapsed = ctx.currentTime - startTime;
-      var duration = processedBuffer.duration;
+function tickProgress(){
+  if(!S.playing||!S.processed) return;
+  var el = getCtx().currentTime - S.startT;
+  var dur = S.processed.duration;
+  if(el>dur){ stopAudio(); return; }
+  tCur.textContent = fmtTime(el);
+  progFill.style.width = (el/dur*100)+'%';
+  drawViz();
+  S.animId = requestAnimationFrame(tickProgress);
+}
 
-      if (elapsed > duration) {
-        stopAudio();
-        return;
-      }
+/* ============ VISUALIZER ============ */
+function resizeViz(){
+  var r=vizCanvas.parentElement.getBoundingClientRect();
+  var dpr = window.devicePixelRatio||1;
+  vizCanvas.width = r.width*dpr; vizCanvas.height = r.height*dpr;
+  vizCtx.setTransform(dpr,0,0,dpr,0,0);
+}
+resizeViz(); window.addEventListener('resize', resizeViz);
 
-      currentTimeEl.textContent = formatTime(elapsed);
-      progressFill.style.width = ((elapsed / duration) * 100) + '%';
+function drawViz(){
+  if(!S.analyser) return;
+  var w=vizCanvas.width/(window.devicePixelRatio||1), h=vizCanvas.height/(window.devicePixelRatio||1);
+  vizCtx.clearRect(0,0,w,h);
+  var col = modeColors[S.mode]||modeColors.inner;
 
-      drawVisualizer();
-      animationId = requestAnimationFrame(updateProgress);
-    }
+  // Time domain
+  var td = new Uint8Array(S.analyser.frequencyBinCount);
+  S.analyser.getByteTimeDomainData(td);
+  var sw = w/td.length;
 
-    /* ========= Visualizer ========= */
-    function resizeCanvas() {
-      var rect = visualizerCanvas.parentElement.getBoundingClientRect();
-      visualizerCanvas.width = rect.width * (window.devicePixelRatio || 1);
-      visualizerCanvas.height = rect.height * (window.devicePixelRatio || 1);
-      vizCtx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
-    }
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+  // Glow
+  vizCtx.beginPath();
+  vizCtx.strokeStyle='rgba('+col.r+','+col.g+','+col.b+',0.12)';
+  vizCtx.lineWidth=7;
+  for(var i=0;i<td.length;i++){
+    var y=(td[i]/128)*h/2;
+    if(i===0) vizCtx.moveTo(i*sw,y); else vizCtx.lineTo(i*sw,y);
+  }
+  vizCtx.stroke();
 
-    function drawVisualizer() {
-      if (!analyserNode) return;
-      var w = visualizerCanvas.width / (window.devicePixelRatio || 1);
-      var h = visualizerCanvas.height / (window.devicePixelRatio || 1);
+  // Main
+  vizCtx.beginPath();
+  vizCtx.strokeStyle='rgb('+col.r+','+col.g+','+col.b+')';
+  vizCtx.lineWidth=2;
+  vizCtx.shadowColor='rgb('+col.r+','+col.g+','+col.b+')';
+  vizCtx.shadowBlur=10;
+  for(var j=0;j<td.length;j++){
+    var yy=(td[j]/128)*h/2;
+    if(j===0) vizCtx.moveTo(j*sw,yy); else vizCtx.lineTo(j*sw,yy);
+  }
+  vizCtx.stroke();
+  vizCtx.shadowBlur=0;
 
-      vizCtx.clearRect(0, 0, w, h);
+  // Frequency bars
+  var fd = new Uint8Array(S.analyser.frequencyBinCount);
+  S.analyser.getByteFrequencyData(fd);
+  var bars=50, bw=w/bars, step=Math.floor(fd.length/bars);
+  for(var b=0;b<bars;b++){
+    var val=fd[b*step]/255;
+    var bh=val*h*0.28;
+    vizCtx.fillStyle='rgba('+col.r+','+col.g+','+col.b+','+(0.08+val*0.25)+')';
+    vizCtx.fillRect(b*bw,h-bh,bw-1,bh);
+  }
+}
 
-      var dataArray = new Uint8Array(analyserNode.frequencyBinCount);
-      analyserNode.getByteTimeDomainData(dataArray);
+// Idle animation
+function drawIdle(){
+  if(S.playing) { requestAnimationFrame(drawIdle); return; }
+  var w=vizCanvas.width/(window.devicePixelRatio||1), h=vizCanvas.height/(window.devicePixelRatio||1);
+  vizCtx.clearRect(0,0,w,h);
+  var col = modeColors[S.mode]||modeColors.inner;
+  var t=Date.now()/1000;
+  var f=parseFloat(sFreq.value);
+  vizCtx.beginPath();
+  vizCtx.strokeStyle='rgba('+col.r+','+col.g+','+col.b+',0.25)';
+  vizCtx.lineWidth=1.5;
+  for(var x=0;x<w;x++){
+    var p=x/w;
+    var y=h/2 + Math.sin(p*f*0.5+t*2)*18 + Math.sin(p*f*1.3+t*2.7)*7;
+    if(x===0) vizCtx.moveTo(x,y); else vizCtx.lineTo(x,y);
+  }
+  vizCtx.stroke();
+  // Second wave (ghost)
+  vizCtx.beginPath();
+  vizCtx.strokeStyle='rgba('+col.r+','+col.g+','+col.b+',0.08)';
+  vizCtx.lineWidth=3;
+  for(var x2=0;x2<w;x2++){
+    var p2=x2/w;
+    var y2=h/2 + Math.sin(p2*f*0.5+t*2+0.3)*22 + Math.cos(p2*f*0.8+t*1.5)*10;
+    if(x2===0) vizCtx.moveTo(x2,y2); else vizCtx.lineTo(x2,y2);
+  }
+  vizCtx.stroke();
+  // Center line
+  vizCtx.beginPath();
+  vizCtx.strokeStyle='rgba('+col.r+','+col.g+','+col.b+',0.04)';
+  vizCtx.lineWidth=1;
+  vizCtx.moveTo(0,h/2); vizCtx.lineTo(w,h/2);
+  vizCtx.stroke();
+  requestAnimationFrame(drawIdle);
+}
+drawIdle();
 
-      var bandColors = {
-        delta: { r: 79, g: 195, b: 247 },
-        theta: { r: 179, g: 136, b: 255 },
-        alpha: { r: 0, g: 230, b: 118 },
-        beta: { r: 255, g: 215, b: 64 },
-        gamma: { r: 255, g: 64, b: 129 }
-      };
+/* ============ DOWNLOAD ============ */
+btnDL.addEventListener('click', function(){
+  if(!S.blob) return;
+  var url=URL.createObjectURL(S.blob);
+  var a=document.createElement('a');
+  a.href=url;
+  var orig=S.file?S.file.name.replace(/\.[^/.]+$/,''):'audio';
+  a.download=orig+'_inner_voice_'+S.mode+'.wav';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
 
-      var col = bandColors[currentBand] || bandColors.alpha;
-
-      /* Glow background wave */
-      vizCtx.beginPath();
-      vizCtx.strokeStyle = 'rgba(' + col.r + ',' + col.g + ',' + col.b + ',0.15)';
-      vizCtx.lineWidth = 8;
-      var sliceWidth = w / dataArray.length;
-      var x = 0;
-      for (var i = 0; i < dataArray.length; i++) {
-        var v = dataArray[i] / 128.0;
-        var y = v * (h / 2);
-        if (i === 0) vizCtx.moveTo(x, y);
-        else vizCtx.lineTo(x, y);
-        x += sliceWidth;
-      }
-      vizCtx.stroke();
-
-      /* Main wave */
-      vizCtx.beginPath();
-      vizCtx.strokeStyle = 'rgb(' + col.r + ',' + col.g + ',' + col.b + ')';
-      vizCtx.lineWidth = 2.5;
-      vizCtx.shadowColor = 'rgb(' + col.r + ',' + col.g + ',' + col.b + ')';
-      vizCtx.shadowBlur = 12;
-      x = 0;
-      for (var j = 0; j < dataArray.length; j++) {
-        var vv = dataArray[j] / 128.0;
-        var yy = vv * (h / 2);
-        if (j === 0) vizCtx.moveTo(x, yy);
-        else vizCtx.lineTo(x, yy);
-        x += sliceWidth;
-      }
-      vizCtx.stroke();
-      vizCtx.shadowBlur = 0;
-
-      /* Frequency bars (small) */
-      var freqData = new Uint8Array(analyserNode.frequencyBinCount);
-      analyserNode.getByteFrequencyData(freqData);
-      var barCount = 60;
-      var barWidth = w / barCount;
-      var step = Math.floor(freqData.length / barCount);
-
-      for (var b = 0; b < barCount; b++) {
-        var barVal = freqData[b * step] / 255;
-        var barH = barVal * (h * 0.3);
-        var alpha = 0.1 + barVal * 0.3;
-        vizCtx.fillStyle = 'rgba(' + col.r + ',' + col.g + ',' + col.b + ',' + alpha + ')';
-        vizCtx.fillRect(b * barWidth, h - barH, barWidth - 1, barH);
-      }
-    }
-
-    /* Idle visualizer animation */
-    function drawIdleVisualizer() {
-      if (isPlaying) return;
-      var w = visualizerCanvas.width / (window.devicePixelRatio || 1);
-      var h = visualizerCanvas.height / (window.devicePixelRatio || 1);
-
-      vizCtx.clearRect(0, 0, w, h);
-
-      var bandColors = {
-        delta: { r: 79, g: 195, b: 247 },
-        theta: { r: 179, g: 136, b: 255 },
-        alpha: { r: 0, g: 230, b: 118 },
-        beta: { r: 255, g: 215, b: 64 },
-        gamma: { r: 255, g: 64, b: 129 }
-      };
-
-      var col = bandColors[currentBand] || bandColors.alpha;
-      var time = Date.now() / 1000;
-      var freq = parseFloat(freqSlider.value);
-
-      vizCtx.beginPath();
-      vizCtx.strokeStyle = 'rgba(' + col.r + ',' + col.g + ',' + col.b + ',0.3)';
-      vizCtx.lineWidth = 2;
-      for (var x = 0; x < w; x++) {
-        var t = x / w;
-        var y = h / 2 + Math.sin(t * freq * 0.5 + time * 2) * 20 +
-                Math.sin(t * freq * 1.5 + time * 3) * 8;
-        if (x === 0) vizCtx.moveTo(x, y);
-        else vizCtx.lineTo(x, y);
-      }
-      vizCtx.stroke();
-
-      /* Center line */
-      vizCtx.beginPath();
-      vizCtx.strokeStyle = 'rgba(' + col.r + ',' + col.g + ',' + col.b + ',0.06)';
-      vizCtx.lineWidth = 1;
-      vizCtx.moveTo(0, h / 2);
-      vizCtx.lineTo(w, h / 2);
-      vizCtx.stroke();
-
-      requestAnimationFrame(drawIdleVisualizer);
-    }
-    drawIdleVisualizer();
-
-    /* ========= Download ========= */
-    btnDownload.addEventListener('click', function() {
-      if (!downloadBlob) return;
-      var url = URL.createObjectURL(downloadBlob);
-      var a = document.createElement('a');
-      a.href = url;
-      var originalName = audioFile ? audioFile.name.replace(/\.[^/.]+$/, '') : 'audio';
-      a.download = originalName + '_neuro_' + currentBand + '_' + freqSlider.value + 'Hz.wav';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    });
-
-    /* ========= Init ========= */
-    updateInfoDisplay();
-    carrierGroup.style.opacity = binauralToggle.checked ? '1' : '0.4';
-  </script>
+/* ============ INIT ============ */
+syncSliderDisplays();
+</script>
 </body>
 </html>
