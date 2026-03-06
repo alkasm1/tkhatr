@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeuroLink — التخاطر العقلي</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Oxanium:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --bg-void: #04060e;
+      --bg-deep: #080c1a;
+      --bg-card: #0e1528;
+      --bg-card2: #121d38;
+      --bg-input: #0a1020;
+      --accent-mind: #00f0ff;
+      --accent-psi: #c084fc;
+      --accent-wave: #22d3ee;
+      --accent-fire: #f472b6;
+      --accent-gold: #fbbf24;
+      --accent-green: #34d399;
+      --text-1: #e8ecf4;
+      --text-2: #8b9dc3;
+      --text-3: #4a5c82;
+      --border: rgba(0, 240, 255, 0.1);
+      --glow-mind: 0 0 30px rgba(0, 240, 255, 0.2);
+      --glow-psi: 0 0 25px rgba(192, 132, 252, 0.2);
+      --r: 16px;
+      --rs: 10px;
+    }
+    html:not(.dark) {
+      --bg-void: #eef2f7;
+      --bg-deep: #f5f7fb;
+      --bg-card: #ffffff;
+      --bg-card2: #f0f4fa;
+      --bg-input: #e4e9f2;
+      --accent-mind: #0891b2;
+      --accent-psi: #9333ea;
+      --accent-wave: #0e7490;
+      --accent-fire: #db2777;
+      --accent-gold: #d97706;
+      --accent-green: #059669;
+      --text-1: #0f172a;
+      --text-2: #475569;
+      --text-3: #94a3b8;
+      --border: rgba(8,145,178,0.12);
+      --glow-mind: 0 0 15px rgba(8,145,178,0.08);
+      --glow-psi: 0 0 12px rgba(147,51,234,0.08);
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Tajawal',sans-serif;background:var(--bg-void);color:var(--text-1);min-height:100vh;overflow-x:hidden}
+
+    /* === ATMOSPHERE === */
+    .atmo{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+    .atmo .orb{position:absolute;border-radius:50%;filter:blur(80px)}
+    .atmo .orb-1{width:500px;height:500px;background:rgba(0,240,255,0.04);top:-200px;left:50%;transform:translateX(-50%);animation:drift 12s ease-in-out infinite}
+    .atmo .orb-2{width:400px;height:400px;background:rgba(192,132,252,0.03);bottom:-150px;right:-100px;animation:drift 16s ease-in-out infinite reverse}
+    .atmo .orb-3{width:300px;height:300px;background:rgba(34,211,238,0.025);top:40%;left:-100px;animation:drift 14s ease-in-out infinite 2s}
+    @keyframes drift{0%,100%{transform:translate(0,0)}50%{transform:translate(25px,-25px)}}
+
+    .app{position:relative;z-index:1;max-width:840px;margin:0 auto;padding:14px 12px 50px}
+
+    /* === HEADER === */
+    .hdr{text-align:center;padding:24px 0 8px}
+    .mind-icon{width:90px;height:90px;margin:0 auto 12px;position:relative;display:flex;align-items:center;justify-content:center}
+    .mind-icon .pulse{position:absolute;border-radius:50%;border:1.5px solid var(--accent-mind);animation:mindPulse 3s ease-out infinite}
+    .mind-icon .pulse-1{width:90px;height:90px;animation-delay:0s}
+    .mind-icon .pulse-2{width:90px;height:90px;animation-delay:1s}
+    .mind-icon .pulse-3{width:90px;height:90px;animation-delay:2s}
+    @keyframes mindPulse{0%{transform:scale(1);opacity:0.5}100%{transform:scale(1.8);opacity:0}}
+    .mind-icon svg{width:50px;height:50px}
+    .hdr h1{font-family:'Oxanium',sans-serif;font-size:28px;font-weight:800;background:linear-gradient(135deg,var(--accent-mind),var(--accent-psi));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:3px}
+    .hdr .tag{color:var(--text-2);font-size:13px;font-weight:300;line-height:1.7;margin-top:4px}
+
+    /* === TABS === */
+    .tabs{display:flex;gap:4px;margin-bottom:14px;background:var(--bg-card);border-radius:var(--r);padding:4px;border:1px solid var(--border)}
+    .tab-btn{flex:1;padding:12px 8px;border:none;border-radius:12px;background:transparent;color:var(--text-2);font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:6px}
+    .tab-btn:hover{color:var(--text-1)}
+    .tab-btn.active{background:linear-gradient(135deg,rgba(0,240,255,0.12),rgba(192,132,252,0.08));color:var(--accent-mind);box-shadow:var(--glow-mind)}
+    .tab-btn i{font-size:14px}
+    .tab-content{display:none}
+    .tab-content.active{display:block}
+
+    /* === CARDS === */
+    .card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-bottom:12px;animation:cardUp 0.35s ease both}
+    @keyframes cardUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .card-h{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+    .card-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+    .card-t{font-size:15px;font-weight:700}
+    .card-d{font-size:11px;color:var(--text-3);margin-top:2px}
+
+    /* === TEXT INPUT === */
+    .msg-area{position:relative}
+    .msg-area textarea{
+      width:100%;min-height:140px;padding:16px;border:2px solid var(--border);
+      border-radius:var(--rs);background:var(--bg-input);color:var(--text-1);
+      font-family:'Tajawal',sans-serif;font-size:16px;line-height:1.8;
+      resize:vertical;outline:none;transition:border-color 0.3s;direction:rtl;
+    }
+    .msg-area textarea:focus{border-color:var(--accent-mind)}
+    .msg-area textarea::placeholder{color:var(--text-3)}
+    .char-count{position:absolute;bottom:10px;left:14px;font-family:'Oxanium',sans-serif;font-size:11px;color:var(--text-3)}
+
+    /* === TRANSMISSION VISUALIZER === */
+    .tx-viz{width:100%;height:180px;border-radius:var(--rs);background:rgba(0,0,0,0.3);position:relative;overflow:hidden;margin-bottom:14px}
+    html:not(.dark) .tx-viz{background:rgba(0,0,0,0.04)}
+    .tx-viz canvas{width:100%;height:100%;display:block}
+    .tx-label{position:absolute;top:8px;right:10px;font-family:'Oxanium',sans-serif;font-size:9px;color:var(--text-3);letter-spacing:1.5px}
+    .tx-status-tag{position:absolute;bottom:8px;left:10px;font-family:'Oxanium',sans-serif;font-size:9px;color:var(--accent-mind);opacity:0.7;letter-spacing:1px}
+    .tx-char-display{
+      position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+      font-family:'Oxanium',sans-serif;font-size:36px;font-weight:800;
+      color:var(--accent-mind);opacity:0;transition:opacity 0.15s;
+      text-shadow:0 0 30px var(--accent-mind);pointer-events:none;
+    }
+    .tx-char-display.show{opacity:1}
+
+    /* === SIGNAL BARS === */
+    .signal-bar{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:var(--rs);background:var(--bg-card2);margin-bottom:12px}
+    .signal-label{font-size:12px;color:var(--text-2);flex-shrink:0}
+    .signal-dots{display:flex;gap:3px;flex:1;justify-content:center}
+    .signal-dot{width:6px;height:20px;border-radius:3px;background:rgba(0,240,255,0.1);transition:all 0.2s}
+    .signal-dot.on{background:var(--accent-mind);box-shadow:0 0 8px rgba(0,240,255,0.4)}
+    .signal-pct{font-family:'Oxanium',sans-serif;font-size:13px;color:var(--accent-mind);font-weight:700;min-width:38px;text-align:left}
+
+    /* === PROGRESS RING === */
+    .tx-progress{display:flex;align-items:center;justify-content:center;gap:16px;padding:14px;margin-bottom:12px}
+    .ring-wrap{width:80px;height:80px;position:relative}
+    .ring-wrap svg{transform:rotate(-90deg)}
+    .ring-bg{fill:none;stroke:rgba(0,240,255,0.08);stroke-width:5}
+    .ring-fill{fill:none;stroke:var(--accent-mind);stroke-width:5;stroke-linecap:round;stroke-dasharray:226;stroke-dashoffset:226;transition:stroke-dashoffset 0.3s}
+    .ring-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Oxanium',sans-serif;font-size:18px;font-weight:800;color:var(--accent-mind)}
+    .tx-stats{text-align:right}
+    .tx-stat{font-size:12px;color:var(--text-2);margin-bottom:6px}
+    .tx-stat span{color:var(--accent-mind);font-weight:700;font-family:'Oxanium',sans-serif}
+
+    /* === CONTROLS === */
+    .ctrl-g{margin-bottom:14px}
+    .ctrl-r{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+    .ctrl-l{font-size:13px;font-weight:500;color:var(--text-2)}
+    .ctrl-v{font-family:'Oxanium',sans-serif;font-size:13px;font-weight:700;color:var(--accent-mind);min-width:50px;text-align:left}
+    input[type="range"]{-webkit-appearance:none;width:100%;height:5px;background:rgba(0,240,255,0.08);border-radius:3px;outline:none;cursor:pointer}
+    html:not(.dark) input[type="range"]{background:rgba(8,145,178,0.1)}
+    input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent-mind);box-shadow:var(--glow-mind);cursor:pointer}
+    input[type="range"]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent-mind);box-shadow:var(--glow-mind);border:none;cursor:pointer}
+
+    /* === TOGGLES === */
+    .tg-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+    .tg-row:last-child{border-bottom:none}
+    .tg-info .tg-t{font-size:13px;font-weight:600}
+    .tg-info .tg-d{font-size:11px;color:var(--text-3);margin-top:1px}
+    .tg{position:relative;width:44px;height:24px;flex-shrink:0}
+    .tg input{opacity:0;width:0;height:0}
+    .tg-tr{position:absolute;inset:0;background:rgba(255,255,255,0.07);border-radius:12px;cursor:pointer;transition:0.3s}
+    html:not(.dark) .tg-tr{background:rgba(0,0,0,0.08)}
+    .tg-tr::before{content:'';position:absolute;height:18px;width:18px;right:3px;bottom:3px;background:#fff;border-radius:50%;transition:0.3s}
+    .tg input:checked+.tg-tr{background:var(--accent-mind)}
+    .tg input:checked+.tg-tr::before{transform:translateX(-20px)}
+
+    /* === FREQ MODES === */
+    .freq-modes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+    .freq-mode{text-align:center;padding:14px 8px;border-radius:var(--rs);border:2px solid transparent;cursor:pointer;transition:all 0.3s;background:var(--bg-card2)}
+    .freq-mode:hover{border-color:var(--border)}
+    .freq-mode.active{border-color:var(--fm-c);background:var(--fm-bg);box-shadow:0 0 20px var(--fm-g)}
+    .freq-mode[data-fm="theta"]{--fm-c:#c084fc;--fm-bg:rgba(192,132,252,0.06);--fm-g:rgba(192,132,252,0.1)}
+    .freq-mode[data-fm="alpha"]{--fm-c:#00f0ff;--fm-bg:rgba(0,240,255,0.06);--fm-g:rgba(0,240,255,0.1)}
+    .freq-mode[data-fm="delta"]{--fm-c:#34d399;--fm-bg:rgba(52,211,153,0.06);--fm-g:rgba(52,211,153,0.1)}
+    .fm-emoji{font-size:24px;margin-bottom:4px}
+    .fm-name{font-size:13px;font-weight:700;margin-bottom:2px}
+    .fm-hz{font-size:10px;color:var(--text-3)}
+    .fm-desc{font-size:10px;color:var(--text-3);margin-top:3px;line-height:1.4}
+
+    /* === BUTTONS === */
+    .btn{width:100%;padding:16px;border:none;border-radius:var(--rs);font-family:'Tajawal',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:10px}
+    .btn-tx{background:linear-gradient(135deg,var(--accent-mind),var(--accent-psi));color:#0b1120;position:relative;overflow:hidden}
+    html:not(.dark) .btn-tx{color:#fff}
+    .btn-tx:hover{box-shadow:0 6px 35px rgba(0,240,255,0.3);transform:translateY(-1px)}
+    .btn-tx:disabled{opacity:0.3;cursor:not-allowed;transform:none;box-shadow:none}
+    .btn-tx.transmitting{animation:txPulse 1.5s ease-in-out infinite}
+    @keyframes txPulse{0%,100%{box-shadow:0 0 20px rgba(0,240,255,0.2)}50%{box-shadow:0 0 40px rgba(0,240,255,0.5)}}
+    .btn-stop{background:rgba(244,114,182,0.1);color:var(--accent-fire);border:1px solid rgba(244,114,182,0.2);margin-top:8px}
+    .btn-stop:hover{background:rgba(244,114,182,0.18)}
+    .btn-stop:disabled{opacity:0.2;cursor:not-allowed}
+
+    /* === UPLOAD (Tab 2) === */
+    .up-zone{border:2px dashed var(--border);border-radius:var(--rs);padding:34px 16px;text-align:center;cursor:pointer;transition:0.3s}
+    .up-zone:hover,.up-zone.hov{border-color:var(--accent-mind);background:rgba(0,240,255,0.02)}
+    .up-zone.loaded{border-style:solid;border-color:var(--accent-green);padding:14px}
+    .up-zone input{display:none}
+    .up-zone .up-ico{font-size:32px;color:var(--accent-mind);opacity:0.5;margin-bottom:8px}
+    .up-zone p{font-size:14px;color:var(--text-2)}
+    .up-zone small{font-size:12px;color:var(--text-3)}
+    .f-row{display:flex;align-items:center;gap:12px}
+    .f-row .fi{width:40px;height:40px;border-radius:10px;background:rgba(52,211,153,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--accent-green);font-size:18px}
+    .f-row .fd{flex:1}
+    .f-row .fn{font-size:13px;font-weight:600;word-break:break-all}
+    .f-row .fm{font-size:11px;color:var(--text-3)}
+    .btn-rm{width:30px;height:30px;border-radius:50%;border:none;background:rgba(244,114,182,0.1);color:var(--accent-fire);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;transition:0.2s}
+    .btn-rm:hover{background:rgba(244,114,182,0.2);transform:scale(1.1)}
+
+    /* === PLAYER === */
+    .transport{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+    .btn-r{width:46px;height:46px;border-radius:50%;border:2px solid var(--accent-mind);background:transparent;color:var(--accent-mind);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:0.3s;flex-shrink:0}
+    .btn-r:hover{background:rgba(0,240,255,0.08)}
+    .btn-r.on{background:var(--accent-mind);color:var(--bg-deep)}
+    .btn-r.sm{width:34px;height:34px;font-size:12px}
+    .btn-r:disabled{opacity:0.2;cursor:not-allowed}
+    .prg-w{flex:1}
+    .prg-bg{width:100%;height:4px;background:rgba(0,240,255,0.06);border-radius:2px;cursor:pointer;overflow:hidden;margin-bottom:4px}
+    .prg-f{height:100%;width:0;background:linear-gradient(90deg,var(--accent-mind),var(--accent-psi));border-radius:2px;transition:width 0.1s linear}
+    .prg-t{display:flex;justify-content:space-between;font-family:'Oxanium',sans-serif;font-size:10px;color:var(--text-3)}
+    .vol-r{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+    .vol-r i{color:var(--text-3);font-size:13px}
+    .vol-r input{flex:1}
+
+    /* Status */
+    .st{display:none;align-items:center;gap:8px;padding:10px 14px;border-radius:var(--rs);font-size:12px;font-weight:500;margin-bottom:12px}
+    .st.on{display:flex}
+    .st.wrk{background:rgba(0,240,255,0.05);color:var(--accent-mind);border:1px solid rgba(0,240,255,0.1)}
+    .st.ok{background:rgba(52,211,153,0.05);color:var(--accent-green);border:1px solid rgba(52,211,153,0.1)}
+    .st.err{background:rgba(244,114,182,0.05);color:var(--accent-fire);border:1px solid rgba(244,114,182,0.1)}
+    .sp{width:13px;height:13px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:spn 0.7s linear infinite}
+    @keyframes spn{to{transform:rotate(360deg)}}
+
+    .btn-dl{background:rgba(52,211,153,0.08);color:var(--accent-green);border:1px solid rgba(52,211,153,0.2);margin-top:8px}
+    .btn-dl:hover{background:rgba(52,211,153,0.14)}
+    .btn-dl:disabled{opacity:0.2;cursor:not-allowed}
+    .btn-proc{background:linear-gradient(135deg,var(--accent-green),var(--accent-wave));color:#0b1120;margin-top:0}
+    html:not(.dark) .btn-proc{color:#fff}
+    .btn-proc:hover{box-shadow:0 6px 30px rgba(52,211,153,0.2);transform:translateY(-1px)}
+    .btn-proc:disabled{opacity:0.3;cursor:not-allowed;transform:none;box-shadow:none}
+
+    /* Explain */
+    .exp p{font-size:12px;color:var(--text-2);line-height:1.9;margin-bottom:6px}
+    .exp strong{color:var(--accent-mind)}
+    .exp .hi{color:var(--accent-psi);font-weight:700}
+    .exp .note{padding:10px 14px;border-radius:var(--rs);background:rgba(0,240,255,0.03);border-right:3px solid var(--accent-mind);margin-top:8px;font-size:11px;line-height:1.8}
+
+    .footer{text-align:center;padding:16px;font-size:10px;color:var(--text-3);font-family:'Oxanium',sans-serif;letter-spacing:1.5px}
+
+    @media(max-width:500px){
+      .freq-modes{grid-template-columns:1fr 1fr 1fr;gap:6px}
+      .fm-desc{display:none}
+      .hdr h1{font-size:22px}
+      .card{padding:16px}
+      .tx-viz{height:150px}
+    }
+  </style>
+</head>
+<body>
+<div class="atmo">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<div class="app">
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="mind-icon">
+      <div class="pulse pulse-1"></div>
+      <div class="pulse pulse-2"></div>
+      <div class="pulse pulse-3"></div>
+      <svg viewBox="0 0 100 100" fill="none">
+        <path d="M50 15C32 15 18 30 18 48c0 10 5 19 12 25l2 16c0 3 3 5 6 5h24c3 0 6-2 6-5l2-16c7-6 12-15 12-25 0-18-14-33-32-33z" stroke="url(#mg)" stroke-width="3" fill="none"/>
+        <path d="M38 94h24M42 88h16" stroke="var(--accent-psi)" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
+        <circle cx="50" cy="44" r="8" fill="none" stroke="var(--accent-mind)" stroke-width="2" opacity="0.6"/>
+        <path d="M42 44c0-4 4-8 8-8M50 36v-6M62 44h6M38 44h-6M56 38l4-4M44 38l-4-4" stroke="var(--accent-mind)" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+        <defs><linearGradient id="mg" x1="18" y1="15" x2="82" y2="94"><stop stop-color="var(--accent-mind)"/><stop offset="1" stop-color="var(--accent-psi)"/></linearGradient></defs>
+      </svg>
+    </div>
+    <h1>NEUROLINK</h1>
+    <p class="tag">تخاطر عقلي — حوّل أفكارك إلى موجات دماغية وأرسلها مباشرة</p>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="telepathy"><i class="fas fa-brain"></i>التخاطر العقلي</button>
+    <button class="tab-btn" data-tab="audio"><i class="fas fa-headphones"></i>الصوت الداخلي</button>
+  </div>
+
+  <!-- ==================== TAB 1: TELEPATHY ==================== -->
+  <div class="tab-content active" id="tabTelepathy">
+
+    <!-- Message Input -->
+    <div class="card">
+      <div class="card-h">
+        <div class="card-ico" style="background:rgba(0,240,255,0.1);color:var(--accent-mind)"><i class="fas fa-pen-fancy"></i></div>
+        <div><div class="card-t">رسالة التخاطر</div><div class="card-d">اكتب ما تريد إرساله إلى العقل المستقبِل</div></div>
+      </div>
+      <div class="msg-area">
+        <textarea id="msgInput" placeholder="اكتب رسالتك هنا... سيتم تحويلها إلى موجات دماغية وبثها بتردد التخاطر العقلي" maxlength="500"></textarea>
+        <div class="char-count"><span id="charCount">0</span>/500</div>
+      </div>
+    </div>
+
+    <!-- Frequency Mode -->
+    <div class="card">
+      <div class="card-h">
+        <div class="card-ico" style="background:rgba(192,132,252,0.1);color:var(--accent-psi)"><i class="fas fa-satellite-dish"></i></div>
+        <div><div class="card-t">تردد التخاطر</div><div class="card-d">اختر نطاق التردد المناسب لنوع التخاطر</div></div>
+      </div>
+      <div class="freq-modes" id="freqModes">
+        <div class="freq-mode" data-fm="theta">
+          <div class="fm-emoji">🔮</div>
+          <div class="fm-name" style="color:var(--accent-psi)">ثيتا</div>
+          <div class="fm-hz">4–8 Hz</div>
+          <div class="fm-desc">تخاطر حدسي عميق</div>
+        </div>
+        <div class="freq-mode active" data-fm="alpha">
+          <div class="fm-emoji">🧠</div>
+          <div class="fm-name" style="color:var(--accent-mind)">ألفا</div>
+          <div class="fm-hz">8–13 Hz</div>
+          <div class="fm-desc">تواصل عقلي واعي</div>
+        </div>
+        <div class="freq-mode" data-fm="delta">
+          <div class="fm-emoji">🌊</div>
+          <div class="fm-name" style="color:var(--accent-green)">دلتا</div>
+          <div class="fm-hz">0.5–4 Hz</div>
+          <div class="fm-desc">رسائل تحت الوعي</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="card">
+      <div class="card-h">
+        <div class="card-ico" style="background:rgba(34,211,238,0.1);color:var(--accent-wave)"><i class="fas fa-sliders"></i></div>
+        <div><div class="card-t">ضبط الإرسال</div><div class="card-d">تحكم في قوة ونمط موجات التخاطر</div></div>
+      </div>
+
+      <div class="ctrl-g">
+        <div class="ctrl-r"><span class="ctrl-l">سرعة الإرسال</span><span class="ctrl-v" id="vSpeed">متوسطة</span></div>
+        <input type="range" id="sSpeed" min="1" max="5" step="1" value="3">
+      </div>
+      <div class="ctrl-g">
+        <div class="ctrl-r"><span class="ctrl-l">قوة الإشارة العصبية</span><span class="ctrl-v" id="vPower">70%</span></div>
+        <input type="range" id="sPower" min="10" max="100" step="1" value="70">
+      </div>
+      <div class="ctrl-g">
+        <div class="ctrl-r"><span class="ctrl-l">عمق التردد</span><span class="ctrl-v" id="vTxDepth">65%</span></div>
+        <input type="range" id="sTxDepth" min="10" max="100" step="1" value="65">
+      </div>
+      <div class="ctrl-g">
+        <div class="ctrl-r"><span class="ctrl-l">مستوى الصوت</span><span class="ctrl-v" id="vTxVol">60%</span></div>
+        <input type="range" id="sTxVol" min="5" max="100" step="1" value="60">
+      </div>
+
+      <div class="tg-row">
+        <div class="tg-info"><div class="tg-t">نغمات ثنائية الأذن</div><div class="tg-d">يخلق التردد داخل الدماغ مباشرة — يتطلب سماعات</div></div>
+        <label class="tg"><input type="checkbox" id="tTxBin" checked><span class="tg-tr"></span></label>
+      </div>
+      <div class="tg-row">
+        <div class="tg-info"><div class="tg-t">تكرار تلقائي</div><div class="tg-d">يكرر الرسالة باستمرار لتعزيز الاستقبال</div></div>
+        <label class="tg"><input type="checkbox" id="tRepeat" checked><span class="tg-tr"></span></label>
+      </div>
+      <div class="tg-row">
+        <div class="tg-info"><div class="tg-t">همس داخلي</div><div class="tg-d">يضيف طبقة همس خفية لتعزيز الرسالة</div></div>
+        <label class="tg"><input type="checkbox" id="tWhisperTx" checked><span class="tg-tr"></span></label>
+      </div>
+    </div>
+
+    <!-- Transmitter -->
+    <div class="card">
+      <div class="card-h">
+        <div class="card-ico" style="background:rgba(251,191,36,0.1);color:var(--accent-gold)"><i class="fas fa-tower-broadcast"></i></div>
+        <div><div class="card-t">البث والاستقبال</div></div>
+      </div>
+
+      <div class="tx-viz">
+        <canvas id="txCanvas"></canvas>
+        <div class="tx-label">TELEPATHIC SIGNAL</div>
+        <div class="tx-status-tag" id="txStatusTag">STANDBY</div>
+        <div class="tx-char-display" id="txCharDisp"></div>
+      </div>
+
+      <!-- Signal Strength -->
+      <div class="signal-bar">
+        <span class="signal-label">قوة الإشارة</span>
+        <div class="signal-dots" id="signalDots"></div>
+        <span class="signal-pct" id="signalPct">0%</span>
+      </div>
+
+      <!-- Progress Ring -->
+      <div class="tx-progress" id="txProgress" style="display:none">
+        <div class="ring-wrap">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle class="ring-bg" cx="40" cy="40" r="36"/>
+            <circle class="ring-fill" id="ringFill" cx="40" cy="40" r="36"/>
+          </svg>
+          <div class="ring-text" id="ringText">0%</div>
+        </div>
+        <div class="tx-stats">
+          <div class="tx-stat">الحرف الحالي: <span id="stCurChar">—</span></div>
+          <div class="tx-stat">التقدم: <span id="stProgress">0/0</span></div>
+          <div class="tx-stat">الدورة: <span id="stCycle">1</span></div>
+          <div class="tx-stat">التردد: <span id="stFreq">—</span></div>
+        </div>
+      </div>
+
+      <button class="btn btn-tx" id="btnTransmit" disabled>
+        <i class="fas fa-tower-broadcast"></i>
+        <span>بدء التخاطر</span>
+      </button>
+      <button class="btn btn-stop" id="btnStopTx" disabled>
+        <i class="fas fa-hand"></i>
+        <span>إيقاف البث</span>
+      </button>
+    </div>
+
+    <!-- How It Works -->
+    <div class="card exp">
+      <div class="card-h">
+        <div class="card-ico" style="background:rgba(244,114,182,0.1);color:var(--accent-fire)"><i class="fas fa-lightbulb"></i></div>
+        <div><div class="card-t">كيف يعمل التخاطر العقلي؟</div></div>
+      </div>
+      <p><strong>١. ترميز الحروف:</strong> كل حرف يُحوّل إلى تردد صوتي فريد في نطاق 180–600 Hz — نطاق "الصوت الداخلي" للدماغ البشري.</p>
+      <p><span class="hi">٢. تعديل بموجات التخاطر:</span> الإشارة تُعدَّل بموجات ثيتا/ألفا (4–13 Hz) المرتبطة علمياً بالحدس والتواصل بين العقول.</p>
+      <p><strong>٣. النغمات الثنائية:</strong> تردد مختلف لكل أذن يُنتج "نغمة وهمية" يصنعها الدماغ نفسه — فيستقبل الرسالة كموجة دماغية حقيقية.</p>
+      <p><strong>٤. الهمس الداخلي:</strong> طبقة صوتية خفية تحمل الرسالة بمستوى تحت واعي يتجاوز الأذن ويصل للعقل مباشرة.</p>
+      <div class="note">
+        <i class="fas fa-headphones"></i> <strong>ضروري:</strong> استخدم سماعات الرأس. اجلس في مكان هادئ، أغمض عينيك، وركّز ذهنياً على الشخص المستقبِل أثناء البث.
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TAB 2: AUDIO ==================== -->
+  <div class="tab-content" id="tabAudio">
+    <div class="card">
+      <div class="card-h">
+        <div class="card-ico" style="background:rgba(52,211,153,0.1);color:var(--accent-green)"><i class="fas fa-file-audio"></i></div>
+        <div><div class="card-t">رفع مقطع صوتي</div><div class="card-d">MP3, WAV, OGG — حتى 50MB</div></div>
+      </div>
+      <div class="up-zone" id="upZone">
+        <input type="file" id="audIn" accept="audio/*">
+        <div id="upPh"><div class="up-ico"><i class="fas fa-cloud-arrow-up"></i></div><p>اضغط أو اسحب ملفاً</p><small>سيتم تحويله إلى صوت داخلي</small></div>
+        <div id="fRow" style="display:none" class="f-row">
+          <div class="fi"><i class="fas fa-music"></i></div>
+          <div class="fd"><div class="fn" id="fNm"></div><div class="fm" id="fMt"></div></div>
+          <button class="btn-rm" id="btnRm" type="button"><i class="fas fa-xmark"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h">
+        <div class="card-ico" style="background:rgba(0,240,255,0.1);color:var(--accent-mind)"><i class="fas fa-sliders"></i></div>
+        <div><div class="card-t">إعدادات الصوت الداخلي</div></div>
+      </div>
+      <div class="ctrl-g"><div class="ctrl-r"><span class="ctrl-l">تردد التحفيز</span><span class="ctrl-v" id="vAFreq">10.0 Hz</span></div><input type="range" id="sAFreq" min="0.5" max="100" step="0.5" value="10"></div>
+      <div class="ctrl-g"><div class="ctrl-r"><span class="ctrl-l">عمق التحويل</span><span class="ctrl-v" id="vADepth">75%</span></div><input type="range" id="sADepth" min="0" max="100" step="1" value="75"></div>
+      <div class="ctrl-g"><div class="ctrl-r"><span class="ctrl-l">الهمس الداخلي</span><span class="ctrl-v" id="vAWhis">60%</span></div><input type="range" id="sAWhis" min="0" max="100" step="1" value="60"></div>
+      <div class="ctrl-g"><div class="ctrl-r"><span class="ctrl-l">رنين الجمجمة</span><span class="ctrl-v" id="vARes">50%</span></div><input type="range" id="sARes" min="0" max="100" step="1" value="50"></div>
+
+      <div class="tg-row">
+        <div class="tg-info"><div class="tg-t">نغمات ثنائية</div><div class="tg-d">تردد مختلف لكل أذن</div></div>
+        <label class="tg"><input type="checkbox" id="tABin" checked><span class="tg-tr"></span></label>
+      </div>
+      <div class="tg-row">
+        <div class="tg-info"><div class="tg-t">مزج مركزي</div><div class="tg-d">صوت من مركز الرأس</div></div>
+        <label class="tg"><input type="checkbox" id="tACross" checked><span class="tg-tr"></span></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h">
+        <div class="card-ico" style="background:rgba(251,191,36,0.1);color:var(--accent-gold)"><i class="fas fa-wave-square"></i></div>
+        <div><div class="card-t">التشغيل</div></div>
+      </div>
+      <div class="tx-viz"><canvas id="audViz"></canvas><div class="tx-label">INNER VOICE WAVEFORM</div></div>
+      <div class="transport">
+        <button class="btn-r" id="btnAPlay" disabled><i class="fas fa-play" id="iAPlay"></i></button>
+        <button class="btn-r sm" id="btnAStop" disabled><i class="fas fa-stop"></i></button>
+        <div class="prg-w"><div class="prg-bg" id="aPrgBar"><div class="prg-f" id="aPrgF"></div></div><div class="prg-t"><span id="aTC">0:00</span><span id="aTT">0:00</span></div></div>
+      </div>
+      <div class="vol-r"><i class="fas fa-volume-high"></i><input type="range" id="sAVol" min="0" max="100" value="80"><span class="ctrl-v" id="vAVol">80%</span></div>
+      <div class="st" id="aSt"><div class="sp" id="aStSp" style="display:none"></div><i class="fas fa-circle-info" id="aStIc"></i><span id="aStMsg"></span></div>
+      <button class="btn btn-proc" id="btnAProc" disabled><i class="fas fa-bolt"></i>تحويل إلى صوت داخلي</button>
+      <button class="btn btn-dl" id="btnADL" disabled><i class="fas fa-download"></i>تحميل</button>
+    </div>
+  </div>
+
+  <div class="footer">NEUROLINK — TELEPATHIC FREQUENCY TECHNOLOGY</div>
+</div>
+
+<script>
+/* ===== DARK MODE ===== */
+(function(){
+  function t(d){if(d)document.documentElement.classList.add('dark');else document.documentElement.classList.remove('dark')}
+  if(window.matchMedia){t(window.matchMedia('(prefers-color-scheme:dark)').matches);window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change',function(e){t(e.matches)})}else t(true);
+})();
+
+/* ===== TABS ===== */
+document.querySelectorAll('.tab-btn').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
+    document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active')});
+    btn.classList.add('active');
+    document.getElementById('tab'+btn.dataset.tab.charAt(0).toUpperCase()+btn.dataset.tab.slice(1)).classList.add('active');
+  });
+});
+
+/* ===== TELEPATHY ENGINE ===== */
+var TX = {
+  ctx: null,
+  active: false,
+  charIndex: 0,
+  cycle: 1,
+  text: '',
+  nodes: [],
+  timer: null,
+  animId: null,
+  analyser: null,
+  mode: 'alpha'
+};
+
+var msgInput = document.getElementById('msgInput');
+var charCount = document.getElementById('charCount');
+var freqModes = document.getElementById('freqModes');
+var sSpeed = document.getElementById('sSpeed'), vSpeed = document.getElementById('vSpeed');
+var sPower = document.getElementById('sPower'), vPower = document.getElementById('vPower');
+var sTxDepth = document.getElementById('sTxDepth'), vTxDepth = document.getElementById('vTxDepth');
+var sTxVol = document.getElementById('sTxVol'), vTxVol = document.getElementById('vTxVol');
+var tTxBin = document.getElementById('tTxBin');
+var tRepeat = document.getElementById('tRepeat');
+var tWhisperTx = document.getElementById('tWhisperTx');
+var btnTransmit = document.getElementById('btnTransmit');
+var btnStopTx = document.getElementById('btnStopTx');
+var txCanvas = document.getElementById('txCanvas');
+var txCtx = txCanvas.getContext('2d');
+var txStatusTag = document.getElementById('txStatusTag');
+var txCharDisp = document.getElementById('txCharDisp');
+var signalDots = document.getElementById('signalDots');
+var signalPct = document.getElementById('signalPct');
+var txProgress = document.getElementById('txProgress');
+var ringFill = document.getElementById('ringFill');
+var ringText = document.getElementById('ringText');
+var stCurChar = document.getElementById('stCurChar');
+var stProgress = document.getElementById('stProgress');
+var stCycle = document.getElementById('stCycle');
+var stFreq = document.getElementById('stFreq');
+
+// Create signal dots
+for(var d=0;d<20;d++){var dot=document.createElement('div');dot.className='signal-dot';signalDots.appendChild(dot)}
+
+// Char→Freq mapping (Arabic + Latin + digits)
+var charMap = {};
+(function(){
+  var chars = 'ابتثجحخدذرزسشصضطظعغفقكلمنهوي ةىءؤئأإآ';
+  for(var i=0;i<chars.length;i++) charMap[chars[i]] = 180 + i * 10;
+  var latin = 'abcdefghijklmnopqrstuvwxyz';
+  for(var j=0;j<latin.length;j++) charMap[latin[j]] = 200 + j * 12;
+  for(var k=0;k<=9;k++) charMap[k+''] = 520 + k * 8;
+  charMap[' '] = 0; // silence for space
+})();
+
+function getCharFreq(ch) {
+  var c = ch.toLowerCase();
+  return charMap[c] || 300;
+}
+
+var modeFreqs = { theta: 6, alpha: 10, delta: 2 };
+var modeCarriers = { theta: 180, alpha: 200, delta: 150 };
+var modeColors = {
+  theta:{r:192,g:132,b:252},
+  alpha:{r:0,g:240,b:255},
+  delta:{r:52,g:211,b:153}
+};
+
+var speedNames = ['','بطيئة جداً','بطيئة','متوسطة','سريعة','سريعة جداً'];
+var speedMs = [0, 350, 220, 150, 90, 50];
+
+msgInput.addEventListener('input', function(){
+  charCount.textContent = msgInput.value.length;
+  btnTransmit.disabled = msgInput.value.trim().length === 0;
+});
+
+freqModes.addEventListener('click', function(e){
+  var fm = e.target.closest('.freq-mode');
+  if(!fm) return;
+  document.querySelectorAll('.freq-mode').forEach(function(f){f.classList.remove('active')});
+  fm.classList.add('active');
+  TX.mode = fm.dataset.fm;
+});
+
+sSpeed.addEventListener('input', function(){ vSpeed.textContent = speedNames[parseInt(sSpeed.value)]; });
+sPower.addEventListener('input', function(){ vPower.textContent = sPower.value+'%'; });
+sTxDepth.addEventListener('input', function(){ vTxDepth.textContent = sTxDepth.value+'%'; });
+sTxVol.addEventListener('input', function(){
+  vTxVol.textContent = sTxVol.value+'%';
+  if(TX.masterGain) TX.masterGain.gain.setValueAtTime(parseInt(sTxVol.value)/100, TX.ctx.currentTime);
+});
+
+btnTransmit.addEventListener('click', startTransmission);
+btnStopTx.addEventListener('click', stopTransmission);
+
+function getTxCtx(){
+  if(!TX.ctx) TX.ctx = new (window.AudioContext||window.webkitAudioContext)();
+  if(TX.ctx.state === 'suspended') TX.ctx.resume();
+  return TX.ctx;
+}
+
+function startTransmission(){
+  var text = msgInput.value.trim();
+  if(!text) return;
+  stopTransmission();
+  TX.text = text;
+  TX.charIndex = 0;
+  TX.cycle = 1;
+  TX.active = true;
+
+  var ctx = getTxCtx();
+  TX.analyser = ctx.createAnalyser();
+  TX.analyser.fftSize = 2048;
+  TX.masterGain = ctx.createGain();
+  TX.masterGain.gain.value = parseInt(sTxVol.value)/100;
+  TX.masterGain.connect(TX.analyser);
+  TX.analyser.connect(ctx.destination);
+
+  btnTransmit.disabled = true;
+  btnTransmit.classList.add('transmitting');
+  btnStopTx.disabled = false;
+  txStatusTag.textContent = 'TRANSMITTING';
+  txProgress.style.display = 'flex';
+
+  transmitNextChar();
+  drawTxViz();
+}
+
+function transmitNextChar(){
+  if(!TX.active) return;
+  var text = TX.text;
+  if(TX.charIndex >= text.length){
+    if(tRepeat.checked){
+      TX.charIndex = 0;
+      TX.cycle++;
+    } else {
+      stopTransmission();
+      return;
+    }
+  }
+
+  var ch = text[TX.charIndex];
+  var freq = getCharFreq(ch);
+  var entrainFreq = modeFreqs[TX.mode] || 10;
+  var carrier = modeCarriers[TX.mode] || 200;
+  var power = parseInt(sPower.value)/100;
+  var depth = parseInt(sTxDepth.value)/100;
+  var useBin = tTxBin.checked;
+  var useWhisper = tWhisperTx.checked;
+  var speed = parseInt(sSpeed.value);
+  var durMs = speedMs[speed] || 150;
+
+  var ctx = getTxCtx();
+  var now = ctx.currentTime;
+  var dur = durMs / 1000;
+
+  // Clear previous nodes
+  TX.nodes.forEach(function(n){ try{n.stop?n.stop():n.disconnect()}catch(e){} });
+  TX.nodes = [];
+
+  if(freq > 0){ // not a space
+    // Main character tone
+    var osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    var oscGain = ctx.createGain();
+    oscGain.gain.value = 0;
+    // Envelope: fade in/out
+    oscGain.gain.linearRampToValueAtTime(power * 0.3, now + dur * 0.15);
+    oscGain.gain.linearRampToValueAtTime(power * 0.3, now + dur * 0.7);
+    oscGain.gain.linearRampToValueAtTime(0, now + dur);
+    osc.connect(oscGain);
+    oscGain.connect(TX.masterGain);
+    osc.start(now);
+    osc.stop(now + dur);
+    TX.nodes.push(osc);
+
+    // Entrainment modulation tone
+    var modOsc = ctx.createOscillator();
+    modOsc.type = 'sine';
+    modOsc.frequency.value = entrainFreq;
+    var modGain = ctx.createGain();
+    modGain.gain.value = depth * 0.15;
+    modOsc.connect(modGain);
+    modGain.connect(TX.masterGain);
+    modOsc.start(now);
+    modOsc.stop(now + dur);
+    TX.nodes.push(modOsc);
+
+    // Binaural beats
+    if(useBin){
+      var halfDiff = entrainFreq / 2;
+      // Create stereo splitter
+      var merger = ctx.createChannelMerger(2);
+      var oscL = ctx.createOscillator();
+      oscL.type = 'sine';
+      oscL.frequency.value = carrier - halfDiff;
+      var gL = ctx.createGain();
+      gL.gain.value = power * 0.06;
+      oscL.connect(gL);
+      gL.connect(merger, 0, 0);
+      oscL.start(now);
+      oscL.stop(now + dur);
+
+      var oscR = ctx.createOscillator();
+      oscR.type = 'sine';
+      oscR.frequency.value = carrier + halfDiff;
+      var gR = ctx.createGain();
+      gR.gain.value = power * 0.06;
+      oscR.connect(gR);
+      gR.connect(merger, 0, 1);
+      oscR.start(now);
+      oscR.stop(now + dur);
+
+      merger.connect(TX.masterGain);
+      TX.nodes.push(oscL, oscR);
+    }
+
+    // Whisper layer (subtle noise-like tone at character freq with harmonics)
+    if(useWhisper){
+      var wOsc1 = ctx.createOscillator();
+      wOsc1.type = 'triangle';
+      wOsc1.frequency.value = freq * 0.5;
+      var wG1 = ctx.createGain();
+      wG1.gain.value = power * 0.05;
+      wOsc1.connect(wG1);
+      wG1.connect(TX.masterGain);
+      wOsc1.start(now);
+      wOsc1.stop(now + dur);
+
+      var wOsc2 = ctx.createOscillator();
+      wOsc2.type = 'sawtooth';
+      wOsc2.frequency.value = freq * 1.01;
+      var wG2 = ctx.createGain();
+      wG2.gain.value = power * 0.02;
+      wOsc2.connect(wG2);
+      wG2.connect(TX.masterGain);
+      wOsc2.start(now);
+      wOsc2.stop(now + dur);
+
+      TX.nodes.push(wOsc1, wOsc2);
+    }
+  }
+
+  // Update UI
+  txCharDisp.textContent = ch === ' ' ? '⎵' : ch;
+  txCharDisp.classList.add('show');
+  setTimeout(function(){ txCharDisp.classList.remove('show'); }, durMs * 0.7);
+
+  var pct = Math.round(((TX.charIndex + 1) / text.length) * 100);
+  ringFill.style.strokeDashoffset = 226 - (226 * pct / 100);
+  ringText.textContent = pct + '%';
+  stCurChar.textContent = ch === ' ' ? 'مسافة' : ch;
+  stProgress.textContent = (TX.charIndex + 1) + '/' + text.length;
+  stCycle.textContent = TX.cycle;
+  stFreq.textContent = freq > 0 ? freq + ' Hz' : 'صمت';
+
+  // Signal dots
+  updateSignalDots(pct);
+
+  TX.charIndex++;
+  TX.timer = setTimeout(transmitNextChar, durMs);
+}
+
+function updateSignalDots(pct){
+  var dots = signalDots.children;
+  var active = Math.round(dots.length * pct / 100);
+  for(var i=0;i<dots.length;i++){
+    if(i < active) dots[i].classList.add('on');
+    else dots[i].classList.remove('on');
+  }
+  signalPct.textContent = pct + '%';
+}
+
+function stopTransmission(){
+  TX.active = false;
+  if(TX.timer){ clearTimeout(TX.timer); TX.timer = null; }
+  TX.nodes.forEach(function(n){ try{n.stop?n.stop():n.disconnect()}catch(e){} });
+  TX.nodes = [];
+  if(TX.animId){ cancelAnimationFrame(TX.animId); TX.animId = null; }
+
+  btnTransmit.disabled = msgInput.value.trim().length === 0;
+  btnTransmit.classList.remove('transmitting');
+  btnStopTx.disabled = true;
+  txStatusTag.textContent = 'STANDBY';
+  txProgress.style.display = 'none';
+  txCharDisp.classList.remove('show');
+  updateSignalDots(0);
+}
+
+/* ===== TX VISUALIZER ===== */
+function resizeTxCanvas(){
+  var r = txCanvas.parentElement.getBoundingClientRect();
+  var dpr = window.devicePixelRatio||1;
+  txCanvas.width = r.width*dpr; txCanvas.height = r.height*dpr;
+  txCtx.setTransform(dpr,0,0,dpr,0,0);
+}
+resizeTxCanvas();
+window.addEventListener('resize', resizeTxCanvas);
+
+function drawTxViz(){
+  if(!TX.active) return;
+  var w=txCanvas.width/(window.devicePixelRatio||1), h=txCanvas.height/(window.devicePixelRatio||1);
+  txCtx.clearRect(0,0,w,h);
+  var col = modeColors[TX.mode]||modeColors.alpha;
+
+  if(TX.analyser){
+    var td = new Uint8Array(TX.analyser.frequencyBinCount);
+    TX.analyser.getByteTimeDomainData(td);
+    var sw = w/td.length;
+
+    // Glow
+    txCtx.beginPath();
+    txCtx.strokeStyle='rgba('+col.r+','+col.g+','+col.b+',0.1)';
+    txCtx.lineWidth=8;
+    for(var i=0;i<td.length;i++){
+      var y=(td[i]/128)*h/2;
+      if(i===0) txCtx.moveTo(0,y); else txCtx.lineTo(i*sw,y);
+    }
+    txCtx.stroke();
+
+    // Main wave
+    txCtx.beginPath();
+    txCtx.strokeStyle='rgb('+col.r+','+col.g+','+col.b+')';
+    txCtx.lineWidth=2;
+    txCtx.shadowColor='rgb('+col.r+','+col.g+','+col.b+')';
+    txCtx.shadowBlur=12;
+    for(var j=0;j<td.length;j++){
+      var yy=(td[j]/128)*h/2;
+      if(j===0) txCtx.moveTo(0,yy); else txCtx.lineTo(j*sw,yy);
+    }
+    txCtx.stroke();
+    txCtx.shadowBlur=0;
+
+    // Frequency bars
+    var fd = new Uint8Array(TX.analyser.frequencyBinCount);
+    TX.analyser.getByteFrequencyData(fd);
+    var bars=40,bw=w/bars,step=Math.floor(fd.length/bars);
+    for(var b=0;b<bars;b++){
+      var val=fd[b*step]/255;
+      var bh=val*h*0.35;
+      txCtx.fillStyle='rgba('+col.r+','+col.g+','+col.b+','+(0.06+val*0.3)+')';
+      txCtx.fillRect(b*bw,h-bh,bw-1,bh);
+    }
+  }
+
+  // Scanning line effect
+  var scanX = ((Date.now() / 20) % w);
+  txCtx.beginPath();
+  txCtx.strokeStyle='rgba('+col.r+','+col.g+','+col.b+',0.15)';
+  txCtx.lineWidth=1;
+  txCtx.moveTo(scanX,0); txCtx.lineTo(scanX,h);
+  txCtx.stroke();
+
+  TX.animId = requestAnimationFrame(drawTxViz);
+}
+
+// Idle TX viz
+function drawTxIdle(){
+  if(TX.active){requestAnimationFrame(drawTxIdle);return}
+  var w=txCanvas.width/(window.devicePixelRatio||1), h=txCanvas.height/(window.devicePixelRatio||1);
+  txCtx.clearRect(0,0,w,h);
+  var col = modeColors[TX.mode]||modeColors.alpha;
+  var t=Date.now()/1000;
+  var f = modeFreqs[TX.mode]||10;
+
+  // Gentle wave
+  txCtx.beginPath();
+  txCtx.strokeStyle='rgba('+col.r+','+col.g+','+col.b+',0.15)';
+  txCtx.lineWidth=1.5;
+  for(var x=0;x<w;x++){
+    var p=x/w;
+    var y=h/2+Math.sin(p*f*0.4+t*1.5)*15+Math.sin(p*3+t*0.8)*5;
+    if(x===0) txCtx.moveTo(x,y); else txCtx.lineTo(x,y);
+  }
+  txCtx.stroke();
+
+  // Ghost wave
+  txCtx.beginPath();
+  txCtx.strokeStyle='rgba('+col.r+','+col.g+','+col.b+',0.06)';
+  txCtx.lineWidth=3;
+  for(var x2=0;x2<w;x2++){
+    var p2=x2/w;
+    var y2=h/2+Math.sin(p2*f*0.4+t*1.5+0.5)*20+Math.cos(p2*2+t)*8;
+    if(x2===0) txCtx.moveTo(x2,y2); else txCtx.lineTo(x2,y2);
+  }
+  txCtx.stroke();
+
+  requestAnimationFrame(drawTxIdle);
+}
+drawTxIdle();
+
+
+/* ========================================================================
+   TAB 2: AUDIO FILE PROCESSING (Simplified from previous version)
+   ======================================================================== */
+var A = { file:null, raw:null, proc:null, blob:null, ctx:null, src:null, gain:null, an:null, playing:false, sT:0, pO:0, anim:null };
+
+var upZone=document.getElementById('upZone'),audIn=document.getElementById('audIn'),upPh=document.getElementById('upPh'),fRow2=document.getElementById('fRow'),fNm=document.getElementById('fNm'),fMt=document.getElementById('fMt'),btnRm=document.getElementById('btnRm');
+var sAFreq=document.getElementById('sAFreq'),vAFreq=document.getElementById('vAFreq');
+var sADepth=document.getElementById('sADepth'),vADepth=document.getElementById('vADepth');
+var sAWhis=document.getElementById('sAWhis'),vAWhis=document.getElementById('vAWhis');
+var sARes=document.getElementById('sARes'),vARes=document.getElementById('vARes');
+var tABin=document.getElementById('tABin'),tACross=document.getElementById('tACross');
+var btnAPlay=document.getElementById('btnAPlay'),btnAStop=document.getElementById('btnAStop'),iAPlay=document.getElementById('iAPlay');
+var aPrgBar=document.getElementById('aPrgBar'),aPrgF=document.getElementById('aPrgF'),aTC=document.getElementById('aTC'),aTT=document.getElementById('aTT');
+var sAVol=document.getElementById('sAVol'),vAVol=document.getElementById('vAVol');
+var aSt=document.getElementById('aSt'),aStSp=document.getElementById('aStSp'),aStIc=document.getElementById('aStIc'),aStMsg=document.getElementById('aStMsg');
+var btnAProc=document.getElementById('btnAProc'),btnADL=document.getElementById('btnADL');
+var audVizCv=document.getElementById('audViz'),audVCtx=audVizCv.getContext('2d');
+
+function fmt(s){var m=Math.floor(s/60),ss=Math.floor(s%60);return m+':'+(ss<10?'0':'')+ss}
+function fmtSz(b){return b<1048576?(b/1024).toFixed(1)+' KB':(b/1048576).toFixed(1)+' MB'}
+function aShowSt(t,m){aSt.className='st on '+t;aStMsg.textContent=m;if(t==='wrk'){aStSp.style.display='block';aStIc.style.display='none'}else{aStSp.style.display='none';aStIc.style.display='';aStIc.className=t==='ok'?'fas fa-circle-check':'fas fa-circle-xmark'}}
+function aHideSt(){aSt.className='st'}
+function getACtx(){if(!A.ctx)A.ctx=new(window.AudioContext||window.webkitAudioContext)();return A.ctx}
+
+upZone.addEventListener('click',function(e){if(e.target===btnRm||btnRm.contains(e.target))return;audIn.click()});
+upZone.addEventListener('dragover',function(e){e.preventDefault();upZone.classList.add('hov')});
+upZone.addEventListener('dragleave',function(){upZone.classList.remove('hov')});
+upZone.addEventListener('drop',function(e){e.preventDefault();upZone.classList.remove('hov');if(e.dataTransfer.files.length&&e.dataTransfer.files[0].type.startsWith('audio/'))loadAud(e.dataTransfer.files[0])});
+audIn.addEventListener('change',function(){if(audIn.files.length)loadAud(audIn.files[0])});
+btnRm.addEventListener('click',function(e){e.stopPropagation();resetAud()});
+
+function loadAud(f){
+  if(f.size>50*1048576){aShowSt('err','حجم كبير');return}
+  A.file=f;fNm.textContent=f.name;fMt.textContent=fmtSz(f.size);
+  upPh.style.display='none';fRow2.style.display='flex';upZone.classList.add('loaded');
+  btnAProc.disabled=false;aHideSt();
+  var r=new FileReader();
+  r.onload=function(e){getACtx().decodeAudioData(e.target.result).then(function(b){A.raw=b;aTT.textContent=fmt(b.duration);aShowSt('ok','جاهز للتحويل')}).catch(function(){aShowSt('err','تعذّر قراءة الملف');btnAProc.disabled=true})};
+  r.readAsArrayBuffer(f);
+}
+
+function resetAud(){
+  stopAud();A.file=null;A.raw=null;A.proc=null;A.blob=null;
+  upPh.style.display='';fRow2.style.display='none';upZone.classList.remove('loaded');audIn.value='';
+  btnAProc.disabled=true;btnAPlay.disabled=true;btnAStop.disabled=true;btnADL.disabled=true;
+  aPrgF.style.width='0%';aTC.textContent='0:00';aTT.textContent='0:00';aHideSt();
+}
+
+[sAFreq,sADepth,sAWhis,sARes].forEach(function(s){s.addEventListener('input',function(){
+  vAFreq.textContent=parseFloat(sAFreq.value).toFixed(1)+' Hz';
+  vADepth.textContent=sADepth.value+'%';
+  vAWhis.textContent=sAWhis.value+'%';
+  vARes.textContent=sARes.value+'%';
+})});
+sAVol.addEventListener('input',function(){vAVol.textContent=sAVol.value+'%';if(A.gain)A.gain.gain.value=sAVol.value/100});
+
+btnAProc.addEventListener('click',function(){if(!A.raw)return;processAud()});
+
+function processAud(){
+  stopAud();aShowSt('wrk','جارٍ التحويل...');btnAProc.disabled=true;btnAPlay.disabled=true;btnADL.disabled=true;
+  setTimeout(function(){
+    try{
+      var freq=parseFloat(sAFreq.value),depth=parseInt(sADepth.value)/100,wAmt=parseInt(sAWhis.value)/100,rAmt=parseInt(sARes.value)/100;
+      var useBin=tABin.checked,useCross=tACross.checked;
+      var raw=A.raw,sr=raw.sampleRate,len=raw.length;
+      var buf=new(window.OfflineAudioContext||window.webkitOfflineAudioContext)(2,len,sr).createBuffer(2,len,sr);
+      var mono=new Float32Array(len);
+      for(var c=0;c<raw.numberOfChannels;c++){var ch=raw.getChannelData(c);for(var i=0;i<len;i++)mono[i]+=ch[i]}
+      var nc=raw.numberOfChannels;for(var i2=0;i2<len;i2++)mono[i2]/=nc;
+
+      // Whisper filter
+      var w=new Float32Array(len);
+      if(wAmt>0){var lp=900-wAmt*400,rc2=1/(2*Math.PI*lp),dt=1/sr,al=dt/(rc2+dt),pv=0;
+        for(var wi=0;wi<len;wi++){pv=pv+al*(mono[wi]-pv);w[wi]=mono[wi]*(1-wAmt)+pv*wAmt}}
+      else for(var cp=0;cp<len;cp++)w[cp]=mono[cp];
+
+      // Resonance
+      var res=new Float32Array(len);
+      if(rAmt>0){var rf=150,rQ=1.5+rAmt*3,rW0=2*Math.PI*rf/sr,rAlp=Math.sin(rW0)/(2*rQ),rA=Math.pow(10,rAmt*12/40);
+        var rb0=1+rAlp*rA,rb1=-2*Math.cos(rW0),rb2=1-rAlp*rA,ra0=1+rAlp/rA,ra1=-2*Math.cos(rW0),ra2=1-rAlp/rA;
+        rb0/=ra0;rb1/=ra0;rb2/=ra0;ra1/=ra0;ra2/=ra0;
+        var rx1=0,rx2=0,ry1=0,ry2=0;
+        for(var ri=0;ri<len;ri++){var rxn=w[ri];res[ri]=rb0*rxn+rb1*rx1+rb2*rx2-ra1*ry1-ra2*ry2;rx2=rx1;rx1=rxn;ry2=ry1;ry1=res[ri]}}
+      else for(var cr2=0;cr2<len;cr2++)res[cr2]=w[cr2];
+
+      // AM modulation
+      var mod=new Float32Array(len);
+      for(var am=0;am<len;am++){var t=am/sr;mod[am]=res[am]*(1-depth+depth*(0.5+0.5*Math.sin(2*Math.PI*freq*t)))}
+
+      // Stereo output
+      var L=buf.getChannelData(0),R=buf.getChannelData(1);
+      var hd=freq/2,cf=200,bA=useBin?0.06*depth:0;
+      for(var o=0;o<len;o++){
+        var t2=o/sr,s=mod[o];
+        if(useCross){var itd=6,ls=s,rs=o>=itd?mod[o-itd]*0.95:s*0.95,cx=0.85;L[o]=ls*(1-cx*0.5)+rs*(cx*0.5);R[o]=rs*(1-cx*0.5)+ls*(cx*0.5)}
+        else{L[o]=s;R[o]=s}
+        if(useBin){L[o]+=bA*Math.sin(2*Math.PI*(cf-hd)*t2);R[o]+=bA*Math.sin(2*Math.PI*(cf+hd)*t2)}
+        L[o]=Math.tanh(L[o]);R[o]=Math.tanh(R[o]);
+      }
+
+      A.proc=buf;A.blob=encWAV(buf);
+      aShowSt('ok','تم التحويل بنجاح');btnAProc.disabled=false;btnAPlay.disabled=false;btnAStop.disabled=false;btnADL.disabled=false;
+    }catch(e){aShowSt('err','خطأ: '+e.message);btnAProc.disabled=false}
+  },80);
+}
+
+function encWAV(buf){
+  var nCh=buf.numberOfChannels,sr=buf.sampleRate,len=buf.length,bps=2;
+  var dLen=len*nCh*bps,tot=44+dLen,ab=new ArrayBuffer(tot),v=new DataView(ab);
+  function ws(o,s){for(var i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))}
+  ws(0,'RIFF');v.setUint32(4,tot-8,true);ws(8,'WAVE');ws(12,'fmt ');
+  v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,nCh,true);
+  v.setUint32(24,sr,true);v.setUint32(28,sr*nCh*bps,true);v.setUint16(32,nCh*bps,true);v.setUint16(34,16,true);
+  ws(36,'data');v.setUint32(40,dLen,true);
+  var chs=[];for(var c=0;c<nCh;c++)chs.push(buf.getChannelData(c));var off=44;
+  for(var i=0;i<len;i++)for(var ch=0;ch<nCh;ch++){var s=Math.max(-1,Math.min(1,chs[ch][i]));v.setInt16(off,s<0?s*32768:s*32767,true);off+=2}
+  return new Blob([ab],{type:'audio/wav'});
+}
+
+btnAPlay.addEventListener('click',function(){if(A.playing)pauseAud();else playAud()});
+btnAStop.addEventListener('click',stopAud);
+aPrgBar.addEventListener('click',function(e){if(!A.proc)return;var r=aPrgBar.getBoundingClientRect(),rt=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)),st=rt*A.proc.duration;if(A.playing){stopAud();A.pO=st;playAud()}else{A.pO=st;aTC.textContent=fmt(st);aPrgF.style.width=(rt*100)+'%'}});
+
+function playAud(){
+  if(!A.proc)return;var ctx=getACtx();if(ctx.state==='suspended')ctx.resume();
+  A.src=ctx.createBufferSource();A.src.buffer=A.proc;A.gain=ctx.createGain();A.gain.gain.value=sAVol.value/100;
+  A.an=ctx.createAnalyser();A.an.fftSize=2048;
+  A.src.connect(A.gain);A.gain.connect(A.an);A.an.connect(ctx.destination);
+  A.src.onended=function(){if(A.playing)stopAud()};
+  A.src.start(0,A.pO);A.sT=ctx.currentTime-A.pO;A.playing=true;
+  iAPlay.className='fas fa-pause';btnAPlay.classList.add('on');tickAud();
+}
+function pauseAud(){if(!A.playing)return;A.pO=getACtx().currentTime-A.sT;A.src.onended=null;A.src.stop();A.src.disconnect();A.playing=false;iAPlay.className='fas fa-play';btnAPlay.classList.remove('on');if(A.anim){cancelAnimationFrame(A.anim);A.anim=null}}
+function stopAud(){if(A.src){A.src.onended=null;try{A.src.stop()}catch(e){}try{A.src.disconnect()}catch(e){}A.src=null}if(A.gain){try{A.gain.disconnect()}catch(e){}A.gain=null}if(A.an){try{A.an.disconnect()}catch(e){}}A.playing=false;A.pO=0;A.sT=0;iAPlay.className='fas fa-play';btnAPlay.classList.remove('on');aPrgF.style.width='0%';aTC.textContent='0:00';if(A.anim){cancelAnimationFrame(A.anim);A.anim=null}}
+function tickAud(){if(!A.playing||!A.proc)return;var el=getACtx().currentTime-A.sT,dur=A.proc.duration;if(el>dur){stopAud();return}aTC.textContent=fmt(el);aPrgF.style.width=(el/dur*100)+'%';drawAudViz();A.anim=requestAnimationFrame(tickAud)}
+
+function resizeAudViz(){var r=audVizCv.parentElement.getBoundingClientRect(),dpr=window.devicePixelRatio||1;audVizCv.width=r.width*dpr;audVizCv.height=r.height*dpr;audVCtx.setTransform(dpr,0,0,dpr,0,0)}
+resizeAudViz();window.addEventListener('resize',resizeAudViz);
+
+function drawAudViz(){
+  if(!A.an)return;var w=audVizCv.width/(window.devicePixelRatio||1),h=audVizCv.height/(window.devicePixelRatio||1);
+  audVCtx.clearRect(0,0,w,h);
+  var td=new Uint8Array(A.an.frequencyBinCount);A.an.getByteTimeDomainData(td);var sw=w/td.length;
+  audVCtx.beginPath();audVCtx.strokeStyle='rgba(52,211,153,0.12)';audVCtx.lineWidth=6;
+  for(var i=0;i<td.length;i++){var y=(td[i]/128)*h/2;if(i===0)audVCtx.moveTo(0,y);else audVCtx.lineTo(i*sw,y)}audVCtx.stroke();
+  audVCtx.beginPath();audVCtx.strokeStyle='rgb(52,211,153)';audVCtx.lineWidth=2;audVCtx.shadowColor='rgb(52,211,153)';audVCtx.shadowBlur=10;
+  for(var j=0;j<td.length;j++){var yy=(td[j]/128)*h/2;if(j===0)audVCtx.moveTo(0,yy);else audVCtx.lineTo(j*sw,yy)}audVCtx.stroke();audVCtx.shadowBlur=0;
+}
+
+// Audio idle viz
+function drawAudIdle(){
+  if(A.playing){requestAnimationFrame(drawAudIdle);return}
+  var w=audVizCv.width/(window.devicePixelRatio||1),h=audVizCv.height/(window.devicePixelRatio||1);
+  audVCtx.clearRect(0,0,w,h);var t=Date.now()/1000;
+  audVCtx.beginPath();audVCtx.strokeStyle='rgba(52,211,153,0.15)';audVCtx.lineWidth=1.5;
+  for(var x=0;x<w;x++){var p=x/w,y=h/2+Math.sin(p*5+t*1.5)*12+Math.sin(p*8+t*2)*4;if(x===0)audVCtx.moveTo(x,y);else audVCtx.lineTo(x,y)}
+  audVCtx.stroke();requestAnimationFrame(drawAudIdle);
+}
+drawAudIdle();
+
+btnADL.addEventListener('click',function(){
+  if(!A.blob)return;var url=URL.createObjectURL(A.blob);var a=document.createElement('a');a.href=url;
+  a.download=(A.file?A.file.name.replace(/\.[^/.]+$/,''):'audio')+'_inner_voice.wav';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+});
+</script>
+</body>
+</html>
